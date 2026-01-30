@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Find Day on 19 Nov. 1973 .,1,,Monday,Tuesday,Wednesday,,
+1,0,Find Day on 17 Feb. 1844.,3,,Tuesday,Friday,Saturday,,
+1,0,Find Day on  11 April 2000.,2,,Thursday,Tuesday,Monday,,
+1,0,Find Day on  28 Jan. 1600.,3,,Sunday,Saturday,Friday,,
+1,0,Find Day on 27 Feb.1502.,1,,Thursday,Friday,Saturday,,
+1,0,Find Day on 11 Feb.2508.,2,,sunday,Saturday,Monday,,
+1,0,Find Day on 5 Feb. 2247.,3,,Friday,Sunday,Saturday,,
+1,0,Find Day on 31 May 1744.,1,,Sunday,Monday,Friday,,
+1,0,Find Day on 8 Aug. 689,2,,sunday,Tuesday,Wednesday,,
+1,0,Find Day on 16 Dec.1881.,1,,Friday,saturday,Monday,,

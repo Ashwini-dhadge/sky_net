@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Known Picture are the Hangers.,1,,TRUE,FALSE,,,
+1,0,"Serial number for Alphabet ""T"" = 17.",2,,TRUE,FALSE,,,
+1,0,"Serial number for Alphabet ""X"" = 21.",2,,TRUE,FALSE,,,
+1,0,"Serail number for Alphabet ""I"" = 9.",1,,TRUE,FALSE,,,
+1,0,"Serail number for Alphabet ""L"" = 13.",2,,TRUE,FALSE,,,

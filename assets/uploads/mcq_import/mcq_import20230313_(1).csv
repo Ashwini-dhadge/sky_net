@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"While Visualising Cinema/Story, We have to take any Hero or Heroin to start the Cinema/Story.",1,,TRUE,FALSE,,,
+1,0,Word Taj is next to Doll.,1,,TRUE,FALSE,,,
+1,0,Word Nails is next to Neem.,2,,TRUE,FALSE,,,
+1,0,Word Doll is next to Door.,1,,TRUE,FALSE,,,
+1,0,Word Mala is next to Moon.,2,,TRUE,FALSE,,,
+1,0,Word Lassi is next to Rope.,1,,TRUE,FALSE,,,
+1,0,Word Home is next to Ray.,2,,TRUE,FALSE,,,
+1,0,Word TC is next to Honey Bee.,1,,TRUE,FALSE,,,
+1,0,Word Rose is next to Movie.,2,,TRUE,FALSE,,,
+1,0,Word Onion is next to Nose.,2,,TRUE,FALSE,,,

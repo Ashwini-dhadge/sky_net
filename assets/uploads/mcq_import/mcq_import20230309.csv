@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,2715 Divide by 26 = ?,1,,Q :104 R:11,Q :114 R:11,Q :124 R:11,,
+1,0,85674 Divide by 46 = ?,3,,Q :1872 R:22,Q :1962 R:22,Q :1862 R:22,,
+1,0,37465 Divide by 32 = ? ,2,,Q :1270 R:25,Q :1170 R:25,Q :1180 R:25,,
+1,0,29716 divide by 82 = ? ,2,,Q:372 R:32,Q:362 R:32,Q:392 R:32,,
+1,0,6478 Divide by 76 = ? ,1,,Q:85 R:18,Q:86 R:18, Q:84 R:18,,
+1,0,64582 Divide by 37 = ?,3,,Q:1735 R:17,Q:1845 R:17,Q:1745 R:17,,
+1,0,94716 Divide by 72 = ?,1,,Q:1315 R:36,Q:1415 R:36,Q:1615 R:36,,
+1,0,37469 Divide by 22 = ?,2,,Q:1803 R:3,Q:1703 R:3,Q:1903 R:3,,
+1,0,6178 Divide by 43 = ?,1,,Q:143 R:29,Q:153 R:29,Q:163 R:29,,
+1,0,6472 Divide by 54 = ?,2,,Q:129 R:46,Q:119 R:46,Q:139 R:4,,

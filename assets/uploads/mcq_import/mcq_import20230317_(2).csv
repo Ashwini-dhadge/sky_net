@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,In Shape method Butterfly represent the number 12.,2,,TRUE,FALSE,,,
+1,0,In Shape method Flag represent the number 14.,1,,TRUE,FALSE,,,
+1,0,In Shape method Gumboot represent the number 15.,1,,TRUE,FALSE,,,
+1,0,In Shape method King Cobra represent the number 19.,2,,TRUE,FALSE,,,
+1,0,In Shape method Sandwitch represent the number 17.,1,,TRUE,FALSE,,,

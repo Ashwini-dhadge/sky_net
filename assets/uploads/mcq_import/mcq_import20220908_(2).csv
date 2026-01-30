@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Find C I if R is 5 % , Time is 3 Years & Principal is 70000",3,,Rs.1103.375,Rs.110337.5,Rs.11033.75,,
+1,0,"Find A if Rate is 6 % @ C I , P is 125000 & time is 3 years.",1,,"Rs.1,48,877","Rs.1,48277","Rs.1,40877",,
+1,0,Find P if Rate is 50 % @ C I & time is 3 years on Amount Rs. 27000,1,,Rs.8000,Rs.80000,Rs.4000,,
+1,0,Find C I if Rate is 8 % & time is 3 years.,1,,1.97%,1.92%,1.93%,,
+1,0,"Find A if Rate is 12 % @ C I & time is 3 years on Rs. 15,625",2,,Rs.21852,Rs.21952,Rs.20952,,
+1,0,Find P if Rate is 10 % @ C I & time is 3 years & C I – S I = Rs. 6200,1,,"Rs.2,00,000","Rs.20,000","Rs.40,000",,
+1,0,Find C I if Rate is 2% and Time is 3 years,2,,6.1209,6.1208,6.128,,
+1,0,"Find A if Rate is 3 % @ C I & time is 2 years on Rs. 1,00,000",2,,"Rs.1,06,009","Rs.1,06,090","Rs.1,06,900",,
+1,0,"Simran borrow Rs 30,000 @ 10 % for 3 years on C I . Find C I",3,,Rs.993,Rs.99300,Rs.9930,,
+1,0,Find C I if rate is 20% & time is 3 Years,1,,72.80%,60.13%,72.00%,,

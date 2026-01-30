@@ -1,0 +1,5 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,45*5,1,,23,23,23,,
+1,0,46*5,2,,25,26,28,,
+1,0,4*6,3,,52,65,265,,
+1,0,3*5,1,,39,256,25,,

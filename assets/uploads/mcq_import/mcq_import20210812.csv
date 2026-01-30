@@ -1,0 +1,24 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Look at this series: 2, 1, (1/2), (1/4), ... What number should come next?",2,"This is a simple division series; each number is one-half of the previous number.
+
+In other terms to say, the number is divided by 2 successively to get the next result.
+
+4/2 = 2
+2/2 = 1
+1/2 = 1/2
+(1/2)/2 = 1/4
+(1/4)/2 = 1/8 and so on.",(1/3),(1/8),(2/8),(1/16),
+1,0,"  
+
+Here are some words translated from an artificial language.
+gorblflur means fan belt
+pixngorbl means ceiling fan
+arthtusl means tile roof
+Which word could mean ""ceiling tile""?",4,"Gorbl means fan; flur means belt; pixn means ceiling; arth means tile; and tusl means roof. Therefore, pixnarth is the correct choice.",gorbltusl,flurgorbl,arthflur,pixnarth,
+1,0,"  
+
+Look at this series: 7, 10, 8, 11, 9, 12, ... What number should come next?",2,"This is a simple alternating addition and subtraction series. In the first pattern, 3 is added; in the second, 2 is subtracted. ",7,10,12,13,
+1,0,"A boy has nine trousers and 12 shirts. In how many different ways can
+ he select a trouser and a shirt?",4,"The boy can select one trouser in nine ways.
+The boy can select one shirt in 12 ways.
+The number of ways in which he can select one trouser and one shirt is 9 * 12 = 108 ways.",21,12,9,108,101

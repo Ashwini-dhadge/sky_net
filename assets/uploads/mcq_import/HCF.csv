@@ -1,0 +1,4 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Find HCF Of (2,4,32)=?",1,,2,4,32,,
+1,0,"Find HCF Of (12,18,24)=?",3,,12,18,6,,
+1,0,"Find HCF Of (7,14,21,26)=?",2,,7,1,147,,

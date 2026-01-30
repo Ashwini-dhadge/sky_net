@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"1st December it was Friday , in the same year which was on 2nd September ?",3,,Monday,Tuesday,Wednesday,,
+1,0,"In 2008 on 10th Feb it was Wednesday , in the same year which was on 10th November ?",1,,Wednesday,Monday,Tuesday,,
+1,0,"In 2003 on 13th February, it was Monday , in the same year which was on 13th November ?",1,,Saturday,Sunday,Monday,,
+1,0,"2020 started on Monday , on which day 2020 ended ?",3,,Friday,Sunday,Monday,,
+1,0,"2019 started on Saturday, on which day 2020 Starts ?",2,,Monday,Thursday,Friday,,
+1,0,"In 2016, Independence Day was on Monday , in the same year which day was on 15th January ?",1,,Monday,Friday,Saturday,,
+1,0,"In 2021, on Republic Day , it was Tuesday , on which day 2021 ends with ?",3,,Tuesday,Monday,Sunday,,
+1,0,"In 1984 on Republic Day , it was Monday , on which day 1984 ended with ?",2,,Tuesday,Monday,Sunday,,
+1,0,"2001 started on Monday . In the same year, what was the day on 1st July ?",3,,,,,,
+1,0,2004 started on Sunday . When was 2005 started ?,1,,,,,,
