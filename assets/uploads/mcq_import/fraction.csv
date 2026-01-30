@@ -1,0 +1,12 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Find LCM & HCM Of 0.005, 0.015 , 0.5 =?",2,,LCM = 1.5  HCF = 0.5,LCM = 1.5  HCF = 0.005,LCM = 15  HCF = 0.05,,
+1,0,"Find LCM & HCF of (2,3,4,7,11) & ( 3,7,13) = ?",1,,LCM = 24024  HCF =3 ,LCM = 72072  HCF  = 3,LCM = 24024 HCF = 1,,
+1,0,"What is the largest 3 digit number which is exactly divisible by 10,8,12?",2,,990,960,950,,
+1,0,27+28+29+30+31+32+33 = ?,1,,210,212,211,,
+1,0,Find Digit sum of 9822012993 = ?,2,,1,0,8,,
+1,0,Find Digit sum of 9021121674 = ?,2,,7,6,5,,
+1,0,1 0 0 0 0 - 4 8 1 6 = ?,3,,5074,5174,5074,,
+1,0,"Table of 25 = 25,50,75,100,125,150,175,200,215,250",2,,TRUE,FALSE,,,
+1,0,Square of 48 = 2304,1,,TRUE,FALSE,,,
+1,0, Find day on 25 March 486 = ?,3,,Saturday,Sunday ,Monday,,
+1,0,,,,,,,,

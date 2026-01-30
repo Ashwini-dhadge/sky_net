@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,First step is month x 2 ,1,,TRUE,FALSE,,,
+1,0,Third step x 5,1,,TRUE,FALSE,,,
+1,0,We have to draw a vertical line 3 digits from the right side of our final answer,2,,TRUE,FALSE,,,
+1,0,"To get date, we have to subtract 50 from right side number of vertical line",1,,TRUE,FALSE,,,
+1,0,"To get month , we have to subtract 3 from left side number of vertical line",2,,TRUE,FALSE,,,
+1,0,Final answer would be maximum 1481,1,,TRUE,FALSE,,,
+1,0,Final answer would be minimum 351,1,,TRUE,FALSE,,,
+1,0,Final answer may be 350,2,,TRUE,FALSE,,,
+1,0,Final answer may be 1482,2,,TRUE,FALSE,,,
+1,0,"Today , you have to play this game with your friends , minimum 5 Friends",1,,TRUE,FALSE,,,

@@ -1,0 +1,7 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Square of 43 = 1849,TRUE,,TRUE,FALSE,,,
+1,0,S q u a r e o f 4 9 = 3 4 8 1,FALSE,,TRUE,FALSE,,,
+1,0,Square Root of 1936 = 44,TRUE,,TRUE,FALSE,,,
+1,0,Square Root of 2304 = 48,TRUE,,TRUE,FALSE,,,
+1,0,Square Root of 2116 = 44,FALSE,,TRUE,FALSE,,,
+1,0,Square of 47 = 2209,TRUE,,TRUE,FALSE,,,

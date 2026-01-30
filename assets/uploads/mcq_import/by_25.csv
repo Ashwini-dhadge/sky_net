@@ -1,0 +1,8 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Cube Root of 76765625 = 425,1,,TRUE,FALSE,,,
+1,0,Cube Root of 6677243 = 502,2,,TRUE,FALSE,,,
+1,0,Find Square of 71 =?,1,,5041,4941,5141,,
+1,0,Write Square of 52 =?,1,,2704,2809,2916,,
+1,0,Find Square of 523 = ? ,1,,273529,273452,254789,,
+1,0,How Many prime numbers are there between 75 to 100 ?,3,,1,2,4,,
+1,0,From the Following Which is a prime numbers?,2,,1,2,4,,

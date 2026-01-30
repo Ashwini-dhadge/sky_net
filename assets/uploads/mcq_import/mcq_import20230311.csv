@@ -1,0 +1,10 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Left Brain likes picturs,2,,TRUE,FALSE,,,
+1,0,Left Brain likes  Creativity,2,,TRUE,FALSE,,,
+1,0,Left Brain likes  Visualization,2,,TRUE,FALSE,,,
+1,0,Right Brain Likes Calculation,2,,TRUE,FALSE,,,
+1,0,Right Brain Likes Language,2,,TRUE,FALSE,,,
+1,0,Right Brain Likes Colour,1,,TRUE,FALSE,,,
+1,0,First Pillar of Memory is Visualization,1,,TRUE,FALSE,,,
+1,0,There are 3 Pillars of memory ,2,,TRUE,FALSE,,,
+1,0,Right Brain likes illogical Things,1,,TRUE,FALSE,,,

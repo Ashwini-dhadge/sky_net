@@ -1,0 +1,7 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,What is LMS?,LMS is online exam,I dont know,test,test1,test2,test3,test4
+2,1,What is course?,Multiple courses are there,multiple courses,test5,test6,test7,test8,test9
+3,0,What is lesson?,All lesons are there,couses against lesson,test10,test11,test12,test13,test14
+4,1,What is Package?,Multiple packages are there,so many packages are there,test15,test16,test17,test18,test19
+5,0,What is mcq test?,For online exam,mcq test is important,test24,test20,test21,test22,test23
+6,1,Why LMS is used?,For online ,dont know,test25,test26,test27,test28,test29

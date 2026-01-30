@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,2 3 + 4 5 = ?,2,,58,68,48,,
+1,0,1 2 + 2 3 = ?,1,,35,36,38,,
+1,0,3 4 + 5 2 =?,2,,82,86,74,,
+1,0,5 4 + 3 2 =?,3,,53,81,86,,
+1,0,4 3 + 3 3 = ?,1,,76,75,75,,

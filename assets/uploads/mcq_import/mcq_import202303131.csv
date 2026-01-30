@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Word Line is next to Lory.,2,,TRUE,FALSE,,,
+1,0,Word Jam is next to Jet.,1,,TRUE,FALSE,,,
+1,0,Word Can is next to Kite.,1,,TRUE,FALSE,,,
+1,0,Word Jail is next to Judge.,2,,TRUE,FALSE,,,
+1,0,Word File is next to Fire.,1,,TRUE,FALSE,,,
+1,0,Word Kaju is next to Coal.,1,,TRUE,FALSE,,,
+1,0,Word Dosa is next to pipe.,1,,TRUE,FALSE,,,
+1,0,Word Leaf is next to lock.,1,,TRUE,FALSE,,,
+1,0,Word Pen is next to Bus,2,,TRUE,FALSE,,,
+1,0,Word Coffee is next to cake ,1,,TRUE,FALSE,,,

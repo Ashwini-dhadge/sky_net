@@ -1,0 +1,10 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Find LCM of (2,7,8) = ?",1,,56,45,35,,
+1,0,"Find LCM of (48,56,72) = ?",2,,1338,1008,1448,,
+1,0,"Find LCM of (2,3,4,) = ?",3,,36,24,12,,
+1,0,"Find LCM of (10,12,14,22) = ?",1,,4620,4350,4850,,
+1,0,"Find LCM of (2,5,8,12,15) = ?",3,,22,150,120,,
+1,0,"Find LCM of (3,6,11)=?",2,,52,66,52,,
+1,0,"Find LCM of (28,36,44)=?",1,,2772,2882,2992,,
+1,0,"Find LCM of (2,5,7,13)=?",2,,922,910,933,,
+1,0,"Find LCM of (4,48)=?",3,,448,42,48,,

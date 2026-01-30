@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"To Remember length of Ganga river, We have to associate two names walking in Ganga river.",1,,TRUE,FALSE,,,
+1,0,Length of Yamuna river is 1375 km.,1,,TRUE,FALSE,,,
+1,0,"To Remember length of Beas river (470km), We have to associate cars with honey bees.",2,,TRUE,FALSE,,,
+1,0,Length of Bramhaputra river is 2700 km.,2,,TRUE,FALSE,,,
+1,0,Length of Sabarmati is 1465 km.,2,,TRUE,FALSE,,,

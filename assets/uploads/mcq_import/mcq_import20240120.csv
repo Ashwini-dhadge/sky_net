@@ -1,0 +1,13 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Find Number of the  F5.,1,,11130130,1113254,11130140,,
+1,0,Find Number of the  D1.,1,,58234,58642,59684,,
+1,0,Find Number of the  A2.,2,,36524,32412,33512,,
+1,0,Find Number of the  B3.,3,,55616,55616,54616,,
+1,0,Find Number of the  C4.,3,,768113,778649,768112,,
+1,0,Find Number of the E3.,2,,81063150,8106215,849562,,
+1,0,Find the day on 27 August 2057.,1,,Monday,Tuesday,Friday,,
+1,0,Find the day on 17 December 2024.,2,,Friday,Tuesday,Wednesday,,
+1,0,Find the day on 26 January 2099.,3,,Saturday,Sunday,Monday,,
+1,0,Find the day on 10 July 2020.,2,,Tuesday,Friday,Monday,,
+1,0,Find the day on 16 February 2015.,1,,Monday,Sunday,Friday,,
+1,0,Find the day on 03 October 2011.,2,,Friday,Monday,Wednesday,,

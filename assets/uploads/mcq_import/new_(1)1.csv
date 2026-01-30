@@ -1,0 +1,8 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,36 x 11 =?,1,,396,386,376,,
+1,0,6 4 x 3 4 =2276,1,,FALSE,TRUE,,,
+1,0,9 3 5 4 x1 4 = 130956,2,,FALSE,TRUE,,,
+1,0,9822012339,3,,1,2,3,,
+1,0,8472664027,2,,2,1,3,,
+1,0,76418325993,2,,0,3,2,,
+1,0,2 7 5 3 x 1 9 = 52317,1,,FALSE,TRUE,,,
