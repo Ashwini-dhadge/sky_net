@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,First Step is x 5,2,,TRUE,FALSE,,,
+1,0,Second Step is + 5,2,,TRUE,FALSE,,,
+1,0,Third Step is x 2,1,,TRUE,FALSE,,,
+1,0,Fourth Step is to add any number from 1 to 9,1,,TRUE,FALSE,,,
+1,0,"To Calculate how much money do your friend have, we eleminate last number of Final answer",1,,TRUE,FALSE,,,
+1,0,"After Eleminating Last digit of final answer, we need to Substract is to get the money (Answer)",2,,TRUE,FALSE,,,
+1,0,"If your friend consider zero Rupees, his/her final answer would be from 51 to 59",1,,TRUE,FALSE,,,
+1,0,"If your friend consider 50 Rupees, his/her final answer would be Rs 551 to 559",1,,TRUE,FALSE,,,
+1,0,"If your friend consider Rs 100, his/her final answer would be Rs 1001 to 1000",2,,TRUE,FALSE,,,
+1,0,"If your friend consider Rs 1, his/her final answer would be Rs 61 to 69",1,,TRUE,FALSE,,,

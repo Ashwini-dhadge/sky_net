@@ -1,0 +1,7 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,We can use Rhyming words to memorize month while dreaming important days.,1,,,,,,
+1,0,Doctors Day- 1st June.,2,,TRUE,FALSE,,,
+1,0,World Animal Day- 4 August.,2,,TRUE,FALSE,,,
+1,0,World Book Day- 23rd April.,1,,TRUE,FALSE,,,
+1,0,Farmers Day- 23rd December.,1,,TRUE,FALSE,,,
+,,,,,TRUE,FALSE,,,

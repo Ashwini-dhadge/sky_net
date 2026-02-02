@@ -1,0 +1,5 @@
+1) composer require zircote/swagger-php
+2) download : https://github.com/swagger-api/swagger-editor 
+3) extrated file inside application added swagger-editor folder
+4) open cmd swagger-editor folder
+5) npm install -g swagger

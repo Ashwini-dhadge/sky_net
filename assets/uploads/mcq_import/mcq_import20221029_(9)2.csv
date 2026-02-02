@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Find Day on 23 Mar 1945 .,1,,Sunday,Friday,Monday,,
+1,0,Find Day on 10 Sept. 2013 .,3,,Thursday,Wednesday,Tuesday,,
+1,0,Find Day on 18 Nov. 2021.,1,,Thursday,Friday,Sunday,,
+1,0,Find Day on  2 April  1999.,3,,Thursday,Wednesday,Friday,,
+1,0,Find Day on  6 June 2015.,2,,Friday,Saturday,Monday,,
+1,0,Find Day on 14 Dec. 2000 .,3,,Wednesday,Tuesday,Thursday,,
+1,0,Find Day on 20 Jan. 1806.,1,,Monday,Thursday,Friday,,
+1,0,Find Day on 30 May 1994.,2,,Thursday,Monday,Wednesday,,
+1,0,Find Day on 1 Feb 1905 .,3,,Friday,Sunday,Wednesday,,
+1,0,Find Day on  6 March 1894.,2,,Wednesday,Tuesday,Friday,,

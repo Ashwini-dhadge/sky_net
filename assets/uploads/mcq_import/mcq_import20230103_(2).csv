@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Find Day On  12 Dec 2022,2,,Sunday,Monday ,Tuesday,,
+1,0,Find Day On 27 May 2022,1,,Friday,Saturday,Thursday,,
+1,0,Find Day On 1 Januray 2022,3,,Sunday,Monday ,Saturday,,
+1,0,Find Day On 3 Feb 2022,3,,Tuesday,Wednesday,Thursday,,
+1,0,Find Day On 19 Nov. 2022 ,1,,Saturday,Sunday ,Monday,,
+1,0,Find Day On 31 Mar.2023,2,,Wednesday,Friday,Thursday,,
+1,0,Find Day On 9 June 2023,1,,Friday,Saturday,Sunday,,
+1,0,Find Day On 1 Oct.2023,2,,Monday ,Sunday ,Tuesday,,
+1,0,Find Day On 11 April 2023,3,,Sunday ,Monday ,Tuesday,,
+1,0,Find Day On 21 Dec.2023,1,,Thursday,Friday,saturday,,

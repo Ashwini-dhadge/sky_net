@@ -1,0 +1,9 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Find Cube of 18 = ?,1,,324,344,360,,
+1,0,Find Cube of  24 =?,2,,675,576,657,,
+1,0,Find Cube of  65 =?,1,,4225,4335,4445,,
+1,0,Find Cube of  57 =?,3,,4859,3346,3249,,
+1,0,Find Cube of  86 =?,2,,5864,7396,7685,,
+1,0,Find Cube of  44 =?,1,,1936,1685,1856,,
+1,0,Find Cube of  25 =?,3,,658,752,625,,
+1,0,Find Cube of  19 =?,1,,361,462,562,,
