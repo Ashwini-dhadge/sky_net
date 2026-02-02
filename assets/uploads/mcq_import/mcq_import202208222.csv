@@ -1,0 +1,13 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Cube Of 33 =35937,TRUE,,TRUE,FALSE,,,
+1,0,Cube Of 28 = 21958,FALSE,,TRUE,FALSE,,,
+1,0,Cube Of 74 = 405224,TRUE,,TRUE,FALSE,,,
+1,0,Cube Of 92 = 778688,TRUE,,TRUE,FALSE,,,
+1,0,Cube Of 19 =6869,FALSE,,TRUE,FALSE,,,
+1,0,Cube Of 47 = 103823,TRUE,,TRUE,FALSE,,,
+1,0,Cube Root Of 636056 = 86,TRUE,,TRUE,FALSE,,,
+1,0,Cube Root Of 9261 = 21,TRUE,,TRUE,FALSE,,,
+1,0,Cube Root Of 287496 = 66,TRUE,,TRUE,FALSE,,,
+1,0,Cube Root Of 389017 = 77,FALSE,,TRUE,FALSE,,,
+1,0,Cube Root Of 61125 = 45,FALSE,,TRUE,FALSE,,,
+1,0,Cube Root Of 531441 = 81,TRUE,,TRUE,FALSE,,,

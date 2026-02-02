@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Find LCM & HCF of (2,3,4,7,11) & ( 3,7,13) = ?",1,,LCM = 24024  HCF=3,LCM = 72072 HCF=3,LCM = 24024  HCF=1,,
+1,0,6 4 x 3 4 =2276,1,,FALSE,TRUE,,,
+1,0,9 3 5 4 x1 4 = 130956,2,,FALSE,TRUE,,,
+1,0,9822012339,3,,1,2,3,,
+1,0,8472664027,2,,2,1,3,,
+1,0,76418325993,2,,0,3,2,,
+1,0,"Find LCM & HCF Of (0.002,0.03,0.4) = ?",3,,LCM =1.2   HCF=0.2,LCM =12   HCF=0.1,LCM =1.2   HCF=0.001,,
+1,0,Which is a prime number = ?,2,,1,2,4,,
+1,0,Find Day of 31 June 281 = ?,3,,Tuesday,Wednesday,Friday,,
+1,0,Find Day of 12 April 604 = ?,1,,Thursday,Friday,Monday,,

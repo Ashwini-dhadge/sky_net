@@ -1,0 +1,7 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,yes,what is RTOS Based Embedded System Design,1,1,1,2,3,4,
+2,yes,15+1,2,12,16,23,,,
+3,yes,12+12,1,24,2,2,22,,
+4,no,1+1,1,1,2,1,,,
+5,yes,print hello in C#?,2,Console.WriteLine(hello);,console.writline();,Console.WriteLine(hello);,console.readline();,,
+6,no,2+23,2,26,12,26,,,

@@ -1,0 +1,11 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,Square of 96 = 9216,TRUE,,TRUE,FALSE,,,
+1,0,Square of 87 = 7669,FALSE,,TRUE,FALSE,,,
+1,0,Square of 97 = 9409,TRUE,,TRUE,FALSE,,,
+1,0,Square of 95 = 9 0 2 5,TRUE,,TRUE,FALSE,,,
+1,0,Square of  98 = 9 6 0 2,FALSE,,TRUE,FALSE,,,
+1,0,Square Root of 7056 = 84,TRUE,,TRUE,FALSE,,,
+1,0,Square Root of 9801 = 92,FALSE,,TRUE,FALSE,,,
+1,0,Square Root of 8464 = 92,TRUE,,TRUE,FALSE,,,
+1,0,Square Root of 8836 = 96,FALSE,,TRUE,FALSE,,,
+1,0,Square Root of 8281 = 81,FALSE,,TRUE,FALSE,,,

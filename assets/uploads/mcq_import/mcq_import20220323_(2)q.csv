@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,yes,3,1,,odd,even,,,
+2,yes,4,1,,even,odd,prime no,,
+3,yes,5,3,,even ,odd ,prime no,squre,
+4,yes,? ?? ????,2,,1,16,8,45,20
+5,yes,root of 3,3,,3,4,9,6,

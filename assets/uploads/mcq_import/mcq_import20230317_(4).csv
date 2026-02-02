@@ -1,0 +1,6 @@
+skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5
+1,0,"Eyes,Ears,Couple,Pair, these words can be used for number = 2.",1,,TRUE,FALSE,,,
+1,0,"Earth,Sun,Moon, these words can be used for number = 3.",2,,TRUE,FALSE,,,
+1,0,"Leap Year,Ludo game, Table, these types of words can be used for number = 8.",2,,TRUE,FALSE,,,
+1,0,"Pandav,Elements,Fingers,Panchamral,Panchtatva,Punjab,etc, words can be used for number = 5.",1,,TRUE,FALSE,,,
+1,0,"Rainbow,Week,Sur,Saptapadi,etc, words can be used for number = 9.",2,,TRUE,FALSE,,,
