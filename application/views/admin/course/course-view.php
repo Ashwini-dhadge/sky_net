@@ -1,12 +1,12 @@
 <?php init_header(); ?>
 <style>
-    ._status {
-        cursor: pointer;
-    }
+._status {
+    cursor: pointer;
+}
 
-    .btn-sm {
-        margin: 0px 2px;
-    }
+.btn-sm {
+    margin: 0px 2px;
+}
 </style>
 
 <div class="main-content">
@@ -180,7 +180,8 @@
                                                     </a>
                                                 </div>
 
-                                                <input type="hidden" id="section_course_id" value="<?= $course['id']; ?>">
+                                                <input type="hidden" id="section_course_id"
+                                                    value="<?= $course['id']; ?>">
                                                 <input type="hidden" id="section_view_type" value="1">
 
                                                 <table id="Sections_datatable"
@@ -261,23 +262,22 @@
                                                         <button class="close" data-dismiss="modal">&times;</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <input type="hidden" name="main_instructor_id" value="<?= loginId(); ?>">
+                                                        <input type="hidden" name="main_instructor_id"
+                                                            value="<?= loginId(); ?>">
 
                                                         <label>Answer by</label>
                                                         <select id="answer_by" class="form-control mb-2">
                                                             <?php foreach ($instructors as $value) { ?>
-                                                                <option value="<?= $value['id'] ?>">
-                                                                    <?= $value['first_name'] . ' ' . $value['last_name'] ?>
-                                                                </option>
+                                                            <option value="<?= $value['id'] ?>">
+                                                                <?= $value['first_name'] . ' ' . $value['last_name'] ?>
+                                                            </option>
                                                             <?php } ?>
                                                         </select>
 
                                                         <p id="questionText" class="font-weight-bold"></p>
                                                         <input type="hidden" id="qna_id">
 
-                                                        <textarea id="answerText"
-                                                            class="form-control"
-                                                            rows="5"
+                                                        <textarea id="answerText" class="form-control" rows="5"
                                                             placeholder="Type your answer..."></textarea>
                                                     </div>
 
@@ -332,7 +332,7 @@
 <script src="<?= base_url(); ?>assets/js/custom-js/course-qna.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/course-resource.js"></script>
 <script>
-    $(document).ajaxComplete(function() {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+$(document).ajaxComplete(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+});
 </script>

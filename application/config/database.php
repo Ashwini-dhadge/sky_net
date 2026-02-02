@@ -75,13 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	// 'hostname' => 'localhost',
-	'hostname' => '127.0.0.1:3310',
+	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => '',
 	// 'database' => 'wetap_lms',
-	// 'database' => 'skynet_lms',
-	'database' => 'skynet',
+	'database' => 'skynet_lms',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

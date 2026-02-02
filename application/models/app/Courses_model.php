@@ -166,61 +166,61 @@ class Courses_model extends CI_Model
         // print_r($this->db->last_query());die;
         return $result->result_array();
     }
-    function getLessonVideoData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "", $user_id = 0)
-    {
-        $this->db->select('lv.*,vm.*,lv.id as lesson_video_id');
-        $this->db->from('tbl_lesson_video lv');
-        $this->db->join('tbl_video_master vm', 'vm.id = lv.video_id', 'left');
-        //    $this->db->join('tbl_lesson_question_master lqm','lqm.lesson_video_id = lv.id');
+    // function getLessonVideoData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "", $user_id = 0)
+    // {
+    //     $this->db->select('lv.*,vm.*,lv.id as lesson_video_id');
+    //     $this->db->from('tbl_lesson_video lv');
+    //     $this->db->join('tbl_video_master vm', 'vm.id = lv.video_id', 'left');
+    //     //    $this->db->join('tbl_lesson_question_master lqm','lqm.lesson_video_id = lv.id');
 
-        if ($search) {
-            $searchVal = "( 
-                        vm.duration like '%$search%' or
-                        vm.title like '%$search%' 
-                       
-                        )";
-            $this->db->where($searchVal);
-        }
+    //     if ($search) {
+    //         $searchVal = "( 
+    //                     vm.duration like '%$search%' or
+    //                     vm.title like '%$search%' 
 
-        if ($limit || $offset) {
-            $this->db->limit($limit, $offset);
-        }
+    //                     )";
+    //         $this->db->where($searchVal);
+    //     }
 
-        $this->db->where($where);
-        if ($where1) {
-            $this->db->where($where1);
-        }
-        $this->db->where('lv.status', ACTIVE);
-        $this->db->where('lv.deleted_by', NULL);
-        $this->db->group_by('lv.video_id', ACTIVE);
-        $this->db->order_by('lv.id', 'asc');
+    //     if ($limit || $offset) {
+    //         $this->db->limit($limit, $offset);
+    //     }
 
-        $query_lesson = $this->db->get();
-        $result = $query_lesson->result_array();
-        // print_r($this->db->last_query());die;
-        foreach ($result as $key => $value) {
-            $result[$key]['no_of_question'] = $value['no_of_question'];
-            if ($user_id) {
-                $stored_pocedure = "CALL procedure_solved_mcq_view_video(" . $value['lesson_video_id'] . "," . $user_id . ") ";
-                $query = $this->db->query($stored_pocedure);
-                $lesson_array = $query->row_array();
-                //  echo $this->db->last_query();die;
-                $query->next_result();
-                $query->free_result();
-                if (!empty($lesson_array) && isset($lesson_array)) {
-                    $result[$key]['view_video'] = $lesson_array['view_video'];
-                    $result[$key]['user_solved_exam'] = $lesson_array['user_solved_exam'];
-                } else {
-                    $result[$key]['view_video'] = 0;
-                    $result[$key]['user_solved_exam'] = 0;
-                }
-            } else {
-                $result[$key]['view_video'] = 0;
-                $result[$key]['user_solved_exam'] = 0;
-            }
-        }
-        return $result;
-    }
+    //     $this->db->where($where);
+    //     if ($where1) {
+    //         $this->db->where($where1);
+    //     }
+    //     $this->db->where('lv.status', ACTIVE);
+    //     $this->db->where('lv.deleted_by', NULL);
+    //     $this->db->group_by('lv.video_id', ACTIVE);
+    //     $this->db->order_by('lv.id', 'asc');
+
+    //     $query_lesson = $this->db->get();
+    //     $result = $query_lesson->result_array();
+    //     // print_r($this->db->last_query());die;
+    //     foreach ($result as $key => $value) {
+    //         $result[$key]['no_of_question'] = $value['no_of_question'];
+    //         if ($user_id) {
+    //             $stored_pocedure = "CALL procedure_solved_mcq_view_video(" . $value['lesson_video_id'] . "," . $user_id . ") ";
+    //             $query = $this->db->query($stored_pocedure);
+    //             $lesson_array = $query->row_array();
+    //             //  echo $this->db->last_query();die;
+    //             $query->next_result();
+    //             $query->free_result();
+    //             if (!empty($lesson_array) && isset($lesson_array)) {
+    //                 $result[$key]['view_video'] = $lesson_array['view_video'];
+    //                 $result[$key]['user_solved_exam'] = $lesson_array['user_solved_exam'];
+    //             } else {
+    //                 $result[$key]['view_video'] = 0;
+    //                 $result[$key]['user_solved_exam'] = 0;
+    //             }
+    //         } else {
+    //             $result[$key]['view_video'] = 0;
+    //             $result[$key]['user_solved_exam'] = 0;
+    //         }
+    //     }
+    //     return $result;
+    // }
     function getLessonVideoMCQData($where = array(), $search = "", $limit = 0, $offset = 0, $where_in = "", $no_of_question = 0)
     {
 
@@ -482,5 +482,108 @@ class Courses_model extends CI_Model
         $result = $this->db->get();
         // print_r($this->db->last_query());die;
         return $result->result_array();
+    }
+    public function getSectionData($course_id)
+    {
+        $this->db->select('ts.id AS section_id,ts.title ,ts.description');
+        $this->db->from('tbl_section ts');
+        $this->db->where('ts.course_id', $course_id);
+        return $this->db->get()->result_array();
+    }
+    public function getLessonsData($course_id, $section_id, $lesson_id)
+    {
+        $this->db->select('tl.id AS lesson_id,tl.sequence,tl.title ,tl.description,tl.sub_title');
+        $this->db->from('tbl_lesson tl');
+
+        if (!empty($section_id)) { // this is use for when course detail api use
+            $this->db->where('tl.section_id', $section_id);
+        }
+        if (!empty($course_id)) { // this is use for when course detail api use
+            $this->db->where('tl.course_id', $course_id);
+        }
+        if ($lesson_id) {  // this is for when lesson detail api use
+            $this->db->where('tl.id', $lesson_id);
+        }
+        return $this->db->get()->result_array();
+    }
+    public function getLessonVideoData($lesson_id)
+    {
+        $this->db->select('tlv.id AS lesson_video_id,tlv.video_title,tlv.vimo_code,tlv.video_duration,tlv.video_thumbnail,tlv.video_type');
+        $this->db->from('tbl_lesson_video tlv');
+        $this->db->where('tlv.lesson_id', $lesson_id);
+        return $this->db->get()->result_array();
+    }
+    public function getLessonSubTitleData($lesson_id)
+    {
+        $this->db->select('tls.id AS lesson_sub_title_id,tls.sub_title_name');
+        $this->db->from('tbl_lesson_sub_title tls');
+        $this->db->where('tls.lesson_id', $lesson_id);
+        return $this->db->get()->result_array();
+    }
+
+    public function getCourseResourse($course_id)
+    {
+        return  $this->db->select('tcr.title,tcr.file')
+            ->from('tbl_course_resources tcr')
+            ->where('tcr.course_id', $course_id)
+            ->where('tcr.deleted_by', NULL)
+            ->get()->result_array();
+    }
+
+    public function getQuestionAnswersData($course_id, $login_user)
+    {
+        $this->db->select('
+        tcq.id AS question_id,
+        tcq.question,
+        tcq.answer,
+        tcq.created_at,
+        tcq.ans_created_at,
+
+        student.id AS student_id,
+        student.first_name AS student_name,
+        student.image AS student_image,
+
+        instructor.id AS instructor_id,
+        instructor.first_name AS instructor_name,
+        instructor.image AS instructor_image
+    ');
+
+        $this->db->from('tbl_course_qna tcq');
+
+        $this->db->join('tbl_users student', 'student.id = tcq.user_id', 'left');
+        $this->db->join('tbl_users instructor', 'instructor.id = tcq.main_instructor_id', 'left');
+
+        $this->db->where('tcq.course_id', $course_id);
+        $this->db->order_by('tcq.created_at', 'DESC');
+
+        $rows = $this->db->get()->result_array();
+
+        $questions = [];
+        foreach ($rows as $row) {
+            $isSelfQuestion = ($login_user == $row['student_id']);
+            $questions[] = [
+                'id' => $row['question_id'],
+                'question' => $row['question'],
+                'created_at' => $row['created_at'],
+                'is_self_question' => $isSelfQuestion,
+                'asked_by' => [
+                    'id' => $row['student_id'],
+                    'name' => $row['student_name'],
+                    'image' => $row['student_image']
+                ],
+                'answer' => $row['instructor_id'] ? [
+                    'id' => $row['instructor_id'],
+                    'ans' => isset($row['answer']) ? $row['answer'] : null,
+                    'created_at' => $row['ans_created_at'],
+                    'answered_by' => [
+                        'id' => $row['instructor_id'],
+                        'name' => $row['instructor_name'],
+                        'image' => $row['instructor_image']
+                    ]
+                ] : null
+            ];
+        }
+
+        return ['questions' => $questions];
     }
 }

@@ -65,15 +65,9 @@
 
                                         <div class="form-group col-md-6">
                                             <label>Mobile No</label>
-                                            <input type="text"
-                                                class="form-control"
-                                                id="mobile_no"
-                                                name="mobile_no"
-                                                placeholder="Enter Mobile No"
-                                                required
-                                                data-parsley-trigger="keyup"
-                                                data-parsley-length="[10,12]"
-                                                data-parsley-type="digits"
+                                            <input type="text" class="form-control" id="mobile_no" name="mobile_no"
+                                                placeholder="Enter Mobile No" required data-parsley-trigger="keyup"
+                                                data-parsley-length="[10,12]" data-parsley-type="digits"
                                                 data-parsley-unique-mobile
                                                 data-parsley-unique-mobile-id="<?= isset($id) ? $id : 0; ?>"
                                                 value="<?= isset($mobile_no) ? $mobile_no : ''; ?>">

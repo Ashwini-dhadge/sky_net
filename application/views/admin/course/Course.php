@@ -1,11 +1,11 @@
 <?php init_header(); ?>
 
 <style>
-    .select2-selection--multiple .select2-selection__choice {
-        background-color: #CA151C !important;
-        border: 1px solid #ec4561 !important;
-        color: #fff !important;
-    }
+.select2-selection--multiple .select2-selection__choice {
+    background-color: #CA151C !important;
+    border: 1px solid #ec4561 !important;
+    color: #fff !important;
+}
 </style>
 
 <div class="main-content">
@@ -28,37 +28,36 @@
                                     <div class="form-group">
                                         <label class="col-form-label">Course Title</label>
                                         <input class="form-control" type="text"
-                                            value="<?= (isset($course)) ? $course['title'] : ''; ?>"
-                                            name="title" id="title" required>
+                                            value="<?= (isset($course)) ? $course['title'] : ''; ?>" name="title"
+                                            id="title" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="col-form-label">Select Category</label>
-                                        <select class="form-control select2" id="category_id" name="category_id" required>
+                                        <select class="form-control select2" id="category_id" name="category_id"
+                                            required>
                                             <option value="">Select Category</option>
                                             <?php foreach ($category as $key => $value) {
                                                 $selected = (isset($course['category_id']) && $course['category_id'] == $value['id']) ? "selected" : "";
                                             ?>
-                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
-                                                    <?= $value['category_name'] ?>
-                                                </option>
+                                            <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+                                                <?= $value['category_name'] ?>
+                                            </option>
                                             <?php } ?>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-form-label">Select Course Instructor</label>
-                                        <select class="form-control select2 form-control-sm"
-                                            id="instructor_id"
-                                            name="instructor_id"
-                                            required>
+                                        <select class="form-control select2 form-control-sm" id="instructor_id"
+                                            name="instructor_id" required>
 
                                             <option value="">Select Instructor</option>
 
                                             <?php foreach ($instructors as $instructor): ?>
-                                                <option value="<?= $instructor['id']; ?>"
-                                                    <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
-                                                    <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
-                                                </option>
+                                            <option value="<?= $instructor['id']; ?>"
+                                                <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
+                                                <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
+                                            </option>
                                             <?php endforeach; ?>
 
                                         </select>
@@ -67,12 +66,15 @@
 
                                     <div class="form-group">
                                         <label class="col-form-label">Select Course Type</label>
-                                        <select class="custom-select form-control-sm" id="course_type" name="course_type" required>
+                                        <select class="custom-select form-control-sm" id="course_type"
+                                            name="course_type" required>
                                             <option value="">Select Course Type</option>
-                                            <option value="0" <?= (isset($course['course_type']) && $course['course_type'] == 0) ? 'selected' : ''; ?>>
+                                            <option value="0"
+                                                <?= (isset($course['course_type']) && $course['course_type'] == 0) ? 'selected' : ''; ?>>
                                                 Offline
                                             </option>
-                                            <option value="1" <?= (isset($course['course_type']) && $course['course_type'] == 1) ? 'selected' : ''; ?>>
+                                            <option value="1"
+                                                <?= (isset($course['course_type']) && $course['course_type'] == 1) ? 'selected' : ''; ?>>
                                                 Online
                                             </option>
                                         </select>
@@ -84,9 +86,9 @@
                                             <?php foreach ($skill as $value) {
                                                 $selected = (isset($course['skill_id']) && $course['skill_id'] == $value['id']) ? "selected" : "";
                                             ?>
-                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
-                                                    <?= $value['name'] ?>
-                                                </option>
+                                            <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+                                                <?= $value['name'] ?>
+                                            </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -95,8 +97,12 @@
                                         <label>Select Language</label>
                                         <select id="language" name="language" required class="form-control select2">
                                             <option value="">Language</option>
-                                            <option value="1" <?= (isset($course) && $course['language'] == 1) ? 'selected' : ''; ?>>English</option>
-                                            <option value="2" <?= (isset($course) && $course['language'] == 2) ? 'selected' : ''; ?>>Marathi</option>
+                                            <option value="1"
+                                                <?= (isset($course) && $course['language'] == 1) ? 'selected' : ''; ?>>
+                                                English</option>
+                                            <option value="2"
+                                                <?= (isset($course) && $course['language'] == 2) ? 'selected' : ''; ?>>
+                                                Marathi</option>
                                         </select>
                                     </div>
 
@@ -128,25 +134,41 @@
                                         <div class="mr-5">
                                             <div class="form-group">
                                                 <label>Certificate</label><br>
-                                                <input type="radio" value="1" name="certificate" <?= (isset($course) && $course['certificate'] == 1) ? 'checked' : ''; ?>> YES
-                                                <input type="radio" value="0" name="certificate" <?= (isset($course) && $course['certificate'] == 0) ? 'checked' : ''; ?>> NO
+                                                <input type="radio" value="1" name="certificate"
+                                                    <?= (isset($course) && $course['certificate'] == 1) ? 'checked' : ''; ?>>
+                                                YES
+                                                <input type="radio" value="0" name="certificate"
+                                                    <?= (isset($course) && $course['certificate'] == 0) ? 'checked' : ''; ?>>
+                                                NO
                                             </div>
                                             <div class="form-group">
                                                 <label>Assessment</label><br>
-                                                <input type="radio" value="1" name="assessment" <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>> YES
-                                                <input type="radio" value="0" name="assessment" <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>> NO
+                                                <input type="radio" value="1" name="assessment"
+                                                    <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>>
+                                                YES
+                                                <input type="radio" value="0" name="assessment"
+                                                    <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>>
+                                                NO
                                             </div>
                                         </div>
                                         <div>
                                             <div class="form-group">
                                                 <label>Status</label><br>
-                                                <input type="radio" value="1" name="status" <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>> Active
-                                                <input type="radio" value="0" name="status" <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>> In-Active
+                                                <input type="radio" value="1" name="status"
+                                                    <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>>
+                                                Active
+                                                <input type="radio" value="0" name="status"
+                                                    <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
+                                                In-Active
                                             </div>
                                             <div class="form-group">
                                                 <label>Is Free</label><br>
-                                                <input type="radio" value="1" name="is_free" <?= (isset($course['is_free']) && $course['is_free'] == 1) ? 'checked' : ''; ?>> Yes
-                                                <input type="radio" value="0" name="is_free" <?= (isset($course['is_free']) && $course['is_free'] == 0) ? 'checked' : ''; ?>> No
+                                                <input type="radio" value="1" name="is_free"
+                                                    <?= (isset($course['is_free']) && $course['is_free'] == 1) ? 'checked' : ''; ?>>
+                                                Yes
+                                                <input type="radio" value="0" name="is_free"
+                                                    <?= (isset($course['is_free']) && $course['is_free'] == 0) ? 'checked' : ''; ?>>
+                                                No
                                             </div>
                                         </div>
                                     </div>
@@ -162,8 +184,7 @@
 
                                 <div class="form-group col-md-3">
                                     <label>Offer Type</label>
-                                    <select name="offer_type" id="offer_type"
-                                        class="form-control" required>
+                                    <select name="offer_type" id="offer_type" class="form-control" required>
                                         <option value="1"
                                             <?= (isset($course_duration) && $course_duration['offer_type'] == 1) ? 'selected' : ''; ?>>
                                             Flat
@@ -177,33 +198,20 @@
 
                                 <div class="form-group col-md-3">
                                     <label>Offer Amount</label>
-                                    <input type="number"
-                                        step="0.01"
-                                        name="offer_amount"
-                                        id="offer_amount"
-                                        class="form-control"
-                                        value="<?= $course_duration['offer_amount'] ?? ''; ?>">
+                                    <input type="number" step="0.01" name="offer_amount" id="offer_amount"
+                                        class="form-control" value="<?= $course_duration['offer_amount'] ?? ''; ?>">
                                 </div>
 
                                 <div class="form-group col-md-3">
                                     <label>Original Price</label>
-                                    <input type="number"
-                                        step="0.01"
-                                        name="strike_thr_price"
-                                        id="strike_thr_price"
-                                        class="form-control"
-                                        value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
+                                    <input type="number" step="0.01" name="strike_thr_price" id="strike_thr_price"
+                                        class="form-control" value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
                                 </div>
 
                                 <div class="form-group col-md-3">
                                     <label>Final Price</label>
-                                    <input type="number"
-                                        step="0.01"
-                                        name="price"
-                                        id="price"
-                                        class="form-control"
-                                        readonly
-                                        value="<?= $course_duration['price'] ?? ''; ?>">
+                                    <input type="number" step="0.01" name="price" id="price" class="form-control"
+                                        readonly value="<?= $course_duration['price'] ?? ''; ?>">
                                 </div>
 
                             </div>
@@ -220,81 +228,80 @@
                                 <div data-repeater-list="resources">
 
                                     <?php if (!empty($resources)): foreach ($resources as $res): ?>
-                                            <div data-repeater-item class="card mb-3">
-                                                <div class="card-body">
+                                    <div data-repeater-item class="card mb-3">
+                                        <div class="card-body">
 
-                                                    <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
+                                            <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
 
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <label>File Title</label>
-                                                            <input type="text" name="file_notes" class="form-control"
-                                                                value="<?= $res['file_notes'] ?>" required>
-                                                        </div>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <label>File Title</label>
+                                                    <input type="text" name="file_notes" class="form-control"
+                                                        value="<?= $res['file_notes'] ?>" required>
+                                                </div>
 
-                                                        <div class="col-md-5">
-                                                            <label>File</label>
-                                                            <input type="file" name="file" class="form-control"
-                                                                onchange="updatePreviewButton(this)">
-                                                        </div>
+                                                <div class="col-md-5">
+                                                    <label>File</label>
+                                                    <input type="file" name="file" class="form-control"
+                                                        onchange="updatePreviewButton(this)">
+                                                </div>
 
-                                                        <div class="col-md-2">
-                                                            <label>&nbsp;</label><br>
-                                                            <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
-                                                                class="btn btn-info preview-btn" target="_blank">
-                                                                <i class="fas fa-eye"></i>
-                                                            </a>
+                                                <div class="col-md-2">
+                                                    <label>&nbsp;</label><br>
+                                                    <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
+                                                        class="btn btn-info preview-btn" target="_blank">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
 
-                                                            <button data-repeater-delete type="button"
-                                                                class="btn btn-danger ml-1">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
+                                                    <button data-repeater-delete type="button"
+                                                        class="btn btn-danger ml-1">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
                                                 </div>
                                             </div>
-                                        <?php endforeach;
+
+                                        </div>
+                                    </div>
+                                    <?php endforeach;
                                     else: ?>
 
-                                        <div data-repeater-item class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="row">
+                                    <div data-repeater-item class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="row">
 
-                                                    <div class="col-md-5">
-                                                        <label>File Title</label>
-                                                        <input type="text" name="file_notes" class="form-control" required>
-                                                    </div>
-
-                                                    <div class="col-md-5">
-                                                        <label>File</label>
-                                                        <input type="file" name="file" class="form-control"
-                                                            onchange="updatePreviewButton(this)">
-                                                    </div>
-
-                                                    <div class="col-md-2">
-                                                        <label>&nbsp;</label><br>
-                                                        <button type="button" class="btn btn-secondary preview-btn"
-                                                            onclick="previewFile(this)">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-
-                                                        <button data-repeater-delete type="button"
-                                                            class="btn btn-danger ml-1">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-
+                                                <div class="col-md-5">
+                                                    <label>File Title</label>
+                                                    <input type="text" name="file_notes" class="form-control" required>
                                                 </div>
+
+                                                <div class="col-md-5">
+                                                    <label>File</label>
+                                                    <input type="file" name="file" class="form-control"
+                                                        onchange="updatePreviewButton(this)">
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <label>&nbsp;</label><br>
+                                                    <button type="button" class="btn btn-secondary preview-btn"
+                                                        onclick="previewFile(this)">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+
+                                                    <button data-repeater-delete type="button"
+                                                        class="btn btn-danger ml-1">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+
                                             </div>
                                         </div>
+                                    </div>
 
                                     <?php endif; ?>
 
                                 </div>
 
-                                <button data-repeater-create type="button"
-                                    class="btn btn-success mt-2">
+                                <button data-repeater-create type="button" class="btn btn-success mt-2">
                                     <i class="fas fa-plus"></i> Add Resource
                                 </button>
 
@@ -322,100 +329,100 @@
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
 
-        $('.resource-repeater').repeater({
-            initEmpty: false,
-            show: function() {
-                $(this).slideDown();
-            },
-            hide: function(deleteElement) {
-                if (confirm('Remove this resource?')) {
-                    $(this).slideUp(deleteElement);
-                }
+    $('.resource-repeater').repeater({
+        initEmpty: false,
+        show: function() {
+            $(this).slideDown();
+        },
+        hide: function(deleteElement) {
+            if (confirm('Remove this resource?')) {
+                $(this).slideUp(deleteElement);
             }
-        });
-
+        }
     });
+
+});
 </script>
 <script>
-    function updatePreviewButton(input) {
-        const row = input.closest('[data-repeater-item]');
-        const btn = row.querySelector('.preview-btn');
-        if (!input.files.length) return;
-        btn.className = 'btn btn-info preview-btn';
-    }
+function updatePreviewButton(input) {
+    const row = input.closest('[data-repeater-item]');
+    const btn = row.querySelector('.preview-btn');
+    if (!input.files.length) return;
+    btn.className = 'btn btn-info preview-btn';
+}
 
-    function previewFile(btn) {
-        const file = btn.closest('[data-repeater-item]')
-            .querySelector('input[type=file]').files[0];
-        if (!file) return alert('Select file');
-        window.open(URL.createObjectURL(file));
-    }
+function previewFile(btn) {
+    const file = btn.closest('[data-repeater-item]')
+        .querySelector('input[type=file]').files[0];
+    if (!file) return alert('Select file');
+    window.open(URL.createObjectURL(file));
+}
 </script>
 
 <script type="text/javascript">
-    CKEDITOR.replace('benefits', {
-        height: '150px'
-    });
-    CKEDITOR.replace('notes', {
-        height: '380px'
-    });
+CKEDITOR.replace('benefits', {
+    height: '150px'
+});
+CKEDITOR.replace('notes', {
+    height: '380px'
+});
 </script>
 <script type="text/javascript">
-    $("#skill_id").select2({
-        placeholder: "Select Skill",
-        allowClear: true,
-        width: '100%'
-    });
+$("#skill_id").select2({
+    placeholder: "Select Skill",
+    allowClear: true,
+    width: '100%'
+});
 </script>
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
 
-        function calculateFinalPrice() {
+    function calculateFinalPrice() {
 
-            const offerType = $('#offer_type').val();
-            let offerAmount = parseFloat($('#offer_amount').val());
-            let originalPrice = parseFloat($('#strike_thr_price').val());
+        const offerType = $('#offer_type').val();
+        let offerAmount = parseFloat($('#offer_amount').val());
+        let originalPrice = parseFloat($('#strike_thr_price').val());
 
-            // Default safety
-            if (isNaN(originalPrice)) originalPrice = 0;
-            if (isNaN(offerAmount)) offerAmount = 0;
+        // Default safety
+        if (isNaN(originalPrice)) originalPrice = 0;
+        if (isNaN(offerAmount)) offerAmount = 0;
 
-            let finalPrice = originalPrice;
+        let finalPrice = originalPrice;
 
-            if (offerType === '1') {
-                // ===== FLAT =====
-                if (offerAmount > originalPrice) {
-                    offerAmount = originalPrice;
-                    $('#offer_amount').val(offerAmount);
-                }
-                finalPrice = originalPrice - offerAmount;
-
-            } else if (offerType === '2') {
-                // ===== PERCENTAGE =====
-                if (offerAmount > 100) {
-                    offerAmount = 100;
-                    $('#offer_amount').val(offerAmount);
-                }
-                finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
+        if (offerType === '1') {
+            // ===== FLAT =====
+            if (offerAmount > originalPrice) {
+                offerAmount = originalPrice;
+                $('#offer_amount').val(offerAmount);
             }
+            finalPrice = originalPrice - offerAmount;
 
-            if (finalPrice < 0) finalPrice = 0;
-
-            $('#price').val(finalPrice.toFixed(2));
+        } else if (offerType === '2') {
+            // ===== PERCENTAGE =====
+            if (offerAmount > 100) {
+                offerAmount = 100;
+                $('#offer_amount').val(offerAmount);
+            }
+            finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
         }
 
-        // When offer type changes, reset offer amount
-        $('#offer_type').on('change', function() {
-            $('#offer_amount').val('');
-            calculateFinalPrice();
-        });
+        if (finalPrice < 0) finalPrice = 0;
 
-        // Recalculate on typing
-        $('#offer_amount, #strike_thr_price').on('keyup change', function() {
-            calculateFinalPrice();
-        });
+        $('#price').val(finalPrice.toFixed(2));
+    }
 
+    // When offer type changes, reset offer amount
+    $('#offer_type').on('change', function() {
+        $('#offer_amount').val('');
+        calculateFinalPrice();
     });
+
+    // Recalculate on typing
+    $('#offer_amount, #strike_thr_price').on('keyup change', function() {
+        calculateFinalPrice();
+    });
+
+});
 </script>

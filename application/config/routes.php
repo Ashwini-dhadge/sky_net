@@ -83,4 +83,7 @@ $route['app_dashboard'] = 'app/Authentication/getDashboard';
 $route['category_list'] = 'app/Courses/getCategoriesList'; #done
 $route['app_courses_list'] = 'app/Courses/getCourses';
 $route['app_courses_details'] = 'app/Courses/getCoursesDetails';
+$route['lesson_details'] = 'app/Courses/getLessonsDetails';
+$route['question_answer_list'] = 'app/Courses/getQuestionAnswerList';
+$route['create_qna'] = 'app/Courses/createQnA';
 $route['testing'] = 'app/Test/testapi';

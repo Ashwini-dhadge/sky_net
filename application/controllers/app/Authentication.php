@@ -79,7 +79,7 @@ class Authentication extends CI_Controller
 
 
                 // $otpNumber = create6NumRandom();
-                $otpNumber = 123;
+                $otpNumber = 1234;
 
                 $selfReferral = "LMS" . $userMobile;
                 $registerDetailArray = array(
@@ -95,7 +95,8 @@ class Authentication extends CI_Controller
                     'password' => $password,
                     'notification_token' => $userNotificationToken,
                     // 'commsion_percentage' => COMMISION_PERCENTAGE,
-                    'imei_no' => $imei_no
+                    'imei_no' => $imei_no,
+                    'user_type' =>  1  // 1 for Online from mobile side
 
                 );
 
@@ -149,7 +150,7 @@ class Authentication extends CI_Controller
                     echo json_encode($response);
                     die();
                 }
-                $otpNumber = '123456'; //create6NumRandom();
+                $otpNumber = '1234'; //create6NumRandom();
                 $otpNumber = create6NumRandom();
                 $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Lalit Dangre";
                 // sendMobileMessage($verificationMessage, $userMobile, '1507163947670092160');
@@ -361,8 +362,17 @@ class Authentication extends CI_Controller
                             echo json_encode($response);
                             die;
                         }
+                        if ($isUserExist['imei_no'] != $imei_no) {
+                            //print_r($isUserExist['imei_no']);
+                            //  print_r($imei_no);
+                            $response['reason'] = "imei number did not match with Login";
+                            $response['result'] = false;
+                            echo json_encode($response);
+                            die;
+                        }
                         $data = array(
                             'reg_type' => $isUserExist['role'],
+                            'user_type' => $isUserExist['user_type'],
                             'reg_id' => $isUserExist['id'],
                             'reg_email' => $isUserExist['email'],
                             'reg_mobile' => $isUserExist['mobile_no'],
@@ -409,7 +419,9 @@ class Authentication extends CI_Controller
                 $response['message'] = 'USER_NOT_FOUND';
             }
         } else if ($userEmail != "" && $password != "") {
+
             $isUserExist = $this->Authentication_model->checkUserExist($userEmail, '');
+
             //echo $this->db->last_query();die;
             if ($isUserExist) {
 
@@ -432,6 +444,7 @@ class Authentication extends CI_Controller
                     }
                     $data = array(
                         'reg_type' => $isUserExist['role'],
+                        'user_type' => $isUserExist['user_type'],
                         'reg_id' => $isUserExist['id'],
                         'reg_email' => $isUserExist['email'],
                         'reg_mobile' => $isUserExist['mobile_no'],

@@ -139,6 +139,34 @@ return [
             'message' => ['type' => 'string', 'example' => 'Course Detail']
         ]
     ],
+    'create_qna' => [
+        'summary' => 'Course Detail',
+        'tags' => 'Course',
+        'method' => 'POST',
+        'parameters' => [
+            'api_token' => ['type' => 'string', 'required' => true, 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWdfdHlwZSI6IjMiLCJyZWdfaWQiOiIyIiwicmVnX2VtYWlsIjoib21rYXJAZ21haWwuY29tIiwicmVnX21vYmlsZSI6IjEyMzQ1Njc4OTkiLCJyZWdfbmFtZSI6Im9ta2FyICIsImtleSI6ODIxMjk0fQ.yAdTYxX4NSZrqvYGPnmdwzVCi2LqXTyw1lR3osc7f-4'],
+            'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
+            'question' => ['type' => 'string', 'required' => true, 'example' => '1'],
+        ],
+        'response' => [
+            'result' => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Question Added Successfully']
+        ]
+    ],
+    'question_answer_list' => [
+        'summary' => 'Course Detail',
+        'tags' => 'Course',
+        'method' => 'POST',
+        'parameters' => [
+            'api_token' => ['type' => 'string', 'required' => true, 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWdfdHlwZSI6IjMiLCJyZWdfaWQiOiIyIiwicmVnX2VtYWlsIjoib21rYXJAZ21haWwuY29tIiwicmVnX21vYmlsZSI6IjEyMzQ1Njc4OTkiLCJyZWdfbmFtZSI6Im9ta2FyICIsImtleSI6ODIxMjk0fQ.yAdTYxX4NSZrqvYGPnmdwzVCi2LqXTyw1lR3osc7f-4'],
+            'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
+
+        ],
+        'response' => [
+            'result' => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Question Added Successfully']
+        ]
+    ],
 
 
     // TestApi
