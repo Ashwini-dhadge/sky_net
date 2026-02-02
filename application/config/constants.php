@@ -126,9 +126,7 @@ define('USER_PROFILE', 'assets/uploads/user_image/');
 define('COMMISION_PERCENTAGE', '5');
 
 define('ACTIVE', '1');
-define('CAT', 'category'.DS);
+define('CAT', 'category' . DS);
 define('CATEGORY_IMAGES', 'assets/uploads/category_thumbnails/');
 
 define('COURSE_RESOURCES', 'assets/uploads/course_resources/');
-
-

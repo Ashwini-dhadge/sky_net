@@ -3,7 +3,7 @@
                    <div class="row">
                        <div class="col-12">
                            © <script>
-                               document.write(new Date().getFullYear())
+                           document.write(new Date().getFullYear())
                            </script> <?= PROJECTNAME ?>
                        </div>
                    </div>
