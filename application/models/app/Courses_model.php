@@ -523,7 +523,7 @@ class Courses_model extends CI_Model
 
     public function getCourseResourse($course_id)
     {
-        return  $this->db->select('tcr.title,tcr.file')
+        return  $this->db->select('tcr.file_notes,tcr.file')
             ->from('tbl_course_resources tcr')
             ->where('tcr.course_id', $course_id)
             ->where('tcr.deleted_by', NULL)
