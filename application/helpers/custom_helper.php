@@ -429,6 +429,7 @@ if (!function_exists('authenticateUser')) {
                     $CI->regType = $userDetail->reg_type;
                     $CI->regEmail = $userDetail->reg_email;
                     $CI->regMobile = $userDetail->reg_mobile;
+                    $CI->user_type = $userDetail->user_type;
                     return true;
                 } else {
                     $response['result'] = false;
