@@ -17,7 +17,7 @@
      }
 
      .so-stat.answer {
-         /* border: 1px solid #5eba7d; */
+         border: 1px solid #5eba7d;
          padding: 4px;
          border-radius: 3px;
      }
@@ -29,12 +29,27 @@
      }
 
      .so-meta {
-        font-size: 10px;
-        color: #8c8c8c;
+         font-size: 10px;
+         color: #8c8c8c;
      }
 
-     .so-title:hover {
-         color: #0a95ff;
+     .editbtn:hover {
+         background-color: #c07f7f;
+         color: #fff;
+     }
+
+     .editbtn:hover {
+         background-color: #7fbbc0;
+         color: #fff;
+     }
+
+     .viewbtn:hover {
+         background-color: #b0d1a2;
+         color: #fff;
+     }
+     .deletebtn:hover {
+         background-color: #ff4e4e;
+         color: #fff;
      }
 
      .so-tag {
@@ -45,6 +60,10 @@
          border-radius: 3px;
          font-size: 12px;
          margin-right: 4px;
+     }
+
+     .fa-trash:hover {
+         color: red;
      }
  </style>
  <table class="table table-borderless" id="questionTable">

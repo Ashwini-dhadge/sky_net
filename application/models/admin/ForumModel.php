@@ -60,7 +60,7 @@ class ForumModel extends CI_Model
 
     public function getNonApprovedQuestions($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0)
     {
-        $this->db->select('q.*, u.first_name as asked_by_first, u.last_name as asked_by_last');
+        $this->db->select('q.*, u.first_name as asked_by');
         $this->db->from('tbl_forum_questions q');
         $this->db->join('tbl_users u', 'u.id = q.user_id', 'left');
         $this->db->where('q.is_approved', 0);
@@ -81,5 +81,44 @@ class ForumModel extends CI_Model
             ->where('deleted_at IS NULL', null, false)
             ->get('tbl_forum_answers')
             ->result_array();
+    }
+
+    public function getQuestionById($id)
+    {
+        return $this->db
+            ->select('q.*, u.first_name as asked_by')
+            ->from('tbl_forum_questions q')
+            ->join('tbl_users u', 'u.id=q.user_id', 'left')
+            ->where('q.id', $id)
+            ->get()
+            ->row_array();
+    }
+
+    public function getAnswersWithUser($id)
+    {
+        return $this->db
+            ->select('a.*, u.first_name as answered_by')
+            ->from('tbl_forum_answers a')
+            ->join('tbl_users u', 'u.id=a.user_id', 'left')
+            ->where('a.forum_id', $id)
+            ->where('a.deleted_at IS NULL', null, false)
+            ->order_by('a.id', 'DESC')
+            ->get()
+            ->result_array();
+    }
+
+    public function getRandomQuestions($limit = 5, $excludeId = 0)
+    {
+        $this->db->select('q.id, q.title');
+        $this->db->from('tbl_forum_questions q');
+        $this->db->where('q.is_approved', 1);
+        $this->db->where('q.deleted_at IS NULL', null, false);
+        if ($excludeId) {
+            $this->db->where('q.id !=', $excludeId);
+        }
+        $this->db->order_by('RAND()');
+        $this->db->limit($limit);
+
+        return $this->db->get()->result_array();
     }
 }
