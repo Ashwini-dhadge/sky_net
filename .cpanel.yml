@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/wetap/public_html/2025/skynet/
+    - /bin/cp -R * $DEPLOYPATH
