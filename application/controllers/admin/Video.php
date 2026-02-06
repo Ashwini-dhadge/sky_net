@@ -14,9 +14,6 @@ class Video extends CI_Controller
         loginId();
     }
 
-    /*********************************************************************/
-    //  QMR
-
     public function index()
     {
         $data['title'] = 'Lesson Master';
@@ -114,7 +111,7 @@ class Video extends CI_Controller
             if ($id) {
                 //print_r($id);die;
                 $data['title'] = 'Edit Lesson';
-                $data['lesson'] = $this->CourseModel->getLessonData('', 0, 0, 0, 0, 0, $id);
+                $data['lesson'] = $this->CommonModel->getData('tbl_lesson', array('id' => $id));
                 $data['video_master'] = $this->CourseModel->getLessonVideoListData('', 0, 0, 0, 0, $id);
             } else {
                 $data['title'] = 'Add Lesson';

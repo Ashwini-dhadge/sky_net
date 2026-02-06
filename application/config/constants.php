@@ -113,6 +113,7 @@ define('AUTH', 'auth/');
 define('USER', 'user' . DS);
 define('SECTION', 'section' . DS);
 define('LESSON', 'lesson' . DS);
+define('FORUM', 'forum' . DS);
 define('VIDEO', 'video' . DS);
 define('PROJECTNAME', 'SKYNET');
 define('STUDENT', 'student' . DS);

@@ -6,21 +6,21 @@ class QuestionAnswer extends CI_Controller
     {
         parent::__construct();
         $this->load->model(ADMIN . 'QuestionModel');
+        $this->load->model('CommonModel');
     }
 
     public function index()
     {
         loginId();
 
-        $data['title'] = 'Question & Answers';
+        $data['title']  = 'Question & Answers';
         $data['active'] = 'Question & Answers';
 
-        $data['courses'] = $this->db
-            ->select('id, title')
-            ->from('tbl_courses')
-            ->where('deleted_at IS NULL')
-            ->get()
-            ->result_array();
+        $data['courses'] = $this->CommonModel->getData(
+            'tbl_courses',
+            ['deleted_at' => null],
+            'id, title'
+        );
 
         $this->load->view(ADMIN . QUESTION . 'list-Question', $data);
     }
@@ -30,8 +30,6 @@ class QuestionAnswer extends CI_Controller
         return $date ? date('d M Y h:i A', strtotime($date)) : '-';
     }
 
-
-    /* ===== EXISTING LIST (UNCHANGED) ===== */
     public function Question_list()
     {
         $course_id  = $this->input->post('course_id');
@@ -40,7 +38,7 @@ class QuestionAnswer extends CI_Controller
         $questions = $this->QuestionModel->getallQuestion($course_id, $unanswered);
 
         $output = [];
-        $sr_no = 1; // ✅ START SERIAL NUMBER
+        $sr_no = 1;
 
         foreach ($questions as $value) {
 
@@ -48,23 +46,23 @@ class QuestionAnswer extends CI_Controller
                 ($value['asked_first_name'] ?? '') . ' ' .
                     ($value['asked_last_name'] ?? '')
             ) ?: '-';
-            $askedDate = $this->formatDate($value['asked_at']);
-            $askedBy = $askedByName . '<br><small class="text-muted">[' . $askedDate . ']</small>';
 
+            $askedDate = $this->formatDate($value['asked_at']);
+            $askedBy   = $askedByName . '<br><small class="text-muted">[' . $askedDate . ']</small>';
 
             $answeredByName = trim(
                 ($value['answered_first_name'] ?? '') . ' ' .
                     ($value['answered_last_name'] ?? '')
             ) ?: '-';
+
             $answeredDate = $value['answered_at']
                 ? $this->formatDate($value['answered_at'])
                 : '-';
-            $answeredBy = $answeredByName . '<br><small class="text-muted">[' . $answeredDate . ']</small>';
 
+            $answeredBy = $answeredByName . '<br><small class="text-muted">[' . $answeredDate . ']</small>';
 
             $output[] = [
                 $sr_no++,
-                // $value['course_title'],
                 '<a href="' . base_url() . 'admin/Course/View/' . $value['course_id'] . '">' . $value['course_title'] . '</a>',
                 $askedBy,
                 $value['question'],
@@ -73,16 +71,15 @@ class QuestionAnswer extends CI_Controller
                     : '<span class="badge badge-warning">Pending</span>',
                 $answeredBy,
                 '<button class="btn btn-sm btn-primary mr-1"
-                    onclick="openAnswerModal(
-                        ' . $value['id'] . ',
-                        `' . htmlspecialchars($value['question'], ENT_QUOTES) . '`,
-                        `' . htmlspecialchars($askedBy, ENT_QUOTES) . '`,
-                        `' . htmlspecialchars($answeredBy, ENT_QUOTES) . '`,
-                        `' . htmlspecialchars($value['answer'] ?? '', ENT_QUOTES) . '`
-                    )">
+                    onclick=\'openAnswerModal(' .
+                    $value['id'] . ',' .
+                    json_encode($value['question']) . ',' .
+                    json_encode($askedBy) . ',' .
+                    json_encode($answeredBy) . ',' .
+                    json_encode($value['answer'] ?? '') .
+                    ')\' >
                     <i class="fas fa-edit"></i>
                 </button>'
-
             ];
         }
 
@@ -93,46 +90,40 @@ class QuestionAnswer extends CI_Controller
     {
         $data = [
             'course_id'   => $this->input->post('course_id'),
-            'user_id'     => loginId(), // student/user
+            'user_id'     => loginId(),
             'question'    => $this->input->post('question'),
 
-            // 👇 ASK TIMESTAMP
             'created_at'  => date('Y-m-d H:i:s'),
             'created_by'  => loginId(),
 
-            // 👇 ANSWER FIELDS EMPTY
-            'answer'          => NULL,
-            'ans_created_at'  => NULL,
-            'ans_created_by'  => NULL,
-            'ans_updated_at'  => NULL,
-            'ans_updated_by'  => NULL
+            'answer'          => null,
+            'ans_created_at'  => null,
+            'ans_created_by'  => null,
+            'ans_updated_at'  => null,
+            'ans_updated_by'  => null
         ];
 
-        $this->db->insert('tbl_course_qna', $data);
+        $this->CommonModel->iudAction(
+            'tbl_course_qna',
+            $data,
+            'insert'
+        );
 
         echo json_encode(['status' => true]);
     }
 
-
-
-    /* ===== SAVE ANSWER ===== */
     public function saveAnswer()
     {
         $id     = $this->input->post('id');
         $answer = trim($this->input->post('answer'));
 
-        // if (!$id || $answer === '') {
-        //     echo json_encode(['status' => false, 'msg' => 'Invalid data']);
-        //     return;
-        // }
-
-        // Check if answer already exists
-        $qna = $this->db
-            ->select('answer')
-            ->from('tbl_course_qna')
-            ->where('id', $id)
-            ->get()
-            ->row_array();
+        $qna = $this->CommonModel->getData(
+            'tbl_course_qna',
+            ['id' => $id],
+            'answer',
+            '',
+            'row_array'
+        );
 
         $updateData = [
             'answer'         => $answer,
@@ -140,17 +131,20 @@ class QuestionAnswer extends CI_Controller
             'ans_updated_by' => loginId()
         ];
 
-        // 👇 FIRST TIME ANSWER
         if (empty($qna['answer'])) {
             $updateData['ans_created_at'] = date('Y-m-d H:i:s');
             $updateData['ans_created_by'] = loginId();
         }
 
-        $this->db->where('id', $id)->update('tbl_course_qna', $updateData);
+        $this->CommonModel->iudAction(
+            'tbl_course_qna',
+            $updateData,
+            'update',
+            ['id' => $id]
+        );
 
         echo json_encode(['status' => true]);
     }
-
 
     public function deleteAnswer()
     {
@@ -161,13 +155,18 @@ class QuestionAnswer extends CI_Controller
             return;
         }
 
-        $this->db->where('id', $id)->update('tbl_course_qna', [
-            'answer'          => NULL,
-            'ans_created_at'  => NULL,
-            'ans_created_by'  => NULL,
-            'ans_updated_at'  => NULL,
-            'ans_updated_by'  => NULL
-        ]);
+        $this->CommonModel->iudAction(
+            'tbl_course_qna',
+            [
+                'answer'          => null,
+                'ans_created_at'  => null,
+                'ans_created_by'  => null,
+                'ans_updated_at'  => null,
+                'ans_updated_by'  => null
+            ],
+            'update',
+            ['id' => $id]
+        );
 
         echo json_encode(['status' => true]);
     }

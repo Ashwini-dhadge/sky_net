@@ -14,7 +14,6 @@
         <div class="content">
             <div class="container-fluid">
 
-                <!-- Page Title -->
                 <div class="page-title-box">
                     <div class="row align-items-center">
                         <div class="col-sm-6">
@@ -29,7 +28,6 @@
                     </div>
                 </div>
 
-                <!-- Course Details -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -47,12 +45,10 @@
                                 <hr>
 
                                 <div class="row">
-                                    <!-- Image -->
                                     <div class="col-lg-5">
                                         <?php $img = ($course['image']) ? $course['image'] : 'no-image.png'; ?>
                                         <img src="<?= base_url(COURSE_IMAGES . $img); ?>" width="80%" alt="">
                                     </div>
-                                    <!-- Basic Info -->
                                     <div class="col-lg-7">
                                         <h4 class="header-title mb-3">Course Basic</h4>
                                         <table class="table">
@@ -95,7 +91,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <!-- Benefits -->
                                     <div class="col-lg-12 mt-3" style="overflow-y: overlay;">
                                         <h4><u>Benefits</u></h4>
                                         <p><?= $course['benefits']; ?></p>
@@ -109,7 +104,6 @@
 
                 <hr>
 
-                <!-- Tabs Section -->
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-4 mt-4">
@@ -131,7 +125,6 @@
                                             Lesson
                                         </a>
                                     </li>
-                                    <!-- NEW -->
                                     <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#qnaTab">
                                             Q & A
@@ -147,7 +140,6 @@
 
                                 <div class="tab-content mt-3">
 
-                                    <!-- ================= DURATION ================= -->
                                     <div class="tab-pane fade show active" id="durationTab">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
@@ -166,7 +158,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- ================= SECTION ================= -->
                                     <div class="tab-pane fade" id="sectionTab">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
@@ -192,7 +183,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- ================= LESSON ================= -->
                                     <div class="tab-pane fade" id="lessonTab">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
@@ -215,7 +205,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- ================= Q&A ================= -->
                                     <div class="tab-pane fade" id="qnaTab">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
@@ -224,8 +213,7 @@
 
                                                 <input type="hidden" id="course_id" value="<?= $course['id']; ?>">
 
-                                                <!-- Analytics -->
-                                                <div class="row text-center mb-4">
+                                                <!-- <div class="row text-center mb-4">
                                                     <div class="col-md-4">
                                                         <div class="card border-0 shadow-sm py-3">
                                                             <h6 class="text-muted">Total Questions</h6>
@@ -244,7 +232,7 @@
                                                             <h4 id="qna_pending" class="mb-0 text-warning">0</h4>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <table id="courseQnaTable"
                                                     class="table table-bordered table-striped dt-responsive w-100">
@@ -253,7 +241,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Answer Modal (unchanged logic) -->
                                         <div class="modal fade" id="answerModal">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
@@ -291,7 +278,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- ================= RESOURCES ================= -->
                                     <div class="tab-pane fade" id="resourceTab">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
@@ -314,15 +300,14 @@
                                     </div>
 
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-            </div> <!-- container-fluid -->
-        </div> <!-- content -->
-    </div> <!-- content-page -->
-</div> <!-- main-content -->
+            </div> 
+        </div> 
+    </div> 
+</div> 
 
 <?php init_footer(); ?>
 

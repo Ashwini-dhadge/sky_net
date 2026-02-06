@@ -5,7 +5,7 @@ function listLesson() {
 		processing: true,
 		serverSide: true,
 		destroy: true,
-		pageLength: 25,
+		pageLength: 10,
 		order: [[0, "desc"]],
 
 		ajax: {
@@ -25,7 +25,6 @@ function listLesson() {
 			{ data: 3 },
 			{ data: 4 },
 			{ data: 5 },
-			{ data: 6, orderable: false, className: "text-right" },
 		],
 	});
 }
@@ -33,8 +32,8 @@ function listLesson() {
 $(document).ready(function () {
 	listLesson();
 
-	/* ===== COURSE CHANGE ===== */
-	$("#filter_course").on("change", function () {
+	$('#filter_course').on('change', function () {
+
 		let courseId = $(this).val();
 		$("#filter_section").html('<option value="">All Sections</option>');
 
@@ -59,13 +58,11 @@ $(document).ready(function () {
 		lesson.ajax.reload();
 	});
 
-	/* ===== SECTION CHANGE ===== */
-	$("#filter_section").on("change", function () {
+	$('#filter_section').on('change', function () {
 		lesson.ajax.reload();
 	});
 });
 
-/* ===== DELETE LESSON ===== */
 function deleteLesson(id) {
 	if (!id) return;
 
