@@ -9,9 +9,9 @@
                         <div class="card mb-4 mt-4">
                             <div class="card-body">
                                 <h4 class="card-title"><?= $title ?></h4>
-                                <div class="row mb-3">
+                                <div class="row ">
 
-                                    <div class="col-md-3">
+                                    <!-- <div class="col-md-3">
                                         <label>Status</label>
                                         <select id="answerFilter" class="form-control">
                                             <option value="all">All</option>
@@ -30,22 +30,17 @@
                                             <option value="month">This Month</option>
                                             <option value="year">This Year</option>
                                         </select>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-2 align-self-end">
-                                        <button id="applyFilters" class="btn btn-success w-100">
-                                            Apply
-                                        </button>
+                                    <div class="col-md-12 align-self-end">
+                                        <?php if ($this->session->userdata('role') == 1) { ?>
+                                            <button type="button" class="btn btn-primary float-right addQuestion" data-toggle="modal" data-target="#addQuestion">
+                                                Add Question
+                                            </button>
+                                        <?php } ?>
                                     </div>
 
                                 </div>
-
-
-                                <?php if ($this->session->userdata('role') == 1) { ?>
-                                    <button type="button" class="btn btn-primary float-right addQuestion" data-toggle="modal" data-target="#addQuestion">
-                                        Add Question
-                                    </button>
-                                <?php } ?>
                                 <?php $this->load->view(ADMIN . FORUM . 'table-listing'); ?>
                             </div>
                         </div>
