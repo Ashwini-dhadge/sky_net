@@ -1,6 +1,7 @@
+---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/wetap/public_html/
+    - export DEPLOYPATH=/home/CPANELUSER/public_html/
     - /bin/cp -R application $DEPLOYPATH
     - /bin/cp -R system $DEPLOYPATH
     - /bin/cp -R assets $DEPLOYPATH
