@@ -83,65 +83,6 @@ class Forum extends CI_Controller
     }
 
 
-
-    // public function approved_list()
-    // {
-    //     $data = $_POST;
-
-    //     $columns = [];
-    //     $page  = $data['draw'];
-    //     $limit = $data['length'];
-    //     $offset = $data['start'];
-    //     $searchVal = $data['search']['value'];
-    //     $sortColIndex = $data['order'][0]['column'];
-    //     $sortBy = $data['order'][0]['dir'];
-
-    //     $count = count($this->ForumModel->getApprovedQuestions($searchVal, 0, 0, 0, 0));
-    //     if ($count) {
-
-    //         $ForumData = $this->ForumModel->getApprovedQuestions(
-    //             $searchVal,
-    //             $sortColIndex,
-    //             $sortBy,
-    //             $limit,
-    //             $offset
-    //         );
-    //         foreach ($ForumData as $key => $forum) {
-
-    //             $row = [];
-
-    //             array_push($row, $offset + ($key + 1));
-    //             array_push($row, $forum['title']);
-    //             array_push($row, $forum['asked_by']);
-    //             array_push($row, $forum['description']);
-
-
-    //             $visibility = $forum['visibility'] == 1
-    //                 ? '<span class="badge badge-info">Public</span>'
-    //                 : '<span class="badge badge-secondary">Private</span>';
-
-    //             array_push($row, $visibility);
-
-    //             $answersBtn = '
-    //             <button class="btn btn-primary btn-sm viewAnswers"
-    //             data-id="' . $forum['id'] . '">
-    //             <i class="fa fa-comments"></i> Answers
-    //             </button>';
-
-    //             array_push($row, $answersBtn);
-
-    //             $columns[] = $row;
-    //         }
-    //     }
-
-    //     echo json_encode([
-    //         'draw' => $page,
-    //         'data' => $columns,
-    //         'recordsTotal' => $count,
-    //         'recordsFiltered' => $count
-    //     ]);
-    // }
-
     public function approved_list()
     {
         $data = $this->input->post();
@@ -179,11 +120,15 @@ class Forum extends CI_Controller
                 array_push($row, $forum['asked_by']);
                 array_push($row, $forum['description']);
                 array_push($row, $forum['tags']);
-                array_push(
-                    $row,
-                    DateTime::createFromFormat('Y-m-d H:i:s', $forum['created_at'])
-                        ->format('d-m-Y h:i A')
-                );
+                $formattedDate = '-';
+
+                if (!empty($forum['created_at'])) {
+                    $dt = DateTime::createFromFormat('Y-m-d H:i:s', $forum['created_at']);
+                    if ($dt !== false) {
+                        $formattedDate = $dt->format('d-m-Y h:i A');
+                    }
+                }
+                array_push($row, $formattedDate);
                 array_push($row, $answers);
 
                 $columns[] = $row;
@@ -219,7 +164,9 @@ class Forum extends CI_Controller
             [
                 'is_approved' => 1,
                 'approved_at' => date('Y-m-d H:i:s'),
-                'approved_by' => loginId()
+                'approved_by' => loginId(),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId()
             ],
             'update',
             ['id' => $this->input->post('id')]
@@ -231,7 +178,7 @@ class Forum extends CI_Controller
     {
         $this->CommonModel->iudAction(
             'tbl_forum_questions',
-            ['is_approved' => 2],
+            ['is_approved' => 2, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => loginId(), 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => loginId()],
             'update',
             ['id' => $this->input->post('id')]
         );
@@ -348,4 +295,21 @@ class Forum extends CI_Controller
 
         echo json_encode(['status' => true]);
     }
+
+    public function detail_view($id)
+    {
+        $question = $this->ForumModel->getQuestionById($id);
+        $answers = $this->ForumModel->getAnswersWithUser($id);
+
+        $recentQuestions = $this->ForumModel->getRandomQuestions(5, $id);
+
+        $data['title'] = 'Forum Details';
+        $data['question'] = $question;
+        $data['answers'] = $answers;
+        $data['recentQuestions'] = $recentQuestions;
+
+        $this->load->view(ADMIN . FORUM . 'details_view', $data);
+    }
+
+
 }

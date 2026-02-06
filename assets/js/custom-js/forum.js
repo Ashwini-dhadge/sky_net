@@ -68,52 +68,53 @@ $(document).ready(function () {
                 }
 
                 html += `
-    <tr class="so-row">
+                <tr class="so-row">
 
-        <td class="so-stats">
-            <div class="so-stat answer">
-                <strong>${answers}</strong>
-                replies
-            </div>
-        </td>
+                    <td class="so-stats">
+                        <div class="so-stat answer">
+                            <strong>${answers}</strong>
+                            replies
+                        </div>
+                    </td>
 
-        <td>
-            <div class="so-summary">
+                    <td>
+                        <div class="so-summary">
+                            <div style="display:flex;justify-content:space-between;">
+                                <div class="so-title">
+                                    ${title}
+                                </div>
+                                <div>
+                                    <a class="btn btn-secondary btn-sm openAnswers editbtn"  data-id="${id}" title="Click to show answers" data-title="${title}" data-user="${user}">
+                                        <i class="fa fa-edit "></i>
+                                    </a>
+                                    <a href="${base_url}admin/Forum/detail_view/${id}" class="btn btn-secondary btn-sm viewbtn">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-secondary btn-sm deletebtn">
+                                        <i class="fa fa-trash deleteQuestion" data-id="${id}"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-1 text-muted" style="text-align:justify;">
+                                ${description}
+                            </div>
 
-                <div style="display:flex;justify-content:space-between;">
-                    <div class="so-title openAnswers"
-                        data-id="${id}"
-                        data-title="${title}"
-                        data-user="${user}">
-                        ${title}
-                    </div>
+                            <div class="so-tags mt-2">
+                                ${tagsHTML}
+                            </div>
 
-                    <div>
-                        <i class="fa fa-trash deleteQuestion"
-                           data-id="${id}"></i>
-                    </div>
-                </div>
+                            <div class="so-meta mt-2"
+                                style="display:flex;justify-content:space-between;">
 
-                <div class="mt-1 text-muted" style="text-align:justify;">
-                    ${description}
-                </div>
+                                <span>asked by <b>${user}</b></span>
+                                <span>asked <b>${asked_at}</b></span>
 
-                <div class="so-tags mt-2">
-                    ${tagsHTML}
-                </div>
+                            </div>
 
-                <div class="so-meta mt-2"
-                     style="display:flex;justify-content:space-between;">
+                        </div>
+                    </td>
 
-                    <span>asked by <b>${user}</b></span>
-                    <span>asked <b>${asked_at}</b></span>
-
-                </div>
-
-            </div>
-        </td>
-
-    </tr>`;
+                </tr>`;
             });
 
 
@@ -132,7 +133,6 @@ $(document).ready(function () {
 
         $('#modalQuestionText').text($(this).data('title'));
         $('#askedByName').text($(this).data('user'));
-
         $('#answerModal').modal('show');
 
     });
@@ -155,8 +155,8 @@ $(document).ready(function () {
                 dataSrc: 'data'
             },
             columns: [
-                { data: 'id', title: '#' },
-                { data: 'answer', title: 'Answer' },
+                { data: 'id', title: 'ID' },
+                { data: 'answer', title: 'Answer', width: '90%' },
                 {
                     data: null,
                     title: 'Action',
