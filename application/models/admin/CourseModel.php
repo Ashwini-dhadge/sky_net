@@ -157,10 +157,10 @@ class CourseModel extends CI_Model
     }
     public function getLessonData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $course_id = 0, $id = 0)
     {
-        // ⭐ FIXED SELECT (removed dm.duration) ⭐
-        $this->db->select('l.*, c.title as course_name');
+        $this->db->select('l.*, 
+        c.title as course_name,
+        s.title as section_name');
 
-        // --- WHERE FILTERS ---
         if ($course_id) {
             $this->db->where('l.course_id', $course_id);
         }
@@ -177,22 +177,17 @@ class CourseModel extends CI_Model
             $this->db->where($searchCondition);
         }
 
-        // --- FROM & JOIN ---
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id');
+        $this->db->join('tbl_section s', 's.id = l.section_id');
 
-        // ❌ REMOVED ❌
-        // $this->db->join('tbl_duration_master as dm', 'dm.id = l.duration_id', 'left');
 
-        // --- LIMIT & ORDER ---
         if ($limit) {
             $this->db->limit($limit, $offset);
         }
 
-        // NOTE: $this->lt_Column is still untouched
         $this->db->order_by($this->lt_Column[$sortColIndex], $sortBy);
 
-        // --- RESULT ---
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -468,5 +463,37 @@ class CourseModel extends CI_Model
         $query = $this->db->get();
 
         return $query->result_array();
+    }
+
+    public function getCourseQnaList($course_id, $search = '', $limit = 0, $start = 0)
+    {
+        $this->db->select('
+            q.*,
+            CONCAT(ask.first_name," ",ask.last_name) AS asked_by,
+            CONCAT(ans.first_name," ",ans.last_name) AS answered_by,
+            c.status AS course_status
+        ');
+        $this->db->from('tbl_course_qna q');
+        $this->db->join('tbl_users ask', 'ask.id = q.user_id', 'left');
+        $this->db->join('tbl_users ans', 'ans.id = q.ans_created_by', 'left');
+        $this->db->join('tbl_courses c', 'c.id = q.course_id', 'left');
+        $this->db->where('q.course_id', $course_id);
+
+        if ($search !== '') {
+            $this->db->group_start();
+            $this->db->like('q.question', $search);
+            $this->db->like('ask.first_name', $search);
+            $this->db->or_like('ask.last_name', $search);
+            $this->db->group_end();
+        }
+
+        $this->db->order_by('CASE WHEN q.answer IS NULL THEN 0 ELSE 1 END', 'ASC', false);
+        $this->db->order_by('q.created_at', 'ASC');
+
+        if ($limit) {
+            $this->db->limit($limit, $start);
+        }
+
+        return $this->db->get()->result_array();
     }
 }

@@ -12,8 +12,6 @@ class Course extends CI_Controller
 		$this->load->model(ADMIN . 'CourseModel');
 	}
 
-	/*********************************************************************/
-	//  QMR
 
 	public function index()
 	{
@@ -99,12 +97,10 @@ class Course extends CI_Controller
 		$length = intval($post['length'] ?? 10);
 		$search = $post['search']['value'] ?? '';
 
-		/* ===== TOTAL COUNT ===== */
 		$this->db->from('tbl_course_qna q');
 		$this->db->where('q.course_id', $course_id);
 		$total = $this->db->count_all_results();
 
-		/* ===== FILTERED COUNT ===== */
 		$this->db->from('tbl_course_qna q');
 		$this->db->join('tbl_users ask', 'ask.id = q.user_id', 'left');
 		$this->db->where('q.course_id', $course_id);
@@ -119,32 +115,14 @@ class Course extends CI_Controller
 
 		$filtered = $this->db->count_all_results();
 
-		/* ===== DATA ===== */
-		$this->db->select('
-        q.*,
-        CONCAT(ask.first_name," ",ask.last_name) AS asked_by,
-        CONCAT(ans.first_name," ",ans.last_name) AS answered_by,
-        c.status AS course_status
-    ');
-		$this->db->from('tbl_course_qna q');
-		$this->db->join('tbl_users ask', 'ask.id = q.user_id', 'left');
-		$this->db->join('tbl_users ans', 'ans.id = q.ans_created_by', 'left');
-		$this->db->join('tbl_courses c', 'c.id = q.course_id', 'left');
-		$this->db->where('q.course_id', $course_id);
+		$this->load->model('CourseModel');
 
-		if ($search !== '') {
-			$this->db->group_start();
-			$this->db->like('q.question', $search);
-			$this->db->like('ask.first_name', $search);
-			$this->db->or_like('ask.last_name', $search);
-			$this->db->group_end();
-		}
-
-		$this->db->order_by('CASE WHEN q.answer IS NULL THEN 0 ELSE 1 END', 'ASC', FALSE); // ✅ Pending first
-		$this->db->order_by('q.created_at', 'ASC');
-
-		$this->db->limit($length, $start);
-		$result = $this->db->get()->result_array();
+		$result = $this->CourseModel->getCourseQnaList(
+			$course_id,
+			$search,
+			$length,
+			$start
+		);
 
 		$data = [];
 		$sr = $start + 1;
@@ -153,12 +131,10 @@ class Course extends CI_Controller
 
 			$isAnswered = !empty($row['answer']);
 
-			/* STATUS */
 			$status = $isAnswered
 				? '<span class="badge badge-success">Answered</span>'
 				: '<span class="badge badge-warning">Pending</span>';
 
-			/* ANSWERED BY + TOOLTIP */
 			if ($isAnswered) {
 				$answeredTime = date('d M Y h:i A', strtotime($row['ans_created_at']));
 				$answeredBy = '<span data-toggle="tooltip" title="Answered on ' . $answeredTime . '">'
@@ -168,43 +144,28 @@ class Course extends CI_Controller
 				$answeredBy = '-';
 			}
 
-			/* SAFE JS VALUES */
-			$questionJs = json_encode($row['question']);
-			$answerJs   = json_encode($row['answer']);
+			$action = '<span class="text-muted">Course Inactive</span>';
 
-			/* ACTION */
 			if ($row['course_status'] == 1) {
-
 				$btnClass = $isAnswered ? 'btn-warning' : 'btn-primary';
 				$btnText  = $isAnswered ? 'Update' : 'Answer';
 
-				$questionJs = json_encode($row['question']);
-				$answerJs   = json_encode($row['answer']);
-
-				if ($row['course_status'] == 1) {
-
-					$btnClass = $isAnswered ? 'btn-warning' : 'btn-primary';
-					$btnText  = $isAnswered ? 'Update' : 'Answer';
-
-					$action = '<button class="btn btn-sm ' . $btnClass . '"
-        onclick=\'openAnswerModal(' . $row['id'] . ',' . $questionJs . ',' . $answerJs . ')\'>
-        ' . $btnText . '
-    </button>';
-				} else {
-					$action = '<span class="text-muted">Course Inactive</span>';
-				}
-			} else {
-				$action = '<span class="text-muted">Course Inactive</span>';
+				$action = '<button class="btn btn-sm ' . $btnClass . '"
+                onclick=\'openAnswerModal(' .
+					$row['id'] . ',' .
+					json_encode($row['question']) . ',' .
+					json_encode($row['answer']) .
+					')\'>' . $btnText . '</button>';
 			}
 
-			$data[] = [
+			array_push($data, [
 				$sr++,
 				$row['question'],
 				$row['asked_by'] ?: 'Guest',
 				$answeredBy,
 				$status,
 				$action
-			];
+			]);
 		}
 
 		echo json_encode([
@@ -215,6 +176,7 @@ class Course extends CI_Controller
 		]);
 		exit;
 	}
+
 
 
 
@@ -247,19 +209,15 @@ class Course extends CI_Controller
 
 	public function course_qna_analytics($course_id)
 	{
-		// Total
 		$total = $this->db->where('course_id', $course_id)
 			->count_all_results('tbl_course_qna');
 
-		// Answered
 		$answered = $this->db->where('course_id', $course_id)
 			->where('answer IS NOT NULL', null, false)
 			->count_all_results('tbl_course_qna');
 
-		// Pending
 		$pending = $total - $answered;
 
-		// Avg answer time (ONLY answered)
 		$avg = $this->db->select('AVG(TIMESTAMPDIFF(HOUR, created_at, ans_created_at)) AS avg_time')
 			->where('course_id', $course_id)
 			->where('ans_created_at IS NOT NULL', null, false)
@@ -375,13 +333,17 @@ class Course extends CI_Controller
 				$row = [];
 				$row[] = $offset + ($key + 1);
 				$row[] = $lesson['title'];
-				$row[] = $lesson['duration'];
 				$row[] = $lesson['section_name'];
-				$row[] = $lesson['lesson_type'];
 
-				$action  = '<a class="btn btn-secondary btn-sm" data-toggle="modal" ';
-				$action .= 'data-target="#LModal" onclick="courseLessonEdit(' . $lesson['id'] . ')">';
-				$action .= '<i class="fas fa-edit"></i></a> ';
+
+				$action = '<a class="btn btn-success btn-sm" ';
+				$action .= 'href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '"> ';
+				$action .= '<i class="fas fa-edit"></i></a>';
+
+				$action .= '<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
+							class="btn btn-sm btn-info mr-1">
+								MCQ
+							</a>';
 
 				$action .= '<a class="btn btn-danger btn-sm" ';
 				$action .= 'href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '" ';
@@ -422,7 +384,6 @@ class Course extends CI_Controller
 
 	public function Course($id = '')
 	{
-		/* ================= VIEW ================= */
 		if (!$this->input->post()) {
 
 			if ($id) {
@@ -465,11 +426,8 @@ class Course extends CI_Controller
 			return;
 		}
 
-		/* ================= SAVE ================= */
 
 		$post = $this->input->post();
-
-		/* ================= COURSE DATA ================= */
 
 		$courseData = [
 			'title'         => $post['title'],
@@ -486,7 +444,6 @@ class Course extends CI_Controller
 			'is_free'       => $post['is_free'],
 		];
 
-		/* ===== IMAGE UPLOAD ===== */
 		if (!empty($_FILES['image']['name'])) {
 			$upload = fileUpload(COURSE_IMAGES, 'image', false);
 			if ($upload['status']) {
@@ -494,7 +451,6 @@ class Course extends CI_Controller
 			}
 		}
 
-		/* ===== INSERT / UPDATE COURSE ===== */
 		if (empty($post['id'])) {
 
 			$courseData['created_by'] = loginId();
@@ -524,7 +480,6 @@ class Course extends CI_Controller
 			$this->session->set_flashdata('success', 'Course updated successfully');
 		}
 
-		/* ================= COURSE RESOURCES ================= */
 
 		$keepIds = [];
 
@@ -593,7 +548,6 @@ class Course extends CI_Controller
 		}
 		$this->db->delete('tbl_course_resources');
 
-		/* ================= COURSE DURATION (CORRECT TABLE) ================= */
 
 		$durationId = 5; // DEFAULT FROM MASTER
 

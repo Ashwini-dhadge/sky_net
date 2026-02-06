@@ -33,7 +33,8 @@
         border-radius: 50%;
         line-height: 1;
     }
-    .cke_notification{
+
+    .cke_notification {
         display: none;
     }
 </style>
@@ -54,46 +55,35 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-12">
-
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="mt-0 header-title m-b-20"><?= $title; ?></h4>
                                 <hr>
-
                                 <form class="repeater" action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>"
                                     method="post" enctype="multipart/form-data">
-
                                     <input type="hidden" name="id" value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
-
                                     <div class="row">
                                         <div class="col-lg-4 col-12" style="border-right:1px dashed gray;">
                                             <div class="row">
-
-                                                <!-- COURSE -->
                                                 <div class="form-group col-md-12">
                                                     <label>Select Course</label>
                                                     <select class="form-control select2" name="course_id" required>
                                                         <option value="">Select Course</option>
                                                         <?php foreach ($course as $c) { ?>
-                                                          <option value="<?= $c['id'] ?>" <?php
-                                                          if (isset($lesson) && $lesson['course_id'] == $c['id']) {
-                                                              echo "selected";
-                                                          } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
-                                                              echo "selected";
-                                                          }
-                                                          ?>>
-                                                            <?= $c['title']; ?>
-                                                        </option>
-
-
+                                                            <option value="<?= $c['id'] ?>" <?php
+                                                                                            if (isset($lesson) && $lesson['course_id'] == $c['id']) {
+                                                                                                echo "selected";
+                                                                                            } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
+                                                                                                echo "selected";
+                                                                                            }
+                                                                                            ?>>
+                                                                <?= $c['title']; ?>
+                                                            </option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-
-                                                <!-- SECTION -->
                                                 <div class="form-group col-md-12">
                                                     <label>Select Section</label>
                                                     <select class="form-control select2" name="section_id" required>
@@ -105,23 +95,18 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>
-
-                                                <!-- TITLE -->
                                                 <div class="form-group col-md-12">
                                                     <label>Add Title</label>
                                                     <input class="form-control" type="text" name="tags" id="tags"
                                                         value="<?= isset($lesson) ? $lesson['title'] : ''; ?>"
                                                         placeholder="Enter title">
                                                 </div>
-                                                
                                                 <div class="form-group col-md-12">
                                                     <label>Sequence</label>
                                                     <input type="number" min="1" name="sequence"
                                                         value="<?= isset($lesson) ? $lesson['sequence'] : 1; ?>"
-                                                                    class="form-control" required>
+                                                        class="form-control" required>
                                                 </div>
-
-                                                <!-- TAGS -->
                                                 <div class="form-group col-md-12">
                                                     <label>Select Tags</label>
                                                     <select class="custom-select" id="tags_input" name="tags_input[]"
@@ -131,15 +116,12 @@
                                                                 <option value="<?= trim($t['sub_title_name']) ?>" selected>
                                                                     <?= trim($t['sub_title_name']) ?>
                                                                 </option>
-                                                            <?php }
+                                                        <?php }
                                                         } ?>
                                                     </select>
                                                 </div>
-
                                             </div>
                                         </div>
-
-                                        <!-- DESCRIPTION -->
                                         <div class="col-lg-8 col-12">
                                             <div class="row">
                                                 <div class="form-group col-md-12">
@@ -150,28 +132,19 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <hr style="border:1px dashed gray;">
-
-                                    <!-- VIDEOS -->
                                     <h5 class="mt-4 mb-3">Lesson Videos</h5>
-
                                     <div id="video-repeater">
                                         <div data-repeater-list="videos">
-
-                                            <!-- EXISTING VIDEOS -->
                                             <?php if (!empty($lesson_videos)) {
                                                 foreach ($lesson_videos as $vid) { ?>
                                                     <div data-repeater-item class="video-card mb-3 p-3">
-
                                                         <div class="d-flex justify-content-between mb-2">
                                                             <h6 class="video-card-title mb-0">Video Details</h6>
                                                             <button data-repeater-delete type="button"
                                                                 class="btn btn-sm btn-outline-danger">✕</button>
                                                         </div>
-
                                                         <div class="row">
-
                                                             <div class="col-md-3 text-center">
                                                                 <div class="thumb-box border p-2">
                                                                     <?php if ($vid['video_thumbnail']) { ?>
@@ -183,30 +156,24 @@
                                                                             style="height:150px; object-fit:contain; display:none;">
                                                                     <?php } ?>
                                                                 </div>
-
                                                                 <input type="file" accept="image/*" name="video_thumbnail"
                                                                     class="video-thumb-input form-control mt-2">
-
                                                                 <input type="hidden" name="id" value="<?= $vid['id']; ?>">
                                                                 <input type="hidden" name="old_thumbnail"
                                                                     value="<?= $vid['video_thumbnail']; ?>">
                                                             </div>
-
                                                             <div class="col-md-9">
-
                                                                 <div class="form-group">
                                                                     <label>Video Title</label>
                                                                     <input type="text" name="video_title" class="form-control"
                                                                         value="<?= $vid['video_title']; ?>" required>
                                                                 </div>
-
                                                                 <div class="form-row">
                                                                     <div class="form-group col-md-7">
                                                                         <label>Vimeo Code</label>
                                                                         <input type="text" name="vimo_code" class="form-control"
                                                                             value="<?= $vid['vimo_code']; ?>" required>
                                                                     </div>
-
                                                                     <div class="form-group col-md-5">
                                                                         <label>Type</label>
                                                                         <select name="video_type" class="form-control">
@@ -219,14 +186,11 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-
                                                             </div>
                                                         </div>
                                                     </div>
-                                                <?php }
+                                            <?php }
                                             } ?>
-
-                                            <!-- HIDDEN TEMPLATE -->
                                             <div data-repeater-item class="video-card mb-3 p-3 template"
                                                 style="display:none;">
 
@@ -235,7 +199,6 @@
                                                     <button data-repeater-delete type="button"
                                                         class="btn btn-sm btn-outline-danger">✕</button>
                                                 </div>
-
                                                 <div class="row">
                                                     <div class="col-md-3 text-center">
                                                         <div class="thumb-box border p-2">
@@ -245,21 +208,16 @@
                                                         <input type="file" accept="image/*" name="video_thumbnail"
                                                             class="video-thumb-input form-control mt-2">
                                                     </div>
-
                                                     <div class="col-md-9">
                                                         <div class="form-group">
                                                             <label>Video Title</label>
-                                                            <input type="text" name="video_title" class="form-control"
-                                                                >
+                                                            <input type="text" name="video_title" class="form-control">
                                                         </div>
-
                                                         <div class="form-row">
                                                             <div class="form-group col-md-7">
                                                                 <label>Vimeo Code</label>
-                                                                <input type="text" name="vimo_code" class="form-control"
-                                                                    >
+                                                                <input type="text" name="vimo_code" class="form-control">
                                                             </div>
-
                                                             <div class="form-group col-md-5">
                                                                 <label>Type</label>
                                                                 <select name="video_type" class="form-control">
@@ -271,26 +229,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                             </div>
-
                                         </div>
-
                                         <button data-repeater-create type="button" class="btn btn-success mt-3">+ Add
                                             Another Video</button>
                                     </div>
-
                                     <div class="form-group col-md-12 text-right mt-3">
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
-
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -299,15 +250,15 @@
 <?php init_footer(); ?>
 
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
-<script src="<?= base_url(); ?>assets/pages/form-repeater.int.js"></script>
 
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('benefits', { height: '170px' });
+    CKEDITOR.replace('benefits', {
+        height: '170px'
+    });
 </script>
 
 <script>
-    // SELECT2 TAGS
     $("#tags_input").select2({
         tags: true,
         tokenSeparators: [','],
@@ -315,27 +266,40 @@
         width: '100%'
     });
 
-    // IMAGE PREVIEW
-    $(document).on('change', '.video-thumb-input', function (e) {
-        let preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
-        let file = e.target.files[0];
-        if (file) {
-            let reader = new FileReader();
-            reader.onload = e => preview.attr('src', e.target.result).show();
-            reader.readAsDataURL(file);
-        } else {
-            preview.hide();
+    $(document).on('change', '.video-thumb-input', function() {
+        const input = this;
+        const preview = $(this).closest('.col-md-3').find('.video-thumb-preview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(input.files[0]);
         }
     });
 
-    // REPEATER INIT
+
     $('#video-repeater').repeater({
         initEmpty: <?= empty($lesson_videos) ? 'true' : 'false' ?>,
-        show: function () {
+
+        show: function() {
+            $(this).find('.video-thumb-preview')
+                .attr('src', '')
+                .hide();
+
+            $(this).find('.video-thumb-input').val('');
+
+            $(this).find('input[name="id"]').remove();
+            $(this).find('input[name="old_thumbnail"]').remove();
+
             $(this).slideDown();
         },
-        hide: function (deleteElement) {
-            $(this).slideUp(deleteElement);
+
+        hide: function(deleteElement) {
+            if (confirm('Are you sure you want to remove this video?')) {
+                $(this).slideUp(deleteElement);
+            }
         }
     });
 </script>

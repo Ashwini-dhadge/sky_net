@@ -15,16 +15,14 @@ function listLesson() {
             url: base_url + _admin + "Course/lesson_list",
             type: "POST",
             data: function (d) {
-                d.course_id = course_id;   // 🔥 PASS COURSE ID
+                d.course_id = course_id;   
             }
         },
 
         columns: [
             { title: "#", orderable: false },
             { title: "Title" },
-            { title: "Duration" },
             { title: "Section" },
-            { title: "Lesson Type" },
             { title: "Action", orderable: false, className: "text-right" }
         ]
     });

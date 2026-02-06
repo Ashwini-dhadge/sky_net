@@ -16,15 +16,13 @@
             <tr>
                 <th>Sr.No</th>
                 <th>Sequence</th>
-                <th>Lesson Title</th>
                 <th>Course Name</th>
                 <th>Section Title</th>
-                <th>Description</th>
+                <th>Lesson Title</th>
                 <th>Action</th>
             </tr>
         </thead>
     </table>
-
 </div>
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">

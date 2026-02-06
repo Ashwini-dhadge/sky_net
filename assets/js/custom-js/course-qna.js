@@ -43,7 +43,7 @@ function saveAnswer() {
         {
             qna_id: $('#qna_id').val(),
             answer: $('#answerText').val(),
-            answer_by: $('#answer_by').val() // 👈 instructor id
+            answer_by: $('#answer_by').val() 
         },
         function () {
             $('#answerModal').modal('hide');
@@ -58,26 +58,26 @@ function loadCourseQna() {
 
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     if ($(e.target).attr('href') === '#qnaTab') {
-        loadQnaAnalytics();
+        // loadQnaAnalytics();
         loadCourseQna();
     }
 });
 
-function loadQnaAnalytics() {
-    $.get(
-        base_url + _admin + 'Course/course_qna_analytics/' + $('#course_id').val(),
-        function (res) {
-            $('#qna_total').text(res.total);
-            $('#qna_answered').text(res.answered);
-            $('#qna_pending').text(res.pending);
+// function loadQnaAnalytics() {
+//     $.get(
+//         base_url + _admin + 'Course/course_qna_analytics/' + $('#course_id').val(),
+//         function (res) {
+//             $('#qna_total').text(res.total);
+//             $('#qna_answered').text(res.answered);
+//             $('#qna_pending').text(res.pending);
 
-            if (res.avg_hours > 0) {
-                $('#qna_avg').text(res.avg_hours);
-                $('#qna_avg').closest('.card').show();
-            } else {
-                $('#qna_avg').closest('.card').hide(); // 👈 hide card
-            }
-        },
-        'json'
-    );
-}
+//             if (res.avg_hours > 0) {
+//                 $('#qna_avg').text(res.avg_hours);
+//                 $('#qna_avg').closest('.card').show();
+//             } else {
+//                 $('#qna_avg').closest('.card').hide(); 
+//             }
+//         },
+//         'json'
+//     );
+// }
