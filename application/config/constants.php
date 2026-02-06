@@ -123,6 +123,7 @@ define('STUDENT', 'student' . DS);
 //Upload images path
 define('USER_IMAGES', 'assets/uploads/user_image/');
 define('COURSE_IMAGES', 'assets/uploads/thumbnails/course_thumbnails/');
+define('VIDEO_IMAGES', 'assets/uploads/thumbnails/video_thumbnails/');
 define('USER_PROFILE', 'assets/uploads/user_image/');
 define('COMMISION_PERCENTAGE', '5');
 
