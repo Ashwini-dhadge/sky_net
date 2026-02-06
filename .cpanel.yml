@@ -1,8 +1,5 @@
+---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/wetap/public_html/
-    - /bin/cp -R application $DEPLOYPATH
-    - /bin/cp -R system $DEPLOYPATH
-    - /bin/cp -R assets $DEPLOYPATH
-    - /bin/cp index.php $DEPLOYPATH
-    - /bin/cp .htaccess $DEPLOYPATH
+    - export DEPLOYPATH=/home/wetap/public_html/2025/skynet/
+    - /bin/cp -R * $DEPLOYPATH
