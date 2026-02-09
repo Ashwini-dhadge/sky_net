@@ -45,11 +45,14 @@ $(document).ready(function () {
 
     if ($('#questionBody').length) {
 
-        $.getJSON(base_url + _admin + 'Forum/approved_list', function (res) {
+        const perPage = 10;
+        let currentPage = 1;
+
+        function renderRows(data) {
 
             let html = '';
 
-            res.data.forEach(row => {
+            data.forEach(row => {
 
                 let id = row[0];
                 let title = row[1];
@@ -72,44 +75,43 @@ $(document).ready(function () {
 
                     <td class="so-stats">
                         <div class="so-stat answer">
-                            <strong>${answers}</strong>
-                            replies
+                        <strong>${answers}</strong> replies
                         </div>
                     </td>
 
                     <td>
                         <div class="so-summary">
+
                             <div style="display:flex;justify-content:space-between;">
-                                <div class="so-title">
-                                    ${title}
-                                </div>
-                                <div>
-                                    <a class="btn btn-secondary btn-sm openAnswers editbtn"  data-id="${id}" title="Click to show answers" data-title="${title}" data-user="${user}">
-                                        <i class="fa fa-edit "></i>
-                                    </a>
-                                    <a href="${base_url}admin/Forum/detail_view/${id}" class="btn btn-secondary btn-sm viewbtn">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-secondary btn-sm deletebtn">
-                                        <i class="fa fa-trash deleteQuestion" data-id="${id}"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mt-1 text-muted" style="text-align:justify;">
-                                ${description}
-                            </div>
+                                <div class="so-title">${title}</div>
+                            <div>
+                                <a class="btn btn-secondary btn-sm openAnswers editbtn"
+                                data-id="${id}" data-title="${title}" data-user="${user}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
 
-                            <div class="so-tags mt-2">
-                                ${tagsHTML}
+                                <a href="${base_url}admin/Forum/detail_view/${id}"
+                                    class="btn btn-secondary btn-sm viewbtn">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+
+                                <button class="btn btn-secondary btn-sm deletebtn">
+                                    <i class="fa fa-trash deleteQuestion" data-id="${id}"></i>
+                                </button>
                             </div>
+                        </div>
 
-                            <div class="so-meta mt-2"
-                                style="display:flex;justify-content:space-between;">
+                        <div class="mt-1 text-muted" style="text-align:justify;">
+                        ${description}
+                        </div>
 
-                                <span>asked by <b>${user}</b></span>
-                                <span>asked <b>${asked_at}</b></span>
+                        <div class="so-tags mt-2">${tagsHTML}</div>
 
-                            </div>
+                        <div class="so-meta mt-2"
+                        style="display:flex;justify-content:space-between;">
+                        <span>asked by <b>${user}</b></span>
+                        <span>asked <b>${asked_at}</b></span>
+                        </div>
 
                         </div>
                     </td>
@@ -117,13 +119,56 @@ $(document).ready(function () {
                 </tr>`;
             });
 
-
             $('#questionBody').html(html);
+        }
 
+        function renderPager(totalRecords) {
+
+            let totalPages = Math.ceil(totalRecords / perPage);
+            let pager = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                pager += `
+                <button class="btn btn-sm ${i == currentPage ? 'btn-primary' : 'btn-light'} pageBtn mr-1" style="padding-right:10px;padding-left:10px;"
+                    data-page="${i}">
+                    ${i}
+                </button>`;
+            }
+
+            $('#forumPager').html(pager);
+        }
+
+        function loadPage(page) {
+
+            currentPage = page;
+
+            $.ajax({
+                url: base_url + _admin + 'Forum/approved_list',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    draw: page,
+                    start: (page - 1) * perPage,
+                    length: perPage
+                },
+                success: function (res) {
+
+                    renderRows(res.data);
+                    renderPager(res.recordsTotal);
+
+                }
+            });
+        }
+
+        // Initial Load
+        loadPage(1);
+
+        // Page Click
+        $(document).on('click', '.pageBtn', function () {
+            loadPage($(this).data('page'));
         });
+
     }
-
-
 
     let currentQuestion = 0;
 

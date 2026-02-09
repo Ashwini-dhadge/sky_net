@@ -1,11 +1,11 @@
 <?php init_header(); ?>
 
 <style>
-.select2-selection--multiple .select2-selection__choice {
-    background-color: #CA151C !important;
-    border: 1px solid #ec4561 !important;
-    color: #fff !important;
-}
+    .select2-selection--multiple .select2-selection__choice {
+        background-color: #CA151C !important;
+        border: 1px solid #ec4561 !important;
+        color: #fff !important;
+    }
 </style>
 
 <div class="main-content">
@@ -40,9 +40,9 @@
                                             <?php foreach ($category as $key => $value) {
                                                 $selected = (isset($course['category_id']) && $course['category_id'] == $value['id']) ? "selected" : "";
                                             ?>
-                                            <option value="<?= $value['id'] ?>" <?= $selected; ?>>
-                                                <?= $value['category_name'] ?>
-                                            </option>
+                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+                                                    <?= $value['category_name'] ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -54,10 +54,10 @@
                                             <option value="">Select Instructor</option>
 
                                             <?php foreach ($instructors as $instructor): ?>
-                                            <option value="<?= $instructor['id']; ?>"
-                                                <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
-                                                <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
-                                            </option>
+                                                <option value="<?= $instructor['id']; ?>"
+                                                    <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
+                                                    <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
+                                                </option>
                                             <?php endforeach; ?>
 
                                         </select>
@@ -86,9 +86,9 @@
                                             <?php foreach ($skill as $value) {
                                                 $selected = (isset($course['skill_id']) && $course['skill_id'] == $value['id']) ? "selected" : "";
                                             ?>
-                                            <option value="<?= $value['id'] ?>" <?= $selected; ?>>
-                                                <?= $value['name'] ?>
-                                            </option>
+                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+                                                    <?= $value['name'] ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -121,13 +121,13 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-md-12">
+                                <!-- <div class="col-12 col-md-12">
                                     <div class="form-group">
                                         <label>Benefits</label>
                                         <textarea class="form-control summernote" rows="2"
                                             name="benefits"><?= (isset($course)) ? $course['benefits'] : ''; ?></textarea>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-12 col-md-6">
                                     <div class="d-flex gap-2">
@@ -181,7 +181,11 @@
                             <hr>
 
                             <div class="row">
-
+                                <div class="form-group col-md-3">
+                                    <label>Original Price</label>
+                                    <input type="number" step="0.01" name="strike_thr_price" id="strike_thr_price"
+                                        class="form-control" value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
+                                </div>
                                 <div class="form-group col-md-3">
                                     <label>Offer Type</label>
                                     <select name="offer_type" id="offer_type" class="form-control" required>
@@ -202,11 +206,7 @@
                                         class="form-control" value="<?= $course_duration['offer_amount'] ?? ''; ?>">
                                 </div>
 
-                                <div class="form-group col-md-3">
-                                    <label>Original Price</label>
-                                    <input type="number" step="0.01" name="strike_thr_price" id="strike_thr_price"
-                                        class="form-control" value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
-                                </div>
+
 
                                 <div class="form-group col-md-3">
                                     <label>Final Price</label>
@@ -228,74 +228,74 @@
                                 <div data-repeater-list="resources">
 
                                     <?php if (!empty($resources)): foreach ($resources as $res): ?>
-                                    <div data-repeater-item class="card mb-3">
-                                        <div class="card-body">
+                                            <div data-repeater-item class="card mb-3">
+                                                <div class="card-body">
 
-                                            <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
+                                                    <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
 
-                                            <div class="row">
-                                                <div class="col-md-5">
-                                                    <label>File Title</label>
-                                                    <input type="text" name="file_notes" class="form-control"
-                                                        value="<?= $res['file_notes'] ?>" required>
-                                                </div>
+                                                    <div class="row">
+                                                        <div class="col-md-5">
+                                                            <label>File Title</label>
+                                                            <input type="text" name="file_notes" class="form-control"
+                                                                value="<?= $res['file_notes'] ?>" required>
+                                                        </div>
 
-                                                <div class="col-md-5">
-                                                    <label>File</label>
-                                                    <input type="file" name="file" class="form-control"
-                                                        onchange="updatePreviewButton(this)">
-                                                </div>
+                                                        <div class="col-md-5">
+                                                            <label>File</label>
+                                                            <input type="file" name="file" class="form-control"
+                                                                onchange="updatePreviewButton(this)">
+                                                        </div>
 
-                                                <div class="col-md-2">
-                                                    <label>&nbsp;</label><br>
-                                                    <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
-                                                        class="btn btn-info preview-btn" target="_blank">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
+                                                        <div class="col-md-2">
+                                                            <label>&nbsp;</label><br>
+                                                            <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
+                                                                class="btn btn-info preview-btn" target="_blank">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
 
-                                                    <button data-repeater-delete type="button"
-                                                        class="btn btn-danger ml-1">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                            <button data-repeater-delete type="button"
+                                                                class="btn btn-danger ml-1">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-
-                                        </div>
-                                    </div>
-                                    <?php endforeach;
+                                        <?php endforeach;
                                     else: ?>
 
-                                    <div data-repeater-item class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="row">
+                                        <div data-repeater-item class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="row">
 
-                                                <div class="col-md-5">
-                                                    <label>File Title</label>
-                                                    <input type="text" name="file_notes" class="form-control" required>
+                                                    <div class="col-md-5">
+                                                        <label>File Title</label>
+                                                        <input type="text" name="file_notes" class="form-control" required>
+                                                    </div>
+
+                                                    <div class="col-md-5">
+                                                        <label>File</label>
+                                                        <input type="file" name="file" class="form-control"
+                                                            onchange="updatePreviewButton(this)">
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <label>&nbsp;</label><br>
+                                                        <button type="button" class="btn btn-secondary preview-btn"
+                                                            onclick="previewFile(this)">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+
+                                                        <button data-repeater-delete type="button"
+                                                            class="btn btn-danger ml-1">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+
                                                 </div>
-
-                                                <div class="col-md-5">
-                                                    <label>File</label>
-                                                    <input type="file" name="file" class="form-control"
-                                                        onchange="updatePreviewButton(this)">
-                                                </div>
-
-                                                <div class="col-md-2">
-                                                    <label>&nbsp;</label><br>
-                                                    <button type="button" class="btn btn-secondary preview-btn"
-                                                        onclick="previewFile(this)">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-
-                                                    <button data-repeater-delete type="button"
-                                                        class="btn btn-danger ml-1">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-
                                             </div>
                                         </div>
-                                    </div>
 
                                     <?php endif; ?>
 
@@ -309,7 +309,7 @@
 
                             <hr>
 
-                            <button type="submit" class="btn btn-primary float-right">
+                            <button type="submit" class="btn btn-primary float-right mb-4">
                                 Submit
                             </button>
 
@@ -329,100 +329,100 @@
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    $('.resource-repeater').repeater({
-        initEmpty: false,
-        show: function() {
-            $(this).slideDown();
-        },
-        hide: function(deleteElement) {
-            if (confirm('Remove this resource?')) {
-                $(this).slideUp(deleteElement);
+        $('.resource-repeater').repeater({
+            initEmpty: false,
+            show: function() {
+                $(this).slideDown();
+            },
+            hide: function(deleteElement) {
+                if (confirm('Remove this resource?')) {
+                    $(this).slideUp(deleteElement);
+                }
             }
-        }
+        });
+
     });
-
-});
 </script>
 <script>
-function updatePreviewButton(input) {
-    const row = input.closest('[data-repeater-item]');
-    const btn = row.querySelector('.preview-btn');
-    if (!input.files.length) return;
-    btn.className = 'btn btn-info preview-btn';
-}
-
-function previewFile(btn) {
-    const file = btn.closest('[data-repeater-item]')
-        .querySelector('input[type=file]').files[0];
-    if (!file) return alert('Select file');
-    window.open(URL.createObjectURL(file));
-}
-</script>
-
-<script type="text/javascript">
-CKEDITOR.replace('benefits', {
-    height: '150px'
-});
-CKEDITOR.replace('notes', {
-    height: '380px'
-});
-</script>
-<script type="text/javascript">
-$("#skill_id").select2({
-    placeholder: "Select Skill",
-    allowClear: true,
-    width: '100%'
-});
-</script>
-<script>
-$(document).ready(function() {
-
-    function calculateFinalPrice() {
-
-        const offerType = $('#offer_type').val();
-        let offerAmount = parseFloat($('#offer_amount').val());
-        let originalPrice = parseFloat($('#strike_thr_price').val());
-
-        // Default safety
-        if (isNaN(originalPrice)) originalPrice = 0;
-        if (isNaN(offerAmount)) offerAmount = 0;
-
-        let finalPrice = originalPrice;
-
-        if (offerType === '1') {
-            // ===== FLAT =====
-            if (offerAmount > originalPrice) {
-                offerAmount = originalPrice;
-                $('#offer_amount').val(offerAmount);
-            }
-            finalPrice = originalPrice - offerAmount;
-
-        } else if (offerType === '2') {
-            // ===== PERCENTAGE =====
-            if (offerAmount > 100) {
-                offerAmount = 100;
-                $('#offer_amount').val(offerAmount);
-            }
-            finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
-        }
-
-        if (finalPrice < 0) finalPrice = 0;
-
-        $('#price').val(finalPrice.toFixed(2));
+    function updatePreviewButton(input) {
+        const row = input.closest('[data-repeater-item]');
+        const btn = row.querySelector('.preview-btn');
+        if (!input.files.length) return;
+        btn.className = 'btn btn-info preview-btn';
     }
 
-    // When offer type changes, reset offer amount
-    $('#offer_type').on('change', function() {
-        $('#offer_amount').val('');
-        calculateFinalPrice();
-    });
+    function previewFile(btn) {
+        const file = btn.closest('[data-repeater-item]')
+            .querySelector('input[type=file]').files[0];
+        if (!file) return alert('Select file');
+        window.open(URL.createObjectURL(file));
+    }
+</script>
 
-    // Recalculate on typing
-    $('#offer_amount, #strike_thr_price').on('keyup change', function() {
-        calculateFinalPrice();
+<script type="text/javascript">
+    CKEDITOR.replace('benefits', {
+        height: '150px'
     });
+    CKEDITOR.replace('notes', {
+        height: '380px'
+    });
+</script>
+<script type="text/javascript">
+    $("#skill_id").select2({
+        placeholder: "Select Skill",
+        allowClear: true,
+        width: '100%'
+    });
+</script>
+<script>
+    $(document).ready(function() {
 
-});
+        function calculateFinalPrice() {
+
+            const offerType = $('#offer_type').val();
+            let offerAmount = parseFloat($('#offer_amount').val());
+            let originalPrice = parseFloat($('#strike_thr_price').val());
+
+            // Default safety
+            if (isNaN(originalPrice)) originalPrice = 0;
+            if (isNaN(offerAmount)) offerAmount = 0;
+
+            let finalPrice = originalPrice;
+
+            if (offerType === '1') {
+                // ===== FLAT =====
+                if (offerAmount > originalPrice) {
+                    offerAmount = originalPrice;
+                    $('#offer_amount').val(offerAmount);
+                }
+                finalPrice = originalPrice - offerAmount;
+
+            } else if (offerType === '2') {
+                // ===== PERCENTAGE =====
+                if (offerAmount > 100) {
+                    offerAmount = 100;
+                    $('#offer_amount').val(offerAmount);
+                }
+                finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
+            }
+
+            if (finalPrice < 0) finalPrice = 0;
+
+            $('#price').val(finalPrice.toFixed(2));
+        }
+
+        // When offer type changes, reset offer amount
+        $('#offer_type').on('change', function() {
+            $('#offer_amount').val('');
+            calculateFinalPrice();
+        });
+
+        // Recalculate on typing
+        $('#offer_amount, #strike_thr_price').on('keyup change', function() {
+            calculateFinalPrice();
+        });
+
+    });
 </script>
