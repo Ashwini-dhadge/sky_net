@@ -47,6 +47,7 @@
          background-color: #b0d1a2;
          color: #fff;
      }
+
      .deletebtn:hover {
          background-color: #ff4e4e;
          color: #fff;
@@ -66,6 +67,7 @@
          color: red;
      }
  </style>
+
  <table class="table table-borderless" id="questionTable">
      <tbody id="questionBody">
 
@@ -78,6 +80,7 @@
 
      </tbody>
  </table>
+ <div id="forumPager" class="mt-3 mb-4 text-right"></div>
 
  <div class="modal fade" id="answerModal">
      <div class="modal-dialog modal-xl modal-dialog-scrollable">
