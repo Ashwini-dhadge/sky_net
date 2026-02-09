@@ -401,12 +401,19 @@ if (!function_exists('authenticateUser')) {
         // $CI->load->model('admin/Driver_model');
 
         $apiToken = $CI->input->post('api_token') ? $CI->input->post('api_token') : 0;
+        // print_r($CI->input->post());
+        // die;
         $user_id = $CI->input->post('user_id') ? $CI->input->post('user_id') : 0;
-        // $header = $CI->input->request_headers();
-        // $token = explode(" ", $header['Authorization']);
-        // echo json_encode($header);
+        $header = $CI->input->request_headers();
+        $header = array_change_key_case($header, CASE_LOWER);
         // echo json_encode($token['1']);
         // die;
+        if (!$apiToken && isset($header['authorization'])) {
+            if (preg_match('/Bearer\s(\S+)/', $header['authorization'], $matches)) {
+                $apiToken = $matches[1];
+            }
+        }
+
         try {
             if ($apiToken) {
                 $userDetail = JWTDecode($apiToken);
