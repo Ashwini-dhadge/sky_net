@@ -194,6 +194,7 @@ class Authentication extends CI_Controller
             if (!empty($userDetail)) {
                 $data = array(
                     'reg_type' => $userDetail['role'],
+                    'user_type' => $userDetail['user_type'],
                     'reg_id' => $userDetail['id'],
                     'reg_email' => $userDetail['email'],
                     'reg_mobile' => $userDetail['mobile_no'],
@@ -644,7 +645,7 @@ class Authentication extends CI_Controller
         // $birthdate = trim($this->input->post('birthdate')) ? trim($this->input->post('birthdate')) : '';
 
         $response = array();
-        if ($user_id && strlen($first_name)) {
+        if ($user_id && strlen($first_name) && strlen($email)) {
 
             $userDetail = $this->Common_model->getAllData('tbl_users', array('id' => $user_id, 'is_otp_verified' => 1, 'status' => 1));
             // print_r($this->db->last_query());die;
