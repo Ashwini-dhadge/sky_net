@@ -90,3 +90,12 @@ $route['testing'] = 'app/Test/testapi';
 
 // Discussion Forum
 $route['create_forum_post'] = 'app/Forum/createForumPost';
+$route['forum_post_update'] = 'app/Forum/forumPostUpdate';
+$route['forum_post_delete'] = 'app/Forum/forumPostDelete';
+$route['forum_post_list'] = 'app/Forum/forumPostList';
+$route['forum_post_comment'] = 'app/Forum/createForumAnswer';
+$route['forum_post_detail'] = 'app/Forum/forumPostDetail';
+$route['forum_post_reply'] = 'app/Forum/replyToComment';
+$route['forum_post_comment_update'] = 'app/Forum/postCommentUpdate';
+$route['post_comment_delete'] = 'app/Forum/postCommentDelete';
+$route['my_forum_list'] = 'app/Forum/myForumList';
