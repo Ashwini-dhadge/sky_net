@@ -87,3 +87,6 @@ $route['lesson_details'] = 'app/Courses/getLessonsDetails';
 $route['question_answer_list'] = 'app/Courses/getQuestionAnswerList';
 $route['create_qna'] = 'app/Courses/createQnA';
 $route['testing'] = 'app/Test/testapi';
+
+// Discussion Forum
+$route['create_forum_post'] = 'app/Forum/createForumPost';
