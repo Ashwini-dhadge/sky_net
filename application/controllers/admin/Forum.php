@@ -88,7 +88,7 @@ class Forum extends CI_Controller
         $data = $this->input->post();
 
         $page  = $data['draw'] ?? 1;
-        $limit = $data['length'] ?? 100;
+        $limit = $data['length'] ?? 1000;
         $offset = $data['start'] ?? 0;
         $searchVal = $data['search']['value'] ?? '';
         $sortColIndex = $data['order'][0]['column'] ?? 0;
@@ -102,9 +102,13 @@ class Forum extends CI_Controller
             $offset
         );
 
-        $count = count($ForumData);
+        $totalCount = $this->db
+            ->where('is_approved', 1)
+            ->where('deleted_at IS NULL', null, false)
+            ->count_all_results('tbl_forum_questions');
 
-        if ($count) {
+
+        if ($totalCount) {
 
             foreach ($ForumData as $key => $forum) {
 
@@ -138,8 +142,8 @@ class Forum extends CI_Controller
         echo json_encode([
             'draw' => $page,
             'data' => $columns,
-            'recordsTotal' => $count,
-            'recordsFiltered' => $count
+            'recordsTotal' => $totalCount,
+            'recordsFiltered' => $totalCount
         ]);
     }
 

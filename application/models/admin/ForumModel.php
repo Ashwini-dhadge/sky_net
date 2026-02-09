@@ -97,7 +97,7 @@ class ForumModel extends CI_Model
     public function getAnswersWithUser($id)
     {
         return $this->db
-            ->select('a.*, u.first_name as answered_by')
+            ->select("a.*, CONCAT(u.first_name,' ',u.last_name) as answered_by")
             ->from('tbl_forum_answers a')
             ->join('tbl_users u', 'u.id=a.user_id', 'left')
             ->where('a.forum_id', $id)

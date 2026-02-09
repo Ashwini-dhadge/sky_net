@@ -21,6 +21,7 @@ class User extends CI_Controller
         $data['title'] = 'Users';
         $data['active'] = 'User';
         $data['role'] = 2;
+    // echo $data['role']; die();
         $this->load->view(ADMIN . USER . 'list-user', $data);
     }
     public function index1()
@@ -117,9 +118,17 @@ class User extends CI_Controller
     public function add($_id = '')
     {
         $data['title'] = 'Add Instructor';
-        $data['role']  = 4;
 
         $post = $this->input->post();
+        if ($post['role'] == 2) {
+            $data['role']  = 2;
+        } elseif ($post['role'] == 4) {
+            $data['role']  = 4;
+        }
+
+        // echo '<pre>';
+        // print_r($post);
+        // die();
 
         if ($post) {
 
@@ -195,10 +204,16 @@ class User extends CI_Controller
                 );
             }
 
-            if ($role == 3) {
+
+            if ($role == 2) {
                 redirect(base_url(ADMIN . 'User'));
-            } else {
+                exit;
+            } elseif ($role == 4) {
                 redirect(base_url(ADMIN . 'User/index1'));
+                exit;
+            } else {
+                redirect(base_url(ADMIN . 'User'));
+                exit;
             }
         }
 
@@ -209,14 +224,21 @@ class User extends CI_Controller
             $data['title'] = 'Edit Instructor';
         }
 
-        $this->load->view(ADMIN . USER . 'add-instructor', $data);
+        if ($role == 2) {
+            redirect(base_url(ADMIN . 'User'));
+        } elseif ($role == 4) {
+            redirect(base_url(ADMIN . 'User/index1'));
+        } else {
+            redirect(base_url(ADMIN . 'User'));
+        }
     }
 
 
-    public function add_user()
+    public function add_user($role)
     {
         $data['title'] = 'Add User';
-        $data['role'] = 3;
+        $data['role']  = $role;
+
         $this->load->view(ADMIN . USER . 'add-instructor', $data);
     }
     public function delete($id)

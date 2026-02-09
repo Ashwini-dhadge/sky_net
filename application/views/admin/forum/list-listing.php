@@ -10,28 +10,6 @@
                             <div class="card-body">
                                 <h4 class="card-title"><?= $title ?></h4>
                                 <div class="row ">
-
-                                    <!-- <div class="col-md-3">
-                                        <label>Status</label>
-                                        <select id="answerFilter" class="form-control">
-                                            <option value="all">All</option>
-                                            <option value="answered">Answered</option>
-                                            <option value="unanswered">Unanswered</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label>Time</label>
-                                        <select id="dateFilter" class="form-control">
-                                            <option value="all">All Time</option>
-                                            <option value="today">Today</option>
-                                            <option value="yesterday">Yesterday</option>
-                                            <option value="week">This Week</option>
-                                            <option value="month">This Month</option>
-                                            <option value="year">This Year</option>
-                                        </select>
-                                    </div> -->
-
                                     <div class="col-md-12 align-self-end">
                                         <?php if ($this->session->userdata('role') == 1) { ?>
                                             <button type="button" class="btn btn-primary float-right addQuestion" data-toggle="modal" data-target="#addQuestion">

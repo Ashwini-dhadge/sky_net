@@ -14,19 +14,18 @@
                         <div class="card  mb-4 mt-4">
                             <div class="card-body">
                                 <?php
-                if ($role == 2) {
-                ?>
-                                <a href="<?= base_url(ADMIN . 'User/add_user'); ?>"
-                                    class="btn btn-primary waves-effect waves-light float-right">Add Users</a>
+                                if ($role == 2) {
+                                ?>
+                                    <a href="<?= base_url(ADMIN . 'User/add_user/'. $role); ?>"
+                                        class="btn btn-primary waves-effect waves-light float-right">Add Users</a>
                                 <?php
-                } elseif ($role == 4) {
-                ?>
-                                <a href="<?= base_url(ADMIN . 'User/add'); ?>"
-                                    class="btn btn-primary waves-effect waves-light float-right">Add Instructor</a>
+                                } elseif ($role == 4) {
+                                ?>
+                                    <a href="<?= base_url(ADMIN . 'User/add_user/'. $role); ?>"
+                                        class="btn btn-primary waves-effect waves-light float-right">Add Instructor</a>
                                 <?php
-
-                }
-                ?>
+                                }
+                                ?>
                                 <h4 class="card-title"><?= $title ?></h4>
                                 <?php $this->load->view(ADMIN . USER . 'table-user'); ?>
                             </div>
