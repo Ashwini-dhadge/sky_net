@@ -438,7 +438,7 @@ class Course extends CI_Controller
 			'language'      => $post['language'],
 			'certificate'   => $post['certificate'],
 			'assessment'    => $post['assessment'],
-			'benefits'      => $post['benefits'],
+			'benefits'      => $post['benefits'] ?? null,
 			'notes'         => $post['notes'],
 			'status'        => $post['status'],
 			'is_free'       => $post['is_free'],

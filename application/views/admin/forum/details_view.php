@@ -73,7 +73,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-primary float-right mt-3 mb-3" onclick="window.history.back()">Back</button>
+                        <a href="<?= base_url(ADMIN . FORUM . 'listing'); ?>" class="btn btn-primary float-right mt-3 mb-3">Back</a>
                     </div>
                     <div class="col-lg-8">
                         <div class="card mb-4 mt-4">
@@ -126,8 +126,9 @@
                                         </div>
 
                                         <div>
-                                            <?= $ans['answer'] ?>
+                                            <?= nl2br(htmlspecialchars($ans['answer'])) ?>
                                         </div>
+
 
                                     </div>
                                 <?php endforeach; ?>
