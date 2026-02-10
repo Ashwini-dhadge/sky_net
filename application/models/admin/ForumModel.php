@@ -58,13 +58,20 @@ class ForumModel extends CI_Model
     }
 
 
-    public function getNonApprovedQuestions($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0)
-    {
+    public function getNonApprovedQuestions(
+        $status = 0,
+        $searchVal = '',
+        $sortColIndex = 0,
+        $sortBy = 'desc',
+        $limit = 0,
+        $offset = 0
+    ) {
         $this->db->select('q.*, u.first_name as asked_by');
         $this->db->from('tbl_forum_questions q');
         $this->db->join('tbl_users u', 'u.id = q.user_id', 'left');
-        $this->db->where('q.is_approved', 0);
-        $this->db->where('q.deleted_at IS NULL', null, false);
+
+        $this->db->where('q.is_approved', $status);
+        // $this->db->where('q.deleted_at IS NULL', null, false);
 
         if ($limit) {
             $this->db->limit($limit, $offset);
@@ -72,6 +79,7 @@ class ForumModel extends CI_Model
 
         return $this->db->get()->result_array();
     }
+
 
 
     public function getAnswersByQuestion($id)
@@ -120,5 +128,20 @@ class ForumModel extends CI_Model
         $this->db->limit($limit);
 
         return $this->db->get()->result_array();
+    }
+
+    public function logAction($data)
+    {
+        return $this->CommonModel->iudAction(
+            'tbl_forum_action_logs',
+            [
+                'forum_id'    => $data['forum_id'],
+                'is_approved' => $data['is_approved'],
+                'remark'      => $data['remark'] ?? NULL,
+                'created_by'  => $data['created_by'],
+                'created_at'  => date('Y-m-d H:i:s')
+            ],
+            'insert'
+        );
     }
 }

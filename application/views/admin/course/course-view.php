@@ -1,12 +1,12 @@
 <?php init_header(); ?>
 <style>
-._status {
-    cursor: pointer;
-}
+    ._status {
+        cursor: pointer;
+    }
 
-.btn-sm {
-    margin: 0px 2px;
-}
+    .btn-sm {
+        margin: 0px 2px;
+    }
 </style>
 
 <div class="main-content">
@@ -92,8 +92,8 @@
                                         </table>
                                     </div>
                                     <div class="col-lg-12 mt-3" style="overflow-y: overlay;">
-                                        <h4><u>Benefits</u></h4>
-                                        <p><?= $course['benefits']; ?></p>
+                                        <h4><u>Notes</u></h4>
+                                        <p><?= $course['notes']; ?></p>
                                     </div>
                                 </div>
 
@@ -255,9 +255,9 @@
                                                         <label>Answer by</label>
                                                         <select id="answer_by" class="form-control mb-2">
                                                             <?php foreach ($instructors as $value) { ?>
-                                                            <option value="<?= $value['id'] ?>">
-                                                                <?= $value['first_name'] . ' ' . $value['last_name'] ?>
-                                                            </option>
+                                                                <option value="<?= $value['id'] ?>">
+                                                                    <?= $value['first_name'] . ' ' . $value['last_name'] ?>
+                                                                </option>
                                                             <?php } ?>
                                                         </select>
 
@@ -285,10 +285,10 @@
                                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                                     <h5 class="mb-0">Resources & Downloads</h5>
 
-                                                    <a href="<?= base_url(ADMIN . 'Course/Course/' . $course['id']); ?>"
-                                                        class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-edit mr-1"></i> Edit Course
-                                                    </a>
+                                                    <button class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#resourceModal">
+                                                        <i class="fas fa-plus mr-1"></i> Add Resource
+                                                    </button>
                                                 </div>
 
                                                 <table id="resourceTable"
@@ -297,27 +297,154 @@
 
                                             </div>
                                         </div>
-                                    </div>
+                                        <div class="modal fade" id="resourceModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Answer Question</h5>
+                                                        <button class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                                                        <form action="<?= base_url(ADMIN . 'Course/updateResources/' . $course['id']) ?>"
+                                                            method="POST"
+                                                            enctype="multipart/form-data">
 
+                                                            <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+
+                                                            <div class="resource-repeater">
+
+                                                                <div data-repeater-list="resources">
+
+                                                                    <div data-repeater-item class="card mb-3">
+                                                                        <div class="card-body">
+                                                                            <div class="row">
+
+                                                                                <div class="col-md-5">
+                                                                                    <label>File Title</label>
+                                                                                    <input type="text"
+                                                                                        name="file_notes"
+                                                                                        class="form-control"
+                                                                                        required>
+                                                                                </div>
+
+                                                                                <div class="col-md-5">
+                                                                                    <label>File</label>
+                                                                                    <input type="file"
+                                                                                        name="file"
+                                                                                        class="form-control"
+                                                                                        onchange="updatePreviewButton(this)">
+
+                                                                                </div>
+
+                                                                                <div class="col-md-2">
+                                                                                    <label>&nbsp;</label><br>
+
+                                                                                    <button type="button"
+                                                                                        class="btn btn-secondary preview-btn"
+                                                                                        onclick="previewFile(this)">
+                                                                                        <i class="fas fa-eye"></i>
+                                                                                    </button>
+
+                                                                                    <button data-repeater-delete
+                                                                                        type="button"
+                                                                                        class="btn btn-danger ml-1">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                    </button>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <button data-repeater-create
+                                                                    type="button"
+                                                                    class="btn btn-success mt-2">
+                                                                    <i class="fas fa-plus"></i> Add Resource
+                                                                </button>
+
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    <i class="fas fa-save mr-1"></i> Save Resources
+                                                                </button>
+                                                            </div>
+
+                                                        </form>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div> 
-        </div> 
-    </div> 
-</div> 
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php init_footer(); ?>
-
 <script src="<?= base_url(); ?>assets/js/custom-js/course.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/lesson-list.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/section-list.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/course-qna.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/course-resource.js"></script>
+<script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
+
 <script>
-$(document).ajaxComplete(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-});
+    $(document).ready(function() {
+
+        $('.resource-repeater').repeater({
+            initEmpty: false,
+            show: function() {
+                $(this).slideDown();
+            },
+            hide: function(deleteElement) {
+                if (confirm('Remove this resource?')) {
+                    $(this).slideUp(deleteElement);
+                }
+            }
+        });
+
+        function updatePreviewButton(input) {
+            const row = input.closest('[data-repeater-item]');
+            const btn = row.querySelector('.preview-btn');
+
+            if (input.files.length) {
+                btn.className = 'btn btn-info preview-btn';
+            }
+        }
+
+        function previewFile(btn) {
+            const file = btn.closest('[data-repeater-item]')
+                .querySelector('input[type=file]').files[0];
+
+            if (!file) return alert('Select file');
+
+            window.open(URL.createObjectURL(file));
+        }
+
+
+    });
+</script>
+<script>
+    function updatePreviewButton(input) {
+        const row = input.closest('[data-repeater-item]');
+        const btn = row.querySelector('.preview-btn');
+        if (!input.files.length) return;
+        btn.className = 'btn btn-info preview-btn';
+    }
+
+    function previewFile(btn) {
+        const file = btn.closest('[data-repeater-item]')
+            .querySelector('input[type=file]').files[0];
+        if (!file) return alert('Select file');
+        window.open(URL.createObjectURL(file));
+    }
 </script>

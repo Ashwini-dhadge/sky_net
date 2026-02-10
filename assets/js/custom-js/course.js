@@ -80,8 +80,9 @@ function listDurationlist(data='') {
           { "width": "60px", title: "Duration" },
           { "width": "60px", title: "Language" },
           { "width": "60px", title: "Offer Type" },
-          { "width": "80px", title: "Offer Amount" },
           { "width": "100px", title: "Original Price" },
+          { "width": "100px", title: "Offer" },
+          { "width": "80px", title: "Final Amount" },
           { "width": "60px", title: "Status" },
          // { "width": "40px", title: "Action" },
 
