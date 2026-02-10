@@ -47,9 +47,28 @@ class CourseModel extends CI_Model
             ->select('tcr.*, c.title as course_title')
             ->join('tbl_courses c', 'c.id = tcr.course_id', 'left')
             ->where('tcr.course_id', $this->input->post('course_id'))
+            ->where('tcr.deleted_at', NULL)
             ->get()
             ->result_array();
     }
+
+    // public function getCourseResources($limit, $start)
+    // {
+    //     return $this->db
+    //         ->where('deleted_at', NULL)
+    //         ->limit($limit, $start)
+    //         ->order_by('id', 'DESC')
+    //         ->get('tbl_course_resources')
+    //         ->result_array();
+    // }
+
+    public function countCourseResources()
+    {
+        return $this->db
+            ->where('deleted_at', NULL)
+            ->count_all_results('tbl_course_resources');
+    }
+
 
 
     public function getCourseData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0)
@@ -145,6 +164,7 @@ class CourseModel extends CI_Model
 
 
         $this->db->from('section s');
+        $this->db->where('s.deleted_by', NULL);
 
         if ($limit) {
             $this->db->limit($limit, $offset);
@@ -158,8 +178,11 @@ class CourseModel extends CI_Model
     public function getLessonData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $course_id = 0, $id = 0)
     {
         $this->db->select('l.*, 
+        c.id as course_id,
+        s.id as section_id,
         c.title as course_name,
         s.title as section_name');
+        
 
         if ($course_id) {
             $this->db->where('l.course_id', $course_id);
@@ -180,6 +203,7 @@ class CourseModel extends CI_Model
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id');
         $this->db->join('tbl_section s', 's.id = l.section_id');
+        $this->db->where('l.deleted_at IS NULL');
 
 
         if ($limit) {
@@ -403,6 +427,7 @@ class CourseModel extends CI_Model
     {
         $columns = [
             "ts.id",
+            "c.id as course_id",
             "c.title",
             "ts.title",
             "ts.description"
@@ -411,13 +436,12 @@ class CourseModel extends CI_Model
         $this->db->select("ts.*, c.title AS course_name");
         $this->db->from("tbl_section ts");
         $this->db->join("tbl_courses c", "c.id = ts.course_id", "LEFT");
+        $this->db->where("ts.deleted_at IS NULL");
 
-        /** FILTER BY COURSE */
         if (!empty($course_id)) {
-            $this->db->where("ts.course_id", $course_id);   // FIXED
+            $this->db->where("ts.course_id", $course_id);   
         }
 
-        /** SEARCH */
         if (!empty($searchVal)) {
             $this->db->group_start();
             $this->db->like("ts.title", $searchVal);
@@ -426,12 +450,10 @@ class CourseModel extends CI_Model
             $this->db->group_end();
         }
 
-        /** ORDER */
         if (!empty($sortColIndex) && isset($columns[$sortColIndex])) {
             $this->db->order_by($columns[$sortColIndex], $sortBy);
         }
 
-        /** LIMIT */
         if ($limit > 0) {
             $this->db->limit($limit, $offset);
         }

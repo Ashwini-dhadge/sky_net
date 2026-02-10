@@ -20,17 +20,24 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-
                         <div class="card mb-4 mt-4">
                             <div class="card-body">
                                 <h4 class="card-title"><?= $title ?></h4>
+                                <div class="row">
+                                    <div class="col-md-6 from-group">
+                                        <select id="statusFilter" class="form-control w-50">
+                                            <option value="0" selected>Pending</option>
+                                            <option value="1">Approved</option>
+                                            <option value="2">Rejected</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mb-3 text-muted small">
                                     (Pending questions require Super Admin approval)
                                 </div>
                                 <?php $this->load->view(ADMIN . FORUM . 'table-pending'); ?>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

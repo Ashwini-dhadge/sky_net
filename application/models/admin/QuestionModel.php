@@ -42,6 +42,8 @@ class QuestionModel extends CI_Model
             'left'
         );
 
+        $this->db->where('tbl_course_qna.deleted_at', null);
+
         if ($course_id) {
             $this->db->where('tbl_course_qna.course_id', $course_id);
         }

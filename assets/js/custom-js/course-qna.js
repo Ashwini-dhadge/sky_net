@@ -4,6 +4,7 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         destroy: true,
+        pageLength: 10,
         ajax: {
             url: base_url + _admin + 'Course/course_qna_list',
             type: 'POST',

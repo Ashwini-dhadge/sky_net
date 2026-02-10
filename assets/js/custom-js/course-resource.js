@@ -25,3 +25,23 @@ $(document).ready(function () {
     });
 
 });
+
+
+$(document).on('click', '.deleteResource', function () {
+
+    if (!confirm('Delete resource?')) return;
+
+    let id = $(this).data('id');
+
+    $.post(
+        base_url + _admin + 'Course/deleteCourseResource',
+        { id: id },
+        function () {
+            $('#resourceTable').DataTable().ajax.reload(null, false);
+        }
+    );
+});
+
+function updateResource() {
+    $("#updateResource").modal("show");
+}

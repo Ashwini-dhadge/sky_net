@@ -9,6 +9,7 @@ class Forum extends CI_Controller
         parent::__construct();
         $this->load->model(ADMIN . 'ForumModel');
         $this->load->model('CommonModel');
+        loginId();
     }
 
 
@@ -23,14 +24,17 @@ class Forum extends CI_Controller
         $searchVal = $data['search']['value'];
         $sortColIndex = $data['order'][0]['column'];
         $sortBy = $data['order'][0]['dir'];
+        $status = $data['status'] ?? 0;
 
         $ForumData = $this->ForumModel->getNonApprovedQuestions(
+            $status,
             $searchVal,
             $sortColIndex,
             $sortBy,
             $limit,
             $offset
         );
+
 
         $count = count($ForumData);
 
@@ -45,16 +49,38 @@ class Forum extends CI_Controller
                 array_push($row, $forum['title']);
                 array_push($row, $forum['asked_by']);
 
-                $is_approved = '
-                        <span class="badge badge-warning px-3 py-2">
-                        <i class="fa fa-clock mr-1"></i> Pending
+                switch ($status) {
+
+                    case 1:
+                        $is_approved = '
+                        <span class="badge badge-success px-3 py-2">
+                            <i class="fa fa-check mr-1"></i> Approved
                         </span>';
+                        break;
+
+                    case 2:
+                        $is_approved = '
+                        <span class="badge badge-danger px-3 py-2">
+                            <i class="fa fa-times mr-1"></i> Rejected
+                        </span>';
+                        break;
+
+                    default:
+                        $is_approved = '
+                        <span class="badge badge-warning px-3 py-2">
+                            <i class="fa fa-clock mr-1"></i> Pending
+                        </span>';
+                }
+
                 array_push($row, $is_approved);
                 $action = '';
 
                 if ($this->session->userdata('role') == 1) {
-                    $action = '
+
+                    if ($status == 0) {
+                        $action = '
                         <div class="btn-group shadow-sm">
+
                             <button class="btn btn-success btn-sm approve"
                                 data-id="' . $forum['id'] . '"
                                 title="Approve">
@@ -66,8 +92,18 @@ class Forum extends CI_Controller
                                 title="Reject">
                                 <i class="fa fa-times"></i>
                             </button>
+
                         </div>';
+                    } elseif ($status == 2) {
+                        $action = '
+                        <button class="btn btn-warning btn-sm returnPending"
+                            data-id="' . $forum['id'] . '"
+                            title="Return to Pending">
+                            <i class="fa fa-undo"></i> Return
+                        </button>';
+                    }
                 }
+
 
                 array_push($row, $action);
                 $columns[] = $row;
@@ -119,7 +155,7 @@ class Forum extends CI_Controller
 
                 $row = [];
 
-                array_push($row, $forum['id']); 
+                array_push($row, $forum['id']);
                 array_push($row, $forum['title']);
                 array_push($row, $forum['asked_by']);
                 array_push($row, $forum['description']);
@@ -134,6 +170,8 @@ class Forum extends CI_Controller
                 }
                 array_push($row, $formattedDate);
                 array_push($row, $answers);
+
+
 
                 $columns[] = $row;
             }
@@ -175,19 +213,86 @@ class Forum extends CI_Controller
             'update',
             ['id' => $this->input->post('id')]
         );
+        $this->ForumModel->logAction([
+            'forum_id'    => $this->input->post('id'),
+            'is_approved' => 1,
+            'remark'      => NULL,
+            'created_by'  => loginId(),
+            'created_at'  => date('Y-m-d H:i:s')
+        ]);
+
+
+
         $this->session->set_flashdata('success', 'Question Approved!');
     }
 
     public function reject()
     {
+        $id     = $this->input->post('id');
+        $reason = $this->input->post('reason');
+
         $this->CommonModel->iudAction(
             'tbl_forum_questions',
-            ['is_approved' => 2, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => loginId(), 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => loginId()],
+            [
+                'is_approved' => 2,
+                'remark'      => $reason,
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId(),
+                'deleted_at' => date('Y-m-d H:i:s'),
+                'deleted_by' => loginId()
+            ],
             'update',
-            ['id' => $this->input->post('id')]
+            ['id' => $id]
         );
+
+        $this->ForumModel->logAction([
+            'forum_id'    => $id,
+            'is_approved' => 2,
+            'remark'      => $reason,
+            'created_by'  => loginId(),
+            'created_at'  => date('Y-m-d H:i:s')
+        ]);
+
+
         $this->session->set_flashdata('error', 'Question Rejected!');
     }
+
+    public function returnToPending()
+    {
+        $id = $this->input->post('id');
+
+        if (!$id) {
+            echo json_encode(['status' => false]);
+            return;
+        }
+
+        $this->CommonModel->iudAction(
+            'tbl_forum_questions',
+            [
+                'is_approved' => 0,
+                'remark'      => NULL,
+                'deleted_at' => NULL,
+                'deleted_by' => NULL,
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId()
+            ],
+            'update',
+            ['id' => $id]
+        );
+
+        $this->ForumModel->logAction([
+            'forum_id'    => $id,
+            'is_approved' => 0,
+            'remark'      => 'Returned to pending',
+            'created_by'  => loginId(),
+            'created_at'  => date('Y-m-d H:i:s')
+        ]);
+
+
+        echo json_encode(['status' => true]);
+    }
+
+
 
     public function deleteAnswer()
     {
@@ -225,7 +330,6 @@ class Forum extends CI_Controller
                 'title'       => $title,
                 'description' => $description,
                 'tags'        => $tagString,
-                'visibility'  => 1,
                 'is_approved'  => 1,
                 'user_id'     => loginId(),
                 'created_at'  => date('Y-m-d H:i:s')
@@ -314,6 +418,4 @@ class Forum extends CI_Controller
 
         $this->load->view(ADMIN . FORUM . 'details_view', $data);
     }
-
-
 }

@@ -53,6 +53,12 @@ class Student extends CI_Controller
                 array_push($row, $user['email']);
                 array_push($row, $user['mobile_no']);
                 array_push($row, $user['password']);
+                if($user['user_type']== 0){
+                    $user_type = '<span class="badge badge-info ">Offline</span>';
+                }else{
+                    $user_type = '<span class="badge badge-warning ">Online</span>';
+                }
+                array_push($row, $user_type);
                 if ($user['status']) {
                     $status = '<span class="badge badge-success ">Active</span>';
                 } else {
@@ -118,6 +124,7 @@ class Student extends CI_Controller
             $student['otp'] = $otpNumber;
 
             $student['user_from'] = 1;
+            $student['user_type'] = 0;
             if ($post['id'] == '') {
                 $student['is_otp_verified'] = 0;
                 if ($id = $this->CommonModel->iudAction('tbl_users', $student, 'insert')) {

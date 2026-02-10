@@ -301,7 +301,7 @@ class Course extends CI_Controller
 	public function lesson_list()
 	{
 		$data = $_POST;
-
+		
 		$draw   = $data['draw'];
 		$limit  = $data['length'];
 		$offset = $data['start'];
@@ -335,23 +335,32 @@ class Course extends CI_Controller
 				$row[] = $lesson['title'];
 				$row[] = $lesson['section_name'];
 
+				$action = '
+					<a href="javascript:void(0);"
+					class="btn btn-sm btn-outline-secondary text-warning mr-1"
+					title="Add Videos"
+					onclick="openLessonModel(' . $lesson['course_id'] . ',' . $lesson['section_id'] . ',' . $lesson['id'] . ')">
+						<i class="fa fa-book"></i>
+					</a>
 
-				$action = '<a class="btn btn-success btn-sm" ';
-				$action .= 'href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '"> ';
-				$action .= '<i class="fas fa-edit"></i></a>';
+					<a class="btn btn-success btn-sm mr-1"
+					href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '">
+						<i class="fas fa-edit"></i>
+					</a>
 
-				$action .= '<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
-							class="btn btn-sm btn-info mr-1">
-								MCQ
-							</a>';
+					<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
+					class="btn btn-sm btn-info mr-1">
+						MCQ
+					</a>
 
-				$action .= '<a class="btn btn-danger btn-sm" ';
-				$action .= 'href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '" ';
-				$action .= 'onclick="return confirm(\'Delete this lesson?\')">';
-				$action .= '<i class="fas fa-trash-alt"></i></a>';
+					<a class="btn btn-danger btn-sm"
+					href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
+					onclick="return confirm(\'Delete this lesson?\')">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+					';
 
 				$row[] = $action;
-
 				$rows[] = $row;
 			}
 		}
@@ -398,7 +407,7 @@ class Course extends CI_Controller
 
 				$data['resources'] = $this->CommonModel->getData(
 					'tbl_course_resources',
-					['course_id' => $id]
+					['course_id' => $id, 'deleted_at' => NULL],
 				);
 
 				$data['course_duration'] = $this->db
@@ -604,6 +613,136 @@ class Course extends CI_Controller
 		redirect(base_url(ADMIN . 'Course'));
 	}
 
+	public function updateResources($course_id)
+	{
+		if (empty($_POST['resources'])) {
+			$this->session->set_flashdata('error', 'No resources submitted');
+			redirect(base_url(ADMIN . 'Course/view/' . $course_id));
+			return;
+		}
+
+		$notesArray = $_POST['resources'];
+		$files      = $_FILES['resources'];
+
+		foreach ($notesArray as $i => $res) {
+
+			// Extract nested file data properly
+			if (empty($files['name'][$i]['file'])) {
+				continue;
+			}
+
+			$_FILES['temp_upload'] = [
+				'name'     => $files['name'][$i]['file'],
+				'type'     => $files['type'][$i]['file'],
+				'tmp_name' => $files['tmp_name'][$i]['file'],
+				'error'    => $files['error'][$i]['file'],
+				'size'     => $files['size'][$i]['file']
+			];
+
+			$upload = fileUpload('assets/uploads/course_resources', 'temp_upload');
+
+			if (!$upload['status']) {
+				print_r($upload);
+				die('UPLOAD FAILED');
+			}
+
+			$insert = [
+				'course_id'  => $course_id,
+				'file_notes' => $res['file_notes'] ?? '',
+				'file'       => $upload['image_name'],
+				'created_at' => date('Y-m-d H:i:s'),
+				'created_by' => loginId(),
+				'updated_at' => date('Y-m-d H:i:s'),
+				'updated_by' => loginId()
+			];
+
+			$this->CommonModel->iudAction(
+				'tbl_course_resources',
+				$insert,
+				'insert'
+			);
+		}
+
+		$this->session->set_flashdata('success', 'Resources uploaded successfully');
+		redirect(base_url(ADMIN . 'Course/view/' . $course_id));
+	}
+
+
+	public function CourseResource()
+	{
+		$draw   = intval($this->input->post('draw'));
+		$start  = intval($this->input->post('start'));
+		$length = intval($this->input->post('length'));
+
+		$total = $this->CourseModel->countCourseResources();
+
+		$rows = $this->CourseModel->getCourseResources($length, $start);
+
+		$data = [];
+		$sr = $start + 1;
+
+		foreach ($rows as $row) {
+
+			$fileUrl = base_url(COURSE_RESOURCES . $row['file']);
+
+			$deleteBtn = '
+            <button class="btn btn-sm btn-danger deleteResource"
+                data-id="' . $row['id'] . '">
+                Delete
+            </button>';
+
+			$data[] = [
+				$sr++,
+				htmlspecialchars($row['file_notes']),
+				'<a href="' . $fileUrl . '" target="_blank">View</a>',
+				$row['created_by'],
+				!empty($row['created_at'])
+					? date('d M Y', strtotime($row['created_at']))
+					: '-',
+				$deleteBtn
+			];
+		}
+
+		echo json_encode([
+			'draw' => $draw,
+			'recordsTotal' => $total,
+			'recordsFiltered' => $total,
+			'data' => $data
+		]);
+	}
+
+
+	public function deleteCourseResource()
+	{
+		$id = $this->input->post('id');
+
+		$row = $this->db
+			->where('id', $id)
+			->get('tbl_course_resources')
+			->row_array();
+
+		if (!$row) {
+			echo json_encode(['status' => false]);
+			return;
+		}
+
+		$filePath = FCPATH . COURSE_RESOURCES . $row['file'];
+
+		// SAFE DELETE
+		if (!empty($row['file']) && is_file($filePath)) {
+			unlink($filePath);
+		}
+
+		$this->CommonModel->iudAction(
+			'tbl_course_resources',
+			['deleted_at' => date('Y-m-d H:i:s')],
+			'update',
+			['id' => $id]
+		);
+
+		echo json_encode(['status' => true]);
+	}
+
 
 
 
@@ -805,35 +944,9 @@ class Course extends CI_Controller
 		}
 	}
 
-	public function CourseResource()
-	{
-		$draw   = intval($this->input->post('draw'));
-		$start  = intval($this->input->post('start'));
-		$length = intval($this->input->post('length'));
 
-		$rows = $this->CourseModel->getCourseResources();
 
-		$data = [];
-		$sr = $start + 1;
 
-		foreach ($rows as $row) {
-			$data[] = [
-				$sr++,
-				$row['file_notes'],
-				'<a href="' . base_url(COURSE_RESOURCES . $row['file']) . '" target="_blank">View</a>',
-				$row['created_by'],
-				date('d M Y', strtotime($row['created_at'])),
-				'<button class="btn btn-sm btn-danger">Delete</button>'
-			];
-		}
-
-		echo json_encode([
-			'draw' => $draw,
-			'recordsTotal' => count($rows),
-			'recordsFiltered' => count($rows),
-			'data' => $data
-		]);
-	}
 
 
 
@@ -884,8 +997,13 @@ class Course extends CI_Controller
 				}
 				array_push($row, $offer_type);
 
-				array_push($row, $value['offer_amount']);
 				array_push($row, $value['strike_thr_price']);
+				if ($value['offer_type'] == 1) {
+					array_push($row, $value['offer_amount'] . '/-');
+				} else {
+					array_push($row, $value['offer_amount'] . '%');
+				}
+				array_push($row, $value['price']);
 				if ($value['status'] == 1) {
 					$status = '<span class="badge badge-success _status" onclick="changeDurationStatus(' . $value['id'] . ',0)" id="status_' . $value['id'] . '" title="Click for In-Active">Active</span>';
 				} else {

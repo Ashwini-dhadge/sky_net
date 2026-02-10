@@ -16,13 +16,13 @@
                                 <?php
                                 if ($role == 2) {
                                 ?>
-                                    <a href="<?= base_url(ADMIN . 'User/add_user/'. $role); ?>"
-                                        class="btn btn-primary waves-effect waves-light float-right">Add Users</a>
+                                    <a href="<?= base_url(ADMIN . 'User/add_user/2'); ?>"
+                                        class="btn btn-primary float-right">Add Users</a>
                                 <?php
                                 } elseif ($role == 4) {
                                 ?>
-                                    <a href="<?= base_url(ADMIN . 'User/add_user/'. $role); ?>"
-                                        class="btn btn-primary waves-effect waves-light float-right">Add Instructor</a>
+                                    <a href="<?= base_url(ADMIN . 'User/add_user/4'); ?>"
+                                        class="btn btn-primary float-right">Add Instructor</a>
                                 <?php
                                 }
                                 ?>
