@@ -9,6 +9,7 @@ class Forum extends CI_Controller
         parent::__construct();
         $this->load->model(ADMIN . 'ForumModel');
         $this->load->model('CommonModel');
+        loginId();
     }
 
 

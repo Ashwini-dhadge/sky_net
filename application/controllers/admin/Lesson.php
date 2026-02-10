@@ -62,6 +62,13 @@ class Lesson extends CI_Controller
 				$description = substr($description, 0, 80) . '...';
 			}
 			$action = '
+			<a href="javascript:void(0);"
+				class="btn btn-sm btn-outline-secondary text-warning mr-1"
+				title="Add Videos"
+				onclick="openLessonModel(' . $row['course_id'] . ',' . $row['section_id'] . ',' . $row['id'] . ')">
+				<i class="fa fa-book"></i>
+			</a>
+
             <a href="' . base_url(ADMIN . 'Lesson/mcq/' . $row['id']) . '"
                class="btn btn-sm btn-outline-secondary text-primary mr-1" title="MCQ">
                 <i class="fa fa-list"></i>
@@ -321,7 +328,7 @@ class Lesson extends CI_Controller
 				continue;
 			}
 
-			$this->CommonModel->iudAction('tbl_mcq', [
+			$this->CommonModel->iudAction('tbl_lesson_mcq', [
 				'lesson_id'      => $lesson_id,
 				'question'       => $question,
 				'option_a'       => $optionA,
@@ -623,5 +630,112 @@ class Lesson extends CI_Controller
 				'message' => 'Lesson not found or already deleted'
 			]);
 		}
+	}
+
+
+	public function save_videos()
+	{
+		$course_id  = $this->input->post('course_id');
+		$section_id = $this->input->post('section_id');
+		$lesson_id  = $this->input->post('lesson_id');
+		// echo '<pre>';
+		// print_r($this->input->post());
+		// die();
+		$videos = $this->input->post('videos');
+		$files  = $_FILES['videos'] ?? [];
+
+		if (empty($videos)) {
+			echo json_encode(['status' => 0]);
+			return;
+		}
+
+		$posted_ids = [];
+
+		foreach ($videos as $i => $v) {
+			$video_id   = $v['id'] ?? '';
+			$thumb_name = $v['old_thumbnail'] ?? '';
+
+			if (!empty($files['name'][$i]['video_thumbnail'])) {
+				$tmp  = $files['tmp_name'][$i]['video_thumbnail'];
+				$name = time() . '_' . rand(1000, 9999) . '.jpg';
+
+				move_uploaded_file(
+					$tmp,
+					FCPATH . "assets/uploads/thumbnails/video_thumbnails/" . $name
+				);
+
+				$thumb_name = $name;
+			}
+
+			$videoData = [
+				"courses_id"      => $course_id,
+				"section_id"      => $section_id,
+				"lesson_id"       => $lesson_id,
+				"video_title"     => $v['video_title'],
+				"vimo_code"       => $v['vimo_code'],
+				"video_type"      => strtoupper($v['video_type']),
+				"video_thumbnail" => $thumb_name,
+				"updated_at"      => date("Y-m-d H:i:s"),
+				"updated_by"      => $this->session->userdata('id')
+			];
+
+			if (!empty($video_id)) {
+				$posted_ids[] = $video_id;
+
+				$this->CommonModel->iudAction(
+					'tbl_lesson_video',
+					$videoData,
+					'update',
+					['id' => $video_id]
+				);
+			}
+			else {
+				$videoData["created_at"] = date("Y-m-d H:i:s");
+				$videoData["created_by"] = $this->session->userdata('id');
+
+				$insert_id = $this->CommonModel->iudAction(
+					'tbl_lesson_video',
+					$videoData,
+					'insert'
+				);
+
+				if ($insert_id)
+					$posted_ids[] = $insert_id;
+			}
+		}
+
+		if (!empty($posted_ids)) {
+			$existing = $this->CommonModel->getData(
+				'tbl_lesson_video',
+				['lesson_id' => $lesson_id],
+				'id'
+			);
+
+			foreach ($existing as $row) {
+				if (!in_array($row['id'], $posted_ids)) {
+					$this->CommonModel->iudAction(
+						'tbl_lesson_video',
+						[ 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => loginId() ],
+						'update',
+						['id' => $row['id']]
+					);
+				}
+			}
+		}
+
+		echo json_encode(['status' => 1]);
+	}
+
+
+	public function get_lesson_videos()
+	{
+		$lesson_id = $this->input->post('lesson_id');
+
+		$videos = $this->CommonModel->getData(
+			'tbl_lesson_video',
+			['lesson_id' => $lesson_id, 'deleted_at' => NULL]
+		);
+
+		echo json_encode($videos);
 	}
 }

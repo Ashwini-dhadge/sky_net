@@ -47,6 +47,7 @@ class CourseModel extends CI_Model
             ->select('tcr.*, c.title as course_title')
             ->join('tbl_courses c', 'c.id = tcr.course_id', 'left')
             ->where('tcr.course_id', $this->input->post('course_id'))
+            ->where('tcr.deleted_at', NULL)
             ->get()
             ->result_array();
     }
@@ -177,8 +178,11 @@ class CourseModel extends CI_Model
     public function getLessonData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $course_id = 0, $id = 0)
     {
         $this->db->select('l.*, 
+        c.id as course_id,
+        s.id as section_id,
         c.title as course_name,
         s.title as section_name');
+        
 
         if ($course_id) {
             $this->db->where('l.course_id', $course_id);
@@ -423,6 +427,7 @@ class CourseModel extends CI_Model
     {
         $columns = [
             "ts.id",
+            "c.id as course_id",
             "c.title",
             "ts.title",
             "ts.description"
@@ -431,13 +436,12 @@ class CourseModel extends CI_Model
         $this->db->select("ts.*, c.title AS course_name");
         $this->db->from("tbl_section ts");
         $this->db->join("tbl_courses c", "c.id = ts.course_id", "LEFT");
+        $this->db->where("ts.deleted_at IS NULL");
 
-        /** FILTER BY COURSE */
         if (!empty($course_id)) {
-            $this->db->where("ts.course_id", $course_id);   // FIXED
+            $this->db->where("ts.course_id", $course_id);   
         }
 
-        /** SEARCH */
         if (!empty($searchVal)) {
             $this->db->group_start();
             $this->db->like("ts.title", $searchVal);
@@ -446,12 +450,10 @@ class CourseModel extends CI_Model
             $this->db->group_end();
         }
 
-        /** ORDER */
         if (!empty($sortColIndex) && isset($columns[$sortColIndex])) {
             $this->db->order_by($columns[$sortColIndex], $sortBy);
         }
 
-        /** LIMIT */
         if ($limit > 0) {
             $this->db->limit($limit, $offset);
         }

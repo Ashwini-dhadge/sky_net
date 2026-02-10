@@ -413,6 +413,7 @@ body[data-layout="horizontal"] .footer {
 }
 
 .main-content {
+	margin-bottom: 20px;
 	margin-left: 240px;
 	overflow: hidden;
 }
@@ -485,7 +486,7 @@ body[data-layout="horizontal"] .footer {
 }
 
 #sidebar-menu ul li ul.sub-menu li a {
-	padding: 0.4rem 1.5rem 0.4rem 3.3rem;
+	/* padding: -0.6rem 1.5rem 0.4rem 3.3rem; */
 	font-size: 15px;
 	color: #464b50;
 }
