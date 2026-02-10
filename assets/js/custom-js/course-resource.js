@@ -41,3 +41,7 @@ $(document).on('click', '.deleteResource', function () {
         }
     );
 });
+
+function updateResource() {
+    $("#updateResource").modal("show");
+}

@@ -1,5 +1,3 @@
- <br>
- <br>
  <hr>
 
  <table class="table table-borderless" id="questionTable">

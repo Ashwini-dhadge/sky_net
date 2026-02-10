@@ -39,52 +39,52 @@
     <link href="<?= base_url(); ?>assets/node_modules/c3-master/c3.min.css" rel="stylesheet">
 </head>
 <script type="text/javascript">
-base_url = '<?= base_url(); ?>';
-_admin = "admin/";;
+    base_url = '<?= base_url(); ?>';
+    _admin = "admin/";;
 </script>
 <style type="text/css">
-.cke_notification {
-    display: none;
-}
+    .cke_notification {
+        display: none;
+    }
 
-body[data-sidebar="dark"] .navbar-brand-box {
-    /* background: #000; */
-    /* background: #1A252F */
-    background: #fff
-}
+    body[data-sidebar="dark"] .navbar-brand-box {
+        /* background: #000; */
+        /* background: #1A252F */
+        background: #fff
+    }
 
-body[data-sidebar="dark"] .vertical-menu {
-    /* background: #000; */
-    background: #fff;
-    /* background: #1A252F */
-}
+    body[data-sidebar="dark"] .vertical-menu {
+        /* background: #000; */
+        background: #fff;
+        /* background: #1A252F */
+    }
 
-body[data-sidebar="dark"] .mm-active .active {
-    color: #ffffff !important;
-    background-color: #ff545a;
-    border-left-color: #fff;
-    border-left-style: solid;
-}
+    body[data-sidebar="dark"] .mm-active .active {
+        color: #ffffff !important;
+        background-color: #e3a6a8;
+        border-left-color: #fff;
+        border-left-style: solid;
+    }
 
-.bg-primary {
-    /* background-color: #ca151cc2 !important; */
-    background-color: #ca151cd1 !important;
-}
+    .bg-primary {
+        /* background-color: #ca151cc2 !important; */
+        background-color: #ca151cd1 !important;
+    }
 
-body[data-sidebar="dark"] .mm-active .active i {
-    color: #fff !important;
-}
+    body[data-sidebar="dark"] .mm-active .active i {
+        color: #fff !important;
+    }
 
-.btn-primary {
-    background-color: #CA151C;
-    border-color: #CA151C;
-}
+    .btn-primary {
+        background-color: #CA151C;
+        border-color: #CA151C;
+    }
 
-.btn-primary:hover {
-    color: #fff;
-    background-color: #CA151C !important;
-    border-color: #CA151C !important;
-}
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #CA151C !important;
+        border-color: #CA151C !important;
+    }
 </style>
 
 <body data-sidebar="dark">

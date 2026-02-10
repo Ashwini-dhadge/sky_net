@@ -48,7 +48,9 @@ class LessonsModel extends CI_Model
             l.sequence,
             l.description,
             c.title AS course_name,
-            s.title AS section_title
+            s.title AS section_title,
+            c.id as course_id,
+            s.id as section_id
         ");
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id', 'LEFT');

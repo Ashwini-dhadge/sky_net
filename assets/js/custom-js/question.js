@@ -5,7 +5,7 @@ $(document).ready(function () {
 		processing: true,
 		serverSide: false,
 		destroy: true,
-		pageLength: 25,
+		pageLength: 10,
 		autoWidth: false, // 🔥 IMPORTANT
 
 		ajax: {

@@ -301,7 +301,7 @@ class Course extends CI_Controller
 	public function lesson_list()
 	{
 		$data = $_POST;
-
+		
 		$draw   = $data['draw'];
 		$limit  = $data['length'];
 		$offset = $data['start'];
@@ -335,23 +335,32 @@ class Course extends CI_Controller
 				$row[] = $lesson['title'];
 				$row[] = $lesson['section_name'];
 
+				$action = '
+					<a href="javascript:void(0);"
+					class="btn btn-sm btn-outline-secondary text-warning mr-1"
+					title="Add Videos"
+					onclick="openLessonModel(' . $lesson['course_id'] . ',' . $lesson['section_id'] . ',' . $lesson['id'] . ')">
+						<i class="fa fa-book"></i>
+					</a>
 
-				$action = '<a class="btn btn-success btn-sm" ';
-				$action .= 'href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '"> ';
-				$action .= '<i class="fas fa-edit"></i></a>';
+					<a class="btn btn-success btn-sm mr-1"
+					href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '">
+						<i class="fas fa-edit"></i>
+					</a>
 
-				$action .= '<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
-							class="btn btn-sm btn-info mr-1">
-								MCQ
-							</a>';
+					<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
+					class="btn btn-sm btn-info mr-1">
+						MCQ
+					</a>
 
-				$action .= '<a class="btn btn-danger btn-sm" ';
-				$action .= 'href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '" ';
-				$action .= 'onclick="return confirm(\'Delete this lesson?\')">';
-				$action .= '<i class="fas fa-trash-alt"></i></a>';
+					<a class="btn btn-danger btn-sm"
+					href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
+					onclick="return confirm(\'Delete this lesson?\')">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+					';
 
 				$row[] = $action;
-
 				$rows[] = $row;
 			}
 		}
@@ -398,7 +407,7 @@ class Course extends CI_Controller
 
 				$data['resources'] = $this->CommonModel->getData(
 					'tbl_course_resources',
-					['course_id' => $id]
+					['course_id' => $id, 'deleted_at' => NULL],
 				);
 
 				$data['course_duration'] = $this->db
@@ -613,7 +622,7 @@ class Course extends CI_Controller
 		}
 
 		$notesArray = $_POST['resources'];
-		$files      = $_FILES['resources'];   
+		$files      = $_FILES['resources'];
 
 		foreach ($notesArray as $i => $res) {
 
@@ -989,9 +998,9 @@ class Course extends CI_Controller
 				array_push($row, $offer_type);
 
 				array_push($row, $value['strike_thr_price']);
-				if($value['offer_type'] == 1){
+				if ($value['offer_type'] == 1) {
 					array_push($row, $value['offer_amount'] . '/-');
-				}else{
+				} else {
 					array_push($row, $value['offer_amount'] . '%');
 				}
 				array_push($row, $value['price']);

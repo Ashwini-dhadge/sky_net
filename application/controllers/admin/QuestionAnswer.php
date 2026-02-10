@@ -36,24 +36,30 @@ class QuestionAnswer extends CI_Controller
         $unanswered = $this->input->post('unanswered');
 
         $questions = $this->QuestionModel->getallQuestion($course_id, $unanswered);
-
+        // echo '<pre>'; print_r($questions);die();
         $output = [];
-        $sr_no = 1;
+        $sr_no  = 1;
 
         foreach ($questions as $value) {
-
             $askedByName = trim(
                 ($value['asked_first_name'] ?? '') . ' ' .
                     ($value['asked_last_name'] ?? '')
-            ) ?: '-';
+            );
+
+            if ($askedByName === '') {
+                $askedByName = '-';
+            }
 
             $askedDate = $this->formatDate($value['asked_at']);
             $askedBy   = $askedByName . '<br><small class="text-muted">[' . $askedDate . ']</small>';
 
             $answeredByName = trim(
-                ($value['answered_first_name'] ?? '') . ' ' .
-                    ($value['answered_last_name'] ?? '')
-            ) ?: '-';
+                ($value['answered_first_name'] ?? '') . ' ' . ($value['answered_last_name'] ?? '')
+            );
+
+            if ($answeredByName === '') {
+                $answeredByName = '-';
+            }
 
             $answeredDate = $value['answered_at']
                 ? $this->formatDate($value['answered_at'])
@@ -61,30 +67,39 @@ class QuestionAnswer extends CI_Controller
 
             $answeredBy = $answeredByName . '<br><small class="text-muted">[' . $answeredDate . ']</small>';
 
-            $output[] = [
+            $answerPreview = $value['answer']
+                ? mb_substr($value['answer'], 0, 500) . '...'
+                : '<span class="badge badge-warning">Pending</span>';
+
+            $actionBtn = '
+            <button class="btn btn-sm btn-primary mr-1"
+                onclick=\'openAnswerModal('
+                . $value['id'] . ','
+                . json_encode($value['question']) . ','
+                . json_encode($askedBy) . ','
+                . json_encode($answeredBy) . ','
+                . json_encode($value['answer'] ?? '')
+                . ')\'>
+                <i class="fas fa-edit"></i>
+            </button>
+        ';
+
+            array_push($output, [
                 $sr_no++,
-                '<a href="' . base_url() . 'admin/Course/View/' . $value['course_id'] . '">' . $value['course_title'] . '</a>',
+                '<a href="' . base_url() . 'admin/Course/View/' . $value['course_id'] . '">'
+                    . $value['course_title'] .
+                    '</a>',
                 $askedBy,
                 $value['question'],
-                $value['answer']
-                    ? mb_substr($value['answer'], 0, 500) . '...'
-                    : '<span class="badge badge-warning">Pending</span>',
+                $answerPreview,
                 $answeredBy,
-                '<button class="btn btn-sm btn-primary mr-1"
-                    onclick=\'openAnswerModal(' .
-                    $value['id'] . ',' .
-                    json_encode($value['question']) . ',' .
-                    json_encode($askedBy) . ',' .
-                    json_encode($answeredBy) . ',' .
-                    json_encode($value['answer'] ?? '') .
-                    ')\' >
-                    <i class="fas fa-edit"></i>
-                </button>'
-            ];
+                $actionBtn
+            ]);
         }
 
         echo json_encode(['data' => $output]);
     }
+
 
     public function askQuestion()
     {

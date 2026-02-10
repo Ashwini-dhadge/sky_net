@@ -98,6 +98,9 @@ class Section extends CI_Controller
 	{
 
 		$data = $_POST;
+		// echo "<pre>";
+		// print_r($data);
+		// die();
 		$columns = [];
 		$page = $data['draw'];
 		$limit = $data['length'];
@@ -123,7 +126,8 @@ class Section extends CI_Controller
 				array_push($row, $lesson['course_name']);
 				$title = '<a href="' . base_url() . 'admin/Section/view/' . $lesson['id'] . '">' . $lesson['title'] . '</a>';
 				array_push($row, $title);
-				array_push($row, $lesson['description']);
+				$description = substr($lesson['description'], 0, 200);
+				array_push($row, $description . (strlen($lesson['description']) > 200 ? '...' : ''));
 
 				$alert = "confirm('Do you want to delete this record?');";
 				/*	$action = '
@@ -131,7 +135,8 @@ class Section extends CI_Controller
             	<a class="btn btn-danger btn-sm waves-effect waves-light" href="'.base_url().'admin/Course/CourseLessonDelete/'.$lesson['course_id'].'/'.$lesson['id'].'" role="button" onclick="return '.$alert.'" ><i class="fas fa-trash-alt"></i></a>';
                 array_push($row, $action);*/
 				$action = '
-            	<a class="btn btn-success btn-sm waves-effect waves-light" href="' . base_url() . 'admin/Section/Section/' . $lesson['id'] . '" role="button"><i class="fas fa-edit"></i></a>';
+            	<a class="btn btn-success btn-sm waves-effect waves-light" href="' . base_url() . 'admin/Section/Section/' . $lesson['id'] . '" role="button"><i class="fas fa-edit"></i></a>
+            	<a class="btn btn-danger btn-sm waves-effect waves-light" onclick="return confirm(\'Do you want to delete this record?\')" href="' . base_url() . 'admin/Section/CourseSectionDelete/' . $lesson['id']  . '"><i class="fas fa-trash"></i></a>';
 
 				// 			$action .= '
 				//         	<a class="btn btn-info btn-sm waves-effect waves-light" 
@@ -151,7 +156,7 @@ class Section extends CI_Controller
 		];
 		echo json_encode($response);
 	}
-	
+
 	public function courseLessonEdit()
 	{
 		$id = $this->input->post('id');
@@ -173,7 +178,7 @@ class Section extends CI_Controller
 	// public function Section($id = '')
 	// {
 	// 	if (!$this->input->post()) {
-			
+
 	// 		// ⭐ Get course_id from URL (if coming from course view)
 	// 		$selected_course_id = $this->input->get('course_id');
 
@@ -352,13 +357,8 @@ class Section extends CI_Controller
 
 			if ($id) {
 
-				// =============================
-				// EDIT SECTION
-				// =============================
-
 				$data['title'] = 'Edit Section';
 
-				// ⭐ GET MAIN SECTION
 				$data['section'] = $this->CommonModel->getData(
 					'tbl_section',
 					['id' => $id, 'deleted_by' => NULL],
@@ -367,19 +367,15 @@ class Section extends CI_Controller
 					'row_array'
 				);
 
-				// override selected course
 				$selected_course_id = $data['section']['course_id'];
 			} else {
 
-				// =============================
-				// ADD SECTION
-				// =============================
+
 				$data['title'] = 'Add Section';
 
 				$data['section'] = [];
 			}
 
-			// ⭐ send selected course to view
 			$data['selected_course_id'] = $selected_course_id;
 
 			$data['active'] = 'Section';
@@ -393,13 +389,9 @@ class Section extends CI_Controller
 		}
 
 
-		// ======================================================
-		// FORM SUBMITTED  (INSERT / UPDATE)
-		// ======================================================
 
 		$post = $this->input->post();
 
-		// MAIN DATA
 		$sectionData = [
 			'course_id' => $post['course_id'],
 			'title' => $post['title'],
@@ -409,20 +401,11 @@ class Section extends CI_Controller
 		];
 
 
-		// ---------------------------
-		// UPDATE
-		// ---------------------------
 		if (!empty($post['id'])) {
 			$section_id = $post['id'];
 
 			$this->db->where('id', $section_id)->update('tbl_section', $sectionData);
-
-
 		} else {
-			// ---------------------------
-			// INSERT
-			// ---------------------------
-
 			$sectionData['created_at'] = date('Y-m-d H:i:s');
 			$sectionData['created_by'] = 1;
 
@@ -547,19 +530,31 @@ class Section extends CI_Controller
 	}
 
 
-	public function CourseSectionDelete($course_id, $id)
+	public function CourseSectionDelete($id)
 	{
-		$where = array('id' => $id);
+		$data = [
+			'deleted_by' => loginId(),
+			'deleted_at' =>date('Y-m-d H:i:s'),
+		];
+		$where = [
+			'id'        => $id,
+		];
+		// echo "<pre>";
+		// print_r($data);
+		// die();
 
-		if ($this->CommonModel->iudAction('section', '', 'delete', $where)) {
+		$this->CommonModel->iudAction(
+			'tbl_section',
+			$data,
+			'update',
+			$where
+		);
 
-			$this->session->set_flashdata('success', 'Section deleted successfully');
-			redirect(base_url(ADMIN . 'Course/viewCourse/' . $course_id));
-		} else {
-			$this->session->set_flashdata('error', 'Error! fail to delete Site');
-			redirect(base_url(ADMIN . 'Course/viewCourse/' . $course_id));
-		}
+		$this->session->set_flashdata('success', 'Section deleted successfully');
+
+		redirect(ADMIN . 'Section'); 
 	}
+
 
 	public function CourseLessonDelete($course_id, $id)
 	{
