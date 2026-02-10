@@ -22,6 +22,7 @@ class Forum_model extends CI_Model
             fq.tags,
             fq.remark,
             fq.created_at,
+            fq.updated_at,
             u.first_name AS full_name,
             u.image,
             fq.is_approved,
@@ -92,7 +93,7 @@ class Forum_model extends CI_Model
             fq.description,
             fq.tags,
             fq.created_at,
-
+            fq.updated_at,
             u.first_name,
             u.image,
 
