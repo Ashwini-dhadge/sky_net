@@ -23,12 +23,22 @@ class Courses_model extends CI_Model
 
     function getCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
-        $this->db->select('c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `l`.`id`) FROM tbl_lesson as l WHERE `l`.`course_id` = `c`.`id` and `l`.`status`=1 )as no_of_lessons,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name');
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `l`.`id`) FROM tbl_lesson as l WHERE `l`.`course_id` = `c`.`id` and `l`.`status`=1 )as no_of_lessons,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name,
+        cd.price,
+    cd.offer_type,
+    cd.offer_amount,
+    cd.strike_thr_price,
+    CASE
+        WHEN cd.offer_type = 1 THEN 'Flat'
+        WHEN cd.offer_type = 2 THEN 'Percentage'
+        ELSE ''
+    END AS offer_type
+        ");
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
         $this->db->join('tbl_skill_master sm', 'sm.id =c.skill_id');
-
+        $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
 
         if ($search) {
             $searchVal = "(
@@ -63,12 +73,23 @@ class Courses_model extends CI_Model
 
     function getFranchiseCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
-        $this->db->select('c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name');
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name,
+        cd.price,
+    cd.offer_type,
+    cd.offer_amount,
+    cd.strike_thr_price,
+    CASE
+        WHEN cd.offer_type = 1 THEN 'Flat'
+        WHEN cd.offer_type = 2 THEN 'Percentage'
+        ELSE ''
+    END AS offer_type
+        ");
         // $this->db->select('c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `l`.`id`) FROM tbl_lesson as l WHERE `l`.`course_id` = `c`.`id` and `l`.`status`=1 )as no_of_lessons,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name');
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
         $this->db->join('tbl_skill_master sm', 'sm.id =c.skill_id');
+        $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
         // $this->db->join('tbl_order_courses_subscription o', 'o.course_id =c.id');
         // $this->db->join('tbl_users u1','u1.id =c.id');
 

@@ -98,9 +98,15 @@ return [
         'summary' => 'Update Profile',
         'tags' => 'Authentication',
         'method' => 'POST',
+        'headers' => [
+            'Authorization' => [
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+            ]
+        ],
         'parameters' => [
             'user_id' => ['type' => 'number', 'required' => true, 'example' => '12'],
-            'api_token' => ['type' => 'string', 'required' => true, 'example' => '1234567895'],
             'full_name' => ['type' => 'string', 'required' => true, 'example' => 'Amit'],
             'email' => ['type' => 'string', 'required' => true, 'example' => 'abc@gmail.com'],
 
@@ -128,11 +134,24 @@ return [
         'tags' => 'Course',
         'method' => 'POST',
         'parameters' => [
-            'api_token' => ['type' => 'string', 'required' => true, 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWdfdHlwZSI6IjMiLCJyZWdfaWQiOiIyIiwicmVnX2VtYWlsIjoib21rYXJAZ21haWwuY29tIiwicmVnX21vYmlsZSI6IjEyMzQ1Njc4OTkiLCJyZWdfbmFtZSI6Im9ta2FyICIsImtleSI6ODIxMjk0fQ.yAdTYxX4NSZrqvYGPnmdwzVCi2LqXTyw1lR3osc7f-4'],
             'user_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
             'search' => ['type' => 'string', 'required' => false, 'example' => '1234'],
             'page_no' => ['type' => 'number', 'required' => false, 'example' => '1'],
             'category_id' => ['type' => 'number', 'required' => false, 'example' => '1'],
+        ],
+        'response' => [
+            'result' => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Course Detail']
+        ]
+    ],
+    'course_detail' => [
+        'summary' => 'Course Detail',
+        'tags' => 'Course',
+        'method' => 'POST',
+        'parameters' => [
+
+            'user_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
+            'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
         ],
         'response' => [
             'result' => ['type' => 'boolean', 'example' => true],
@@ -144,7 +163,6 @@ return [
         'tags' => 'Course',
         'method' => 'POST',
         'parameters' => [
-            'api_token' => ['type' => 'string', 'required' => true, 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWdfdHlwZSI6IjMiLCJyZWdfaWQiOiIyIiwicmVnX2VtYWlsIjoib21rYXJAZ21haWwuY29tIiwicmVnX21vYmlsZSI6IjEyMzQ1Njc4OTkiLCJyZWdfbmFtZSI6Im9ta2FyICIsImtleSI6ODIxMjk0fQ.yAdTYxX4NSZrqvYGPnmdwzVCi2LqXTyw1lR3osc7f-4'],
             'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
             'question' => ['type' => 'string', 'required' => true, 'example' => '1'],
         ],
@@ -158,7 +176,6 @@ return [
         'tags' => 'Course',
         'method' => 'POST',
         'parameters' => [
-            'api_token' => ['type' => 'string', 'required' => true, 'example' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWdfdHlwZSI6IjMiLCJyZWdfaWQiOiIyIiwicmVnX2VtYWlsIjoib21rYXJAZ21haWwuY29tIiwicmVnX21vYmlsZSI6IjEyMzQ1Njc4OTkiLCJyZWdfbmFtZSI6Im9ta2FyICIsImtleSI6ODIxMjk0fQ.yAdTYxX4NSZrqvYGPnmdwzVCi2LqXTyw1lR3osc7f-4'],
             'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
 
         ],
@@ -168,8 +185,23 @@ return [
         ]
     ],
 
+    'create_forum_post' => [
+        'summary' => 'Create a Forum Post',
+        'tags' => ['Discussion Forum'],
+        'method' => 'POST',
+        'parameters' => [
+            'title' => ['type' => 'string', 'required' => true, 'example' => 'What is WebSocket'],
+            'description' => ['type' => 'string', 'required' => true, 'example' => 'Explain WebSocket in simple terms'],
+            'tags' => ['type' => 'array', 'items' => ['type' => 'string'], 'example' => ['websocket', 'realtime']],
+        ],
+        'response' => [
+            'result' => ['type' => 'boolean', 'example' => true],
+            'reason' => ['type' => 'string', 'example' => 'Forum post created successfully'],
+        ]
+    ],
 
-    // TestApi
+
+
     'testing' => [
         'summary' => 'Test Api',
         'tags' => 'Testing',
