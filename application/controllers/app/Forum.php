@@ -362,66 +362,6 @@ class Forum extends CI_Controller
     public function forumPostDetail()
     {
         authenticateUser();
-
-        // $forum_id       = $this->input->post('forum_post_id');
-        // $login_user_id  = $this->regId;
-
-        // if (empty($forum_id)) {
-        //     echo json_encode([
-        //         'result'  => false,
-        //         'message' => 'Forum post ID is required'
-        //     ]);
-        //     return;
-        // }
-
-        // $forum_post = $this->CommonModel->getData(
-        //     'tbl_forum_questions',
-        //     ['id' => $forum_id, 'deleted_by' => NULL],
-        //     'id',
-        //     '',
-        //     'row_array'
-        // );
-
-        // if (!$forum_post) {
-        //     echo json_encode([
-        //         'result' => false,
-        //         'message' => 'Invalid forum post ID'
-        //     ]);
-        //     return;
-        // }
-
-        // // Get comments
-        // $comments = $this->Forum_model->getForumComments($forum_id);
-
-        // $tree = [];
-        // $map  = [];
-
-        // foreach ($comments as $row) {
-
-        //     // Flags
-        //     $row['is_my_comment'] = (empty($row['parent_id']) && $row['user_id'] == $login_user_id);
-        //     $row['is_my_reply']   = (!empty($row['parent_id']) && $row['user_id'] == $login_user_id);
-
-        //     $row['replies'] = [];
-        //     $map[$row['comment_id']] = $row;
-        // }
-
-        // foreach ($map as $id => $row) {
-        //     if (empty($row['parent_id'])) {
-        //         $tree[] = &$map[$id];
-        //     } else {
-        //         if (isset($map[$row['parent_id']])) {
-        //             $map[$row['parent_id']]['replies'][] = &$map[$id];
-        //         }
-        //     }
-        // }
-
-        // echo json_encode([
-        //     'result'  => true,
-        //     'message' => 'Forum comments fetched successfully',
-        //     'data'    => $tree
-        // ]);
-
         $forum_id      = $this->input->post('forum_post_id');
         $login_user_id = $this->regId;
 
