@@ -77,7 +77,8 @@ class Courses extends CI_Controller
             $count = count($this->Courses_model->getFranchiseCoursesData($where, $search, 0, 0));
             $courseList = $this->Courses_model->getFranchiseCoursesData($where, $search, $limit, $offset);
             $response['course_list'] = $courseList;
-
+            // print_r($courseList);
+            // die;
             $sub = array();
             // foreach ($courseList as $key => $value) {
 
@@ -222,14 +223,14 @@ class Courses extends CI_Controller
                 }
             }
             if ($courseDetailsList) {
-                $response['course_details_list'] = $courseDetailsList;
                 $response['result'] = true;
-                $response['message'] = "Courses found";
+                $response['message'] = "Course details found";
+                $response['course_details_list'] = $courseDetailsList;
                 $response['course_path'] = base_url() . COURSE_IMAGES;
                 $response['resourse_path'] = base_url() . COURSE_RESOURCES;
             } else {
                 $response['result'] = false;
-                $response['message'] = "No Courses found";
+                $response['message'] = "No Course details found";
             }
         } else {
             $response['result'] = false;
@@ -409,11 +410,11 @@ class Courses extends CI_Controller
         authenticateUser();
         $login_user_id = $this->regId;
 
-        $api_token = trim($this->input->post('api_token'));
+
         $course_id = trim($this->input->post('course_id'));
         $question  = trim($this->input->post('question'));
 
-        if (empty($api_token) || empty($course_id) || empty($question)) {
+        if (empty($course_id) || empty($question)) {
             $response = [
                 'result' => false,
                 'message' => 'Invalid Input'
