@@ -7,7 +7,10 @@ $(document).ready(function () {
             destroy: true,
             ajax: {
                 url: base_url + _admin + 'Forum/pending_list',
-                type: 'POST'
+                type: 'POST',
+                data: function (d) {
+                    d.status = $('#statusFilter').val();
+                }
             },
             columns: [
                 { title: "#", orderable: false },
@@ -16,6 +19,24 @@ $(document).ready(function () {
                 { title: "Status" },
                 { title: "Action", orderable: false }
             ]
+        });
+
+        $('#statusFilter').on('change', function () {
+            table.ajax.reload();
+        });
+        $(document).on('click', '.returnPending', function () {
+
+            let id = $(this).data('id');
+
+            if (!confirm('Return this question to Pending?')) return;
+
+            $.post(base_url + _admin + 'Forum/returnToPending',
+                { id: id },
+                function () {
+                    table.ajax.reload(null, false);
+                }
+            );
+
         });
 
 
@@ -29,14 +50,48 @@ $(document).ready(function () {
         });
 
 
+
         $(document).on('click', '.reject', function () {
+
             let id = $(this).data('id');
-            if (!confirm('Reject this question?')) return;
-            $.post(base_url + _admin + 'Forum/reject',
-                { id: id },
-                () => table.ajax.reload(null, false)
-            );
+
+            $('#reject_forum_id').val(id);
+            $('#reject_reason').val('');
+
+            $('#rejectModal').modal('show');
+            
+            $('#rejectModal').on('shown.bs.modal', function () {
+                $('#reject_reason').focus();
+            });
+
+
         });
+
+        $('#confirmReject').on('click', function () {
+
+            let id = $('#reject_forum_id').val();
+            let reason = $('#reject_reason').val().trim();
+
+            if (reason === '') {
+                alert('Reason required');
+                return;
+            }
+
+            $.post(base_url + _admin + 'Forum/reject',
+                {
+                    id: id,
+                    reason: reason
+                },
+                function () {
+
+                    $('#rejectModal').modal('hide');
+                    table.ajax.reload(null, false);
+
+                }
+            );
+
+        });
+
 
     }
 
@@ -66,61 +121,59 @@ $(document).ready(function () {
 
                 if (tags) {
                     tags.split(',').forEach(t => {
-                        tagsHTML += `<span class="so-tag">${t.trim()}</span>`;
+                        tagsHTML += `<span class="tag-pill">${t.trim()}</span>`;
                     });
                 }
 
                 html += `
-                <tr class="so-row">
-
-                    <td class="so-stats">
-                        <div class="so-stat answer">
-                        <strong>${answers}</strong> replies
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="so-summary">
-
-                            <div style="display:flex;justify-content:space-between;">
-                                <div class="so-title">${title}</div>
-                            <div>
-                                <a class="btn btn-secondary btn-sm openAnswers editbtn"
-                                data-id="${id}" data-title="${title}" data-user="${user}">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-
-                                <a href="${base_url}admin/Forum/detail_view/${id}"
-                                    class="btn btn-secondary btn-sm viewbtn">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-
-                                <button class="btn btn-secondary btn-sm deletebtn">
-                                    <i class="fa fa-trash deleteQuestion" data-id="${id}"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mt-1 text-muted" style="text-align:justify;">
-                        ${description}
-                        </div>
-
-                        <div class="so-tags mt-2">${tagsHTML}</div>
-
-                        <div class="so-meta mt-2"
-                        style="display:flex;justify-content:space-between;">
-                        <span>asked by <b>${user}</b></span>
-                        <span>asked <b>${asked_at}</b></span>
-                        </div>
-
-                        </div>
-                    </td>
-
-                </tr>`;
+                        <tr>
+                            <td colspan="2">
+                                <div class="q-card-pro">
+                                    <div class="q-header">
+                                        <div class="q-header-left">
+                                            <div class="q-title">${title}</div>
+                                            <div class="q-meta">
+                                                <span class="q-user">${user}</span>
+                                                <span class="dot"></span>
+                                                ${asked_at}
+                                                <span class="dot"></span>
+                                                ${answers} replies
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="q-desc">
+                                        ${description}
+                                    </div>
+                                    <div class="q-footer">
+                                        <div class="q-tags"> ${tagsHTML} </div>
+                                        <div class="q-actions">
+                                            <a class="btn btn-success btn-sm openAnswers editbtn"
+                                                data-id="${id}" data-title="${title}" data-user="${user}">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="${base_url}admin/Forum/detail_view/${id}"
+                                                class="btn btn-light btn-sm">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm deletebtn deleteQuestion">
+                                                <i class="fa fa-trash " data-id="${id}"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>`;
             });
 
             $('#questionBody').html(html);
         }
+
+       
+
+
+
+
+
 
         function renderPager(totalRecords) {
 

@@ -1,5 +1,99 @@
 <?php init_header(); ?>
+<style>
+    .q-card-pro {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        transition: .15s;
+    }
 
+    .q-card-pro:hover {
+        border-color: #c79e9e;
+    }
+
+    .q-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .q-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #b75656;
+    }
+
+    .q-meta {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 3px;
+    }
+
+    .q-user {
+        font-weight: 600;
+    }
+
+    .dot {
+        display: inline-block;
+        width: 3px;
+        height: 3px;
+        background: #9ca3af;
+        border-radius: 50%;
+        margin: 0 7px;
+    }
+
+    .q-desc {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .q-footer {
+        margin-top: 12px;
+        /* display: flex;
+        justify-content: space-between; */
+        align-items: center;
+    }
+
+    .tag-pill {
+        background: #c9c9c9;
+        color: #000000;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-right: 5px;
+    }
+
+    .q-actions .btn {
+        margin-top: 2rem;
+        border: #b75656 solid 1px;
+        margin-right: 5px;
+    }
+
+    .vis-pill {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .vis-pill.on {
+        background: #ecfdf5;
+        color: #047857;
+        border-color: #a7f3d0;
+    }
+
+    .vis-pill.off {
+        background: #f3f4f6;
+        color: #374151;
+        border-color: #e5e7eb;
+    }
+</style>
 <div class="main-content">
     <div class="content-page">
         <div class="content">

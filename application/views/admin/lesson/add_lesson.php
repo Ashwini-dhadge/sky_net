@@ -72,13 +72,14 @@
                                                     <select class="form-control select2" name="course_id" required>
                                                         <option value="">Select Course</option>
                                                         <?php foreach ($course as $c) { ?>
-                                                            <option value="<?= $c['id'] ?>" <?php
-                                                                                            if (isset($lesson) && $lesson['course_id'] == $c['id']) {
-                                                                                                echo "selected";
-                                                                                            } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
-                                                                                                echo "selected";
-                                                                                            }
-                                                                                            ?>>
+                                                            <option value="<?= $c['id'] ?>"
+                                                                <?php
+                                                                if (isset($lesson) && $lesson['course_id'] == $c['id']) {
+                                                                    echo "selected";
+                                                                } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
+                                                                    echo "selected";
+                                                                }
+                                                                ?>>
                                                                 <?= $c['title']; ?>
                                                             </option>
                                                         <?php } ?>
@@ -87,13 +88,16 @@
                                                 <div class="form-group col-md-12">
                                                     <label>Select Section</label>
                                                     <select class="form-control select2" name="section_id" required>
-                                                        <option value="">Select Title</option>
+                                                        <option value="">Select Section</option>
                                                         <?php foreach ($section as $s) { ?>
-                                                            <option value="<?= $s['id'] ?>" <?= (isset($lesson) && $lesson['section_id'] == $s['id']) ? "selected" : "" ?>>
+                                                            <option value="<?= $s['id'] ?>"
+                                                                <?= (isset($lesson) && $lesson['section_id'] == $s['id']) ? 'selected' : '' ?>>
                                                                 <?= $s['title']; ?>
                                                             </option>
                                                         <?php } ?>
+
                                                     </select>
+
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Add Title</label>
@@ -110,7 +114,7 @@
                                                 <div class="form-group col-md-12">
                                                     <label>Select Tags</label>
                                                     <select class="custom-select" id="tags_input" name="tags_input[]"
-                                                        multiple required>
+                                                        multiple>
                                                         <?php if (!empty($lesson_tags)) {
                                                             foreach ($lesson_tags as $t) { ?>
                                                                 <option value="<?= trim($t['sub_title_name']) ?>" selected>
@@ -301,5 +305,69 @@
                 $(this).slideUp(deleteElement);
             }
         }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+
+        const courseSelect = $('select[name="course_id"]');
+        const sectionSelect = $('select[name="section_id"]');
+
+        // Grab selected section from edit mode
+        let selectedSection = sectionSelect.val();
+
+        function loadSections(course_id, selected = null) {
+            sectionSelect.html('<option value="">Loading...</option>').trigger('change');
+
+            $.ajax({
+                url: base_url + _admin + 'Lesson/getSectionsByCourse',
+                type: 'POST',
+                data: {
+                    course_id: course_id
+                },
+                success: function(res) {
+
+                    let response = JSON.parse(res);
+
+                    if (!response.status) {
+                        sectionSelect.html('<option value="">Select Section</option>');
+                        return;
+                    }
+
+                    let options = '<option value="">Select Section</option>';
+
+                    response.data.forEach(function(sec) {
+
+                        let isSelected = (selected && selected == sec.id) ?
+                            'selected' :
+                            '';
+
+                        options += `<option value="${sec.id}" ${isSelected}>${sec.title}</option>`;
+                    });
+
+                    sectionSelect.html(options).trigger('change');
+                }
+            });
+        }
+
+        courseSelect.on('change', function() {
+            let course_id = $(this).val();
+
+            if (!course_id) {
+                sectionSelect.html('<option value="">Select Section</option>').trigger('change');
+                return;
+            }
+
+            loadSections(course_id);
+        });
+
+
+        let existingCourse = courseSelect.val();
+
+        if (existingCourse && selectedSection) {
+            loadSections(existingCourse, selectedSection);
+        }
+
     });
 </script>

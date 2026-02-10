@@ -23,5 +23,8 @@
           </div>
         </div>
       </div>
-      <?php init_footer(); ?>
-      <script src="<?= base_url(); ?>assets/js/custom-js/lesson.js"></script>
+    </div>
+  </div>
+</div>
+<?php init_footer(); ?>
+<script src="<?= base_url(); ?>assets/js/custom-js/lesson.js"></script>

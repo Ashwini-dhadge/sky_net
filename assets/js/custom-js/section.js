@@ -18,7 +18,7 @@ function listLesson(data = "") {
 		processing: true,
 		serverSide: true,
 		destroy: true,
-		pageLength: 25,
+		pageLength: 10,
 		order: [[0, "desc"]],
 		ajax: {
 			url: base_url + _admin + "Section/sectionList",
