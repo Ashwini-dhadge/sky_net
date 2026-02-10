@@ -48,6 +48,7 @@ function listUsers(data = '') {
             { "width": "150px", title: "Email" },
             { "width": "50px", title: "Mobile" },
             { "width": "50px", title: "Password" },
+            { "width": "50px", title: "Student Type" },
             { "width": "50px", title: "Status" },
             { "width": "100px", title: "Action", orderable: false, "className": "text-right" },
         ],

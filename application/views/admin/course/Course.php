@@ -23,7 +23,6 @@
                                 value="<?= (isset($course)) ? $course['id'] : ''; ?>">
 
                             <div class="row">
-                                <!-- ================= LEFT SIDE (col-5) ================= -->
                                 <div class="col-12 col-md-5">
                                     <div class="form-group">
                                         <label class="col-form-label">Course Title</label>
@@ -176,7 +175,6 @@
                             </div>
                             <hr>
 
-                            <!-- ================= DURATION (NO REPEATER) ================= -->
                             <h4 class="header-title mt-4">Add Pricing</h4>
                             <hr>
 
@@ -219,7 +217,6 @@
 
                             <hr>
 
-                            <!-- ================= RESOURCE REPEATER ================= -->
                             <h4 class="header-title mt-4">Add Download File Resources</h4>
                             <hr>
 

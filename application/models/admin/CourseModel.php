@@ -51,6 +51,24 @@ class CourseModel extends CI_Model
             ->result_array();
     }
 
+    // public function getCourseResources($limit, $start)
+    // {
+    //     return $this->db
+    //         ->where('deleted_at', NULL)
+    //         ->limit($limit, $start)
+    //         ->order_by('id', 'DESC')
+    //         ->get('tbl_course_resources')
+    //         ->result_array();
+    // }
+
+    public function countCourseResources()
+    {
+        return $this->db
+            ->where('deleted_at', NULL)
+            ->count_all_results('tbl_course_resources');
+    }
+
+
 
     public function getCourseData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0)
     {
@@ -145,6 +163,7 @@ class CourseModel extends CI_Model
 
 
         $this->db->from('section s');
+        $this->db->where('s.deleted_by', NULL);
 
         if ($limit) {
             $this->db->limit($limit, $offset);
@@ -180,6 +199,7 @@ class CourseModel extends CI_Model
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id');
         $this->db->join('tbl_section s', 's.id = l.section_id');
+        $this->db->where('l.deleted_at IS NULL');
 
 
         if ($limit) {

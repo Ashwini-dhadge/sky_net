@@ -72,7 +72,7 @@ class User extends CI_Controller
                 $confirm = "confirm('Are you sure you want to delete this Officer?')";
 
                 $action = '
-                <a href="' . base_url() . ADMIN . 'User/add/' . $user['id'] . '" title="Edit" class="btn btn-success waves-effect waves-light btn-sm " ><i class="fas fa-edit" aria-hidden="true"></i></a>
+                <a href="' . site_url() . ADMIN . 'User/add/' . $user['id'] . '" title="Edit" class="btn btn-success waves-effect waves-light btn-sm " ><i class="fas fa-edit" aria-hidden="true"></i></a>
                 <a href="' . base_url() . ADMIN . 'User/view/' . $user['id'] . '/' . $user['role'] . '" title="view" class="btn btn-primary btn-sm waves-effect waves-light" ><i class="fas fa-eye" aria-hidden="true"></i></a>
                 <a onclick="return ' . $confirm . '" href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
                 
@@ -120,11 +120,15 @@ class User extends CI_Controller
         $data['title'] = 'Add Instructor';
 
         $post = $this->input->post();
-        if ($post['role'] == 2) {
-            $data['role']  = 2;
-        } elseif ($post['role'] == 4) {
-            $data['role']  = 4;
+
+        $role = $post['role'] ?? null;
+
+        if ($role == 2) {
+            $data['role'] = 2;
+        } elseif ($role == 4) {
+            $data['role'] = 4;
         }
+
 
         // echo '<pre>';
         // print_r($post);
@@ -173,6 +177,9 @@ class User extends CI_Controller
             $instructor['self_code'] = $selfReferral;
             $instructor['otp']       = $otpNumber;
             $instructor['user_from'] = 1;
+            if($role == 2){
+                $instructor['user_type'] = 0;
+            }
 
             if (empty($post['id'])) {
                 /* ===== INSERT ===== */
@@ -219,10 +226,26 @@ class User extends CI_Controller
 
         /* ================= EDIT VIEW ================= */
         if ($_id) {
+
             $instructor = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
-            $data       = $instructor[0];
-            $data['title'] = 'Edit Instructor';
+
+            if (empty($instructor)) {
+                show_404();
+            }
+
+            $data = $instructor[0];
+
+            // VERY IMPORTANT
+            $data['role'] = $data['role'];
+
+            $data['title'] = ($data['role'] == 4)
+                ? 'Edit Instructor'
+                : 'Edit User';
+
+            $this->load->view(ADMIN . USER . 'add-instructor', $data);
+            return;
         }
+
 
         if ($role == 2) {
             redirect(base_url(ADMIN . 'User'));
@@ -234,13 +257,14 @@ class User extends CI_Controller
     }
 
 
-    public function add_user($role)
+    public function add_user($role = 2)
     {
-        $data['title'] = 'Add User';
+        $data['title'] = ($role == 4) ? 'Add Instructor' : 'Add User';
         $data['role']  = $role;
 
         $this->load->view(ADMIN . USER . 'add-instructor', $data);
     }
+
     public function delete($id)
     {
         if ($id) {

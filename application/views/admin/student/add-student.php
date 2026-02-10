@@ -35,8 +35,8 @@
                                         <input type="hidden" name="id" id="id" value="<?= (isset($id)) ? $id : '' ?>">
                                         <input type="hidden" name="role" id="role"
                                             value="<?= (isset($role)) ? $role : '' ?>">
-                                        <div class="form-group col-md-6">
-                                            <label>First Name</label>
+                                        <div class="form-group col-md-12">
+                                            <label>Full Name</label>
                                             <div>
                                                 <input type="text" class="form-control" required
                                                     placeholder="Enter First Name" name="first_name"
@@ -44,15 +44,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group col-md-6">
+                                        <!-- <div class="form-group col-md-6">
                                             <label>Last Name</label>
                                             <div class="text">
                                                 <input type="text" class="form-control" required
                                                     placeholder="Enter Last Name" name="last_name"
                                                     value="<?= (isset($last_name)) ? $last_name : ''; ?>">
-
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group col-md-6">
                                             <label>Email</label>
                                             <div>

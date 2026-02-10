@@ -28,9 +28,7 @@ class Lesson extends CI_Controller
 		$data['course'] = $this->CommonModel->get('tbl_courses', [
 			'deleted_at' => NULL
 		]);
-		$data['section'] = $this->CommonModel->get('tbl_section', [
-			'deleted_at' => NULL
-		]);
+		$data['section'] = [];
 
 		$data['lessons'] = $this->CommonModel->get('tbl_lesson', [
 			'deleted_at' => NULL
@@ -348,7 +346,6 @@ class Lesson extends CI_Controller
 			echo json_encode(['status' => false, 'data' => []]);
 			return;
 		}
-
 		$sections = $this->CommonModel->getData(
 			'tbl_section',
 			['course_id'  => $course_id,	'deleted_at' => null],
@@ -358,7 +355,6 @@ class Lesson extends CI_Controller
 			'id',
 			'ASC'
 		);
-
 		echo json_encode([
 			'status' => true,
 			'data'   => $sections
@@ -580,8 +576,14 @@ class Lesson extends CI_Controller
 		$data['course'] = $this->CommonModel
 			->getData('tbl_courses', ['status' => 1, 'deleted_by' => NULL]);
 
-		$data['section'] = $this->CommonModel
-			->getData('tbl_section', ['deleted_by' => NULL]);
+		$data['section'] = $this->CommonModel->getData(
+			'tbl_section',
+			[
+				'course_id' => $data['lesson'][0]['course_id'],
+				'deleted_by' => NULL
+			]
+		);
+
 
 		$this->load->view(ADMIN . LESSON . 'add_lesson', $data);
 	}
