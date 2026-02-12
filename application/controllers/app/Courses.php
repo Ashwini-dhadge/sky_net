@@ -33,7 +33,11 @@ class Courses extends CI_Controller
     public function getCourses()
     {
         authenticateUser();
-
+        // echo "<pre>";
+        // print_r($_POST);
+        // echo json_encode($_POST);
+        // die;
+        // die;
         $response = array();
         $categoryId = trim($this->input->post('category_id')) ? trim($this->input->post('category_id')) : 0;
         $user_id = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : "";
@@ -54,13 +58,16 @@ class Courses extends CI_Controller
             }
 
             if ($page) {
-                $limit = 50;
+                $limit = 10;
                 $offset = ($page - 1) * $limit;
             } else {
                 $limit = 0;
                 $offset = 0;
             }
             $where = array();
+            if ($categoryId && strpos($categoryId, ',') !== false) {
+                $categoryId = explode(',', $categoryId);
+            }
             if ($categoryId) {
                 $where['category_id'] = $categoryId;
             }
@@ -74,8 +81,11 @@ class Courses extends CI_Controller
             // $where['o.user_id'] = $user_id;
             //FRANCHISE
 
-            $count = count($this->Courses_model->getFranchiseCoursesData($where, $search, 0, 0));
+            $total_records = count($this->Courses_model->getFranchiseCoursesData($where, $search, 0, 0));
             $courseList = $this->Courses_model->getFranchiseCoursesData($where, $search, $limit, $offset);
+            $total_pages = ($limit > 0) ? ceil($total_records / $limit) : 1;
+            // echo $this->db->last_query();
+            // die;
             $response['course_list'] = $courseList;
             // print_r($courseList);
             // die;
@@ -171,9 +181,15 @@ class Courses extends CI_Controller
                 $response['result'] = true;
                 $response['message'] = "Courses found";
                 $response['course_path'] = base_url() . COURSE_IMAGES;
+                $response['pagination'] = [
+                    'total_records' => (int)$total_records,
+                    'total_pages'   => (int)$total_pages,
+                    'current_page'  => (int)$page,
+                    'per_page'      => (int)$limit
+                ];
             } else {
                 $response['result'] = false;
-                $response['message'] = "No Category found";
+                $response['message'] = "No Courses found";
             }
         } else {
             $response['result'] = false;
@@ -202,14 +218,23 @@ class Courses extends CI_Controller
             $where['c.status'] = ACTIVE;
             $count = count($this->Courses_model->getCoursesData($where, '', 0, 0));
             $courseDetailsList = $this->Courses_model->getCoursesData($where, '', 0, 0);
-
-            // echo $this->db->last_query();
             // echo "<pre>";
-            // print_r($courseResourse);
+            // print_r($courseDetailsList[0]['skill_name']);
+            // die;
+            // echo $this->db->last_query();
+            $skill_name = explode(',', $courseDetailsList[0]['skill_name']);
+
+            // $skill_details
+            $courseDetailsList[0]['skill_details'] = $skill_name;
+            // echo "<pre>";
+            // print_r($skill_ids);
+            // print_r($skill_details);
+            // // print_r($courseDetailsList);
             // die;
 
             //print_r($courseDetailsList);die();
             foreach ($courseDetailsList as $key => $value) {
+
                 $courseSection = $this->Courses_model->getSectionData($courseId);
 
                 $courseDetailsList[$key]['sections'] = $courseSection;
