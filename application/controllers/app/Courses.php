@@ -226,6 +226,7 @@ class Courses extends CI_Controller
 
             // $skill_details
             $courseDetailsList[0]['skill_details'] = $skill_name;
+            $courseDetailsList[0]['course_rating'] = "4.5";
             // echo "<pre>";
             // print_r($skill_ids);
             // print_r($skill_details);
