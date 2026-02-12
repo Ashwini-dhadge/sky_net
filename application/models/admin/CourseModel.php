@@ -74,7 +74,7 @@ class CourseModel extends CI_Model
     public function getCourseData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0)
     {
 
-        $this->db->select('c.*,cc.category_name,sm.name');
+        $this->db->select('c.*,cc.category_name');
         if ($id) {
             $this->db->where('c.id', $id);
         }
@@ -91,7 +91,6 @@ class CourseModel extends CI_Model
 
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories as cc', 'cc.id =c.category_id');
-        $this->db->join('tbl_skill_master as sm', 'sm.id =c.skill_id');
         $this->db->where('c.deleted_by', NULL);
 
         if ($limit) {
@@ -392,7 +391,7 @@ class CourseModel extends CI_Model
 
         $this->db->where('lv.deleted_by', NULL);
         $this->db->from('tbl_lesson_question_master lv');
-        $this->db->join('tbl_skill_master as sm', 'sm.id =lv.skill_id');
+        $this->db->join('tbl_skill_master as sm', 'sm.id =lv.skill');
 
         if ($limit) {
             $this->db->limit($limit, $offset);
