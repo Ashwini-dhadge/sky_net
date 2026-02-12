@@ -79,16 +79,34 @@
                                         </select>
                                     </div>
 
+                                    <?php
+                                    $selectedSkills = [];
+                                    if (!empty($course['skill'])) {
+                                        $selectedSkills = explode(',', $course['skill']);
+                                    }
+                                    ?>
+
                                     <div class="form-group">
                                         <label class="col-form-label">Select Skill</label>
-                                        <select class="custom-select" id="skill_id" name="skill_id[]" multiple required>
-                                            <?php foreach ($skill as $value) {
-                                                $selected = (isset($course['skill_id']) && $course['skill_id'] == $value['id']) ? "selected" : "";
-                                            ?>
-                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+
+                                        <select class="custom-select" id="skill" name="skill[]" multiple>
+
+                                            <?php foreach ($skill as $value): ?>
+
+                                                <option value="<?= $value['name'] ?>"
+                                                    <?= in_array($value['name'], $selectedSkills) ? 'selected' : '' ?>>
                                                     <?= $value['name'] ?>
                                                 </option>
-                                            <?php } ?>
+
+                                            <?php endforeach; ?>
+
+                                            <!-- Show custom saved skills not in master -->
+                                            <?php foreach ($selectedSkills as $s):
+                                                if (!in_array($s, array_column($skill, 'name'))) : ?>
+                                                    <option value="<?= $s ?>" selected><?= $s ?></option>
+                                            <?php endif;
+                                            endforeach; ?>
+
                                         </select>
                                     </div>
 
@@ -324,7 +342,14 @@
 
 <script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
-
+<script>
+    $("#skill").select2({
+        tags: true,
+        tokenSeparators: [','],
+        placeholder: "Type and press Enter to add skill",
+        width: '100%'
+    });
+</script>
 <script>
     $(document).ready(function() {
 
@@ -364,13 +389,6 @@
     });
     CKEDITOR.replace('notes', {
         height: '380px'
-    });
-</script>
-<script type="text/javascript">
-    $("#skill_id").select2({
-        placeholder: "Select Skill",
-        allowClear: true,
-        width: '100%'
     });
 </script>
 <script>
