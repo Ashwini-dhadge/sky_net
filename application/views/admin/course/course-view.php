@@ -76,7 +76,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th class="p-1">Skill</th>
-                                                    <td class="p-1"><?= $course['name']; ?></td>
+                                                    <td class="p-1"><?= $course['skill' ?? '']; ?></td>
                                                 </tr>
                                                 <tr>
                                                     <th class="p-1">Certificate</th>
@@ -91,7 +91,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="col-lg-12 mt-3" style="overflow-y: overlay;">
+                                    <div class="col-lg-12 mt-3" style="overflow-y: overlay; max-height: 300px;">
                                         <h4><u>Notes</u></h4>
                                         <p><?= $course['notes']; ?></p>
                                     </div>

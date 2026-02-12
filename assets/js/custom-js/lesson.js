@@ -20,12 +20,43 @@ function listLesson() {
 
 		columns: [
 			{ data: 0, orderable: false },
-			{ data: 1 },
-			{ data: 2 },
-			{ data: 3 },
-			{ data: 4 },
-			{ data: 5 },
-		],
+			{ title: "Sequence" },
+			{ title: "Course" },
+			{ title: "Section" },
+			{ title: "Lesson" },
+
+			{
+				title: "Action",
+				orderable: false,
+				render: function (data) {
+
+					return `
+                <a href="javascript:void(0);"
+                    class="btn btn-sm btn-outline-secondary text-warning mr-1"
+                    onclick="openLessonModel(${data.course_id},${data.section_id},${data.lesson_id})">
+                    <i class="fa fa-book"></i>
+                </a>
+
+                <a href="${base_url + _admin}Lesson/mcq/${data.lesson_id}"
+                    class="btn btn-sm btn-outline-secondary text-primary mr-1">
+                    <i class="fa fa-list"></i>
+                </a>
+
+                <a href="${base_url + _admin}Lesson/edit/${data.lesson_id}"
+                    class="btn btn-sm btn-success mr-1">
+                    <i class="fa fa-edit"></i>
+                </a>
+
+                <a href="javascript:void(0);"
+                    class="btn btn-sm btn-danger"
+                    onclick="deleteLesson(${data.lesson_id})">
+                    <i class="fa fa-trash"></i>
+                </a>
+            `;
+				}
+			}
+		]
+
 	});
 }
 
@@ -38,6 +69,7 @@ $(document).ready(function () {
 		$("#filter_section").html('<option value="">All Sections</option>');
 
 		if (courseId) {
+			
 			$.ajax({
 				url: base_url + _admin + "Lesson/getSectionsByCourse",
 				type: "POST",

@@ -22,12 +22,12 @@ $(document).ready(function () {
 
 		columns: [
 			{ title: "ID" },
-			{ title: "Course", width: "10%" },
+			{ title: "Course", width: "20%" },
 			{ title: "Ask From", width: "12%" },
 			{ title: "Question", width: "25%" },
 			{
 				title: "Answer",
-				width: "35%",
+				width: "25%",
 				render: function (data, type, row) {
 					if (!data) {
 						return '<span class="badge badge-warning">Pending</span>';

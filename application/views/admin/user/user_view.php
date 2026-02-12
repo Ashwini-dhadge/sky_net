@@ -37,13 +37,13 @@
                                 <tbody>    
                             
                                     <tr>
-                                        <th scope="row" class="p-1">First Name:</th>
+                                        <th scope="row" class="p-1">Full Name:</th>
                                         <td class="p-1"><?= $user['first_name'];?></td>
                                     </tr>
-                                       <tr>
+                                       <!-- <tr>
                                         <th scope="row" class="p-1">Last Name:</th>
                                         <td class="p-1"><?= $user['last_name'];?></td>
-                                    </tr>
+                                    </tr> -->
                                      <tr>
                                         <th scope="row" class="p-1">Email:</th>
                                         <td class="p-1"><?= $user['email'];?></td>

@@ -301,7 +301,7 @@ class Course extends CI_Controller
 	public function lesson_list()
 	{
 		$data = $_POST;
-		
+
 		$draw   = $data['draw'];
 		$limit  = $data['length'];
 		$offset = $data['start'];
@@ -424,7 +424,6 @@ class Course extends CI_Controller
 
 			$data['active']   = 'Course';
 			$data['category'] = $this->CommonModel->getData('tbl_categories', ['status' => 1]);
-			$data['skill']    = $this->CommonModel->getData('tbl_skill_master');
 			$data['duration'] = $this->CommonModel->getData('tbl_duration_master');
 			$data['instructors'] = $this->CourseModel->getInstructors();
 
@@ -443,7 +442,10 @@ class Course extends CI_Controller
 			'instructor_id' => $post['instructor_id'],
 			'category_id'   => $post['category_id'],
 			'course_type'   => $post['course_type'] ?? 0,
-			'skill_id'      => $post['skill_id'][0] ?? null,
+			'skill' => !empty($post['skill'])
+				? implode(',', array_map('trim', $post['skill']))
+				: null,
+
 			'language'      => $post['language'],
 			'certificate'   => $post['certificate'],
 			'assessment'    => $post['assessment'],
