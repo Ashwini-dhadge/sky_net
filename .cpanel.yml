@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/wetap/public_html/2025/skynet/
+    - /bin/cp -R application/controllers $DEPLOYPATH/application
+    - /bin/cp -R application/models $DEPLOYPATH/application
+    - /bin/cp -R application/views $DEPLOYPATH/application
+    - /bin/cp -R application/config $DEPLOYPATH/application
+    - /bin/cp -R application/helpers $DEPLOYPATH/application
+    - /bin/cp -R assets/js $DEPLOYPATH/assets
+    - /bin/cp -R assets $DEPLOYPATH
