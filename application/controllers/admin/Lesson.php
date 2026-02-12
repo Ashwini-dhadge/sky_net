@@ -57,41 +57,21 @@ class Lesson extends CI_Controller
 
 		foreach ($result['data'] as $row) {
 
-			$description = strip_tags((string) ($row['description'] ?? ''));
-			if (strlen($description) > 80) {
-				$description = substr($description, 0, 80) . '...';
-			}
-			$action = '
-			<a href="javascript:void(0);"
-				class="btn btn-sm btn-outline-secondary text-warning mr-1"
-				title="Add Videos"
-				onclick="openLessonModel(' . $row['course_id'] . ',' . $row['section_id'] . ',' . $row['id'] . ')">
-				<i class="fa fa-book"></i>
-			</a>
-
-            <a href="' . base_url(ADMIN . 'Lesson/mcq/' . $row['id']) . '"
-               class="btn btn-sm btn-outline-secondary text-primary mr-1" title="MCQ">
-                <i class="fa fa-list"></i>
-            </a>
-            <a href="' . base_url(ADMIN . 'Lesson/edit/' . $row['id']) . '"
-               class="btn btn-sm btn-success mr-1" title="Edit">
-                <i class="fa fa-edit"></i>
-            </a>
-            <a href="javascript:void(0);"
-               class="btn btn-sm btn-danger" title="Delete"
-               onclick="deleteLesson(' . $row['id'] . ')">
-                <i class="fa fa-trash"></i>
-            </a>
-        ';
-
-			$data[] = [
+			$rowData = [
 				$sr_no++,
 				$row['sequence'],
 				$row['course_name'],
 				$row['section_title'],
 				$row['lesson_title'],
-				$action
+
+				[
+					'lesson_id'  => $row['id'],
+					'course_id'  => $row['course_id'],
+					'section_id' => $row['section_id']
+				]
 			];
+
+			array_push($data, $rowData);
 		}
 
 		echo json_encode([
@@ -101,6 +81,8 @@ class Lesson extends CI_Controller
 			'data'            => $data
 		]);
 	}
+
+
 	public function mcq($lesson_id)
 	{
 		// echo '<pre>'; print_r($this->session->userdata('user_id'));die();
