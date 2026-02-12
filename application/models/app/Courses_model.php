@@ -23,7 +23,7 @@ class Courses_model extends CI_Model
 
     function getCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
-        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `l`.`id`) FROM tbl_lesson as l WHERE `l`.`course_id` = `c`.`id` and `l`.`status`=1 )as no_of_lessons,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name,
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `l`.`id`) FROM tbl_lesson as l WHERE `l`.`course_id` = `c`.`id` and `l`.`status`=1 )as no_of_lessons,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,c.skill as skill_name,
         cd.price,
     cd.offer_type,
     cd.offer_amount,
@@ -37,7 +37,7 @@ class Courses_model extends CI_Model
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
-        $this->db->join('tbl_skill_master sm', 'sm.id =c.skill_id');
+
         $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
 
         if ($search) {
@@ -73,7 +73,7 @@ class Courses_model extends CI_Model
 
     function getFranchiseCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
-        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,sm.name as skill_name,
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,(SELECT COUNT(DISTINCT `cd`.`id`) FROM tbl_courses_duration as cd WHERE `cd`.`courses_id` = `c`.`id` and `cd`.`status`=1 )as no_of_duration,c.skill as skill_name,
         cd.price,
     cd.offer_type,
     cd.offer_amount,
@@ -88,7 +88,7 @@ class Courses_model extends CI_Model
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
-        $this->db->join('tbl_skill_master sm', 'sm.id =c.skill_id');
+
         $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
         // $this->db->join('tbl_order_courses_subscription o', 'o.course_id =c.id');
         // $this->db->join('tbl_users u1','u1.id =c.id');
@@ -109,7 +109,10 @@ class Courses_model extends CI_Model
         if ($limit || $offset) {
             $this->db->limit($limit, $offset);
         }
-
+        if (isset($where['category_id']) && is_array($where['category_id'])) {
+            $this->db->where_in('c.category_id', $where['category_id']);
+            unset($where['category_id']);
+        }
         $this->db->where($where);
         if ($where1) {
             $this->db->where($where1);
@@ -606,5 +609,13 @@ class Courses_model extends CI_Model
         }
 
         return ['questions' => $questions];
+    }
+
+    public function getSkills($ids)
+    {
+        $this->db->select('name');
+        $this->db->from('tbl_skill_master');
+        $this->db->where_in('id', $ids);
+        return $this->db->get()->result_array();
     }
 }

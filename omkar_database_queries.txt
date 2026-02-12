@@ -2,3 +2,5 @@
 ALTER TABLE `tbl_forum_answers` ADD `parent_id` INT NULL AFTER `answer`;
 ALTER TABLE `tbl_forum_questions` ADD `remark` TEXT NULL AFTER `is_approved`;
 ALTER TABLE `tbl_forum_questions` CHANGE `is_approved` `is_approved` TINYINT(4) NULL DEFAULT '0' COMMENT '0:Pending/un-public, 1:Approved/public, 2:Reject/un-public';
+
+ALTER TABLE `tbl_courses` CHANGE `skill_id` `skill_id` JSON NULL;
