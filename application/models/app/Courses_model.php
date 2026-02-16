@@ -532,7 +532,7 @@ class Courses_model extends CI_Model
     }
     public function getLessonVideoData($lesson_id)
     {
-        $this->db->select('tlv.id AS lesson_video_id,tlv.video_title,tlv.vimo_code,tlv.video_duration,tlv.video_thumbnail,tlv.video_type');
+        $this->db->select('tlv.id AS lesson_video_id,tlv.video_title,tlv.vimo_code,tlv.video_thumbnail,tlv.video_type');
         $this->db->from('tbl_lesson_video tlv');
         $this->db->where('tlv.lesson_id', $lesson_id);
         return $this->db->get()->result_array();

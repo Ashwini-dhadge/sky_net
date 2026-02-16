@@ -670,8 +670,7 @@ class Lesson extends CI_Controller
 					'update',
 					['id' => $video_id]
 				);
-			}
-			else {
+			} else {
 				$videoData["created_at"] = date("Y-m-d H:i:s");
 				$videoData["created_by"] = $this->session->userdata('id');
 
@@ -697,7 +696,7 @@ class Lesson extends CI_Controller
 				if (!in_array($row['id'], $posted_ids)) {
 					$this->CommonModel->iudAction(
 						'tbl_lesson_video',
-						[ 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => loginId() ],
+						['deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => loginId()],
 						'update',
 						['id' => $row['id']]
 					);

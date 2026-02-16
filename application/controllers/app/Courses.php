@@ -246,6 +246,7 @@ class Courses extends CI_Controller
                     $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
                     $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
                     $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+                    $courseDetailsList[$key]['sections'][$key1]['lesson_watch'] = count($courseSectionLesson);
                 }
             }
             if ($courseDetailsList) {
@@ -285,6 +286,7 @@ class Courses extends CI_Controller
             //print_r($courseDetailsList);die();
             foreach ($lessonDetails as $key => $value) {
                 $lessonVideo = $this->Courses_model->getLessonVideoData($lessonId);
+
                 $lessonSubTitle = $this->Courses_model->getLessonSubTitleData($lessonId);
                 $lessonDetails[$key]['lesson_video'] = $lessonVideo;
                 $lessonDetails[$key]['lesson_sub_title'] = $lessonSubTitle;
