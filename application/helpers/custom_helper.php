@@ -408,8 +408,8 @@ if (!function_exists('authenticateUser')) {
         $header = array_change_key_case($header, CASE_LOWER);
         // echo json_encode($token['1']);
         // die;
-        if (!$apiToken && isset($header['authorization'])) {
-            if (preg_match('/Bearer\s(\S+)/', $header['authorization'], $matches)) {
+        if (!$apiToken && isset($header['X-API-TOKEN'])) {
+            if (preg_match('/Bearer\s(\S+)/', $header['X-API-TOKEN'], $matches)) {
                 $apiToken = $matches[1];
             }
         }
