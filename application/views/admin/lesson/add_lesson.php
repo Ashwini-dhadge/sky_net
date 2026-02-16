@@ -181,12 +181,12 @@
                                                                     <div class="form-group col-md-5">
                                                                         <label>Type</label>
                                                                         <select name="video_type" class="form-control">
-                                                                            <option value="thoratical"
-                                                                                <?= ($vid['video_type'] == "thoratical") ? "selected" : "" ?>>Theoretical</option>
-                                                                            <option value="practical"
-                                                                                <?= ($vid['video_type'] == "practical") ? "selected" : "" ?>>Practical</option>
-                                                                            <option value="both"
-                                                                                <?= ($vid['video_type'] == "both") ? "selected" : "" ?>>Both</option>
+                                                                            <option value="THORATICAL"
+                                                                                <?= ($vid['video_type'] == "THORATICAL") ? "selected" : "" ?>>Theoretical</option>
+                                                                            <option value="PRACTICAL"
+                                                                                <?= ($vid['video_type'] == "PRACTICAL") ? "selected" : "" ?>>Practical</option>
+                                                                            <option value="BOTH"
+                                                                                <?= ($vid['video_type'] == "BOTH") ? "selected" : "" ?>>Both</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -225,9 +225,9 @@
                                                             <div class="form-group col-md-5">
                                                                 <label>Type</label>
                                                                 <select name="video_type" class="form-control">
-                                                                    <option value="thoratical">Theoretical</option>
-                                                                    <option value="practical">Practical</option>
-                                                                    <option value="both">Both</option>
+                                                                    <option value="THORATICAL">Theoretical</option>
+                                                                    <option value="PRACTICAL">Practical</option>
+                                                                    <option value="BOTH">Both</option>
                                                                 </select>
                                                             </div>
                                                         </div>

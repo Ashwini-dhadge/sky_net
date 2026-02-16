@@ -467,6 +467,8 @@ class Lesson extends CI_Controller
 		$videos = $this->input->post("videos");
 		$files  = $_FILES['videos'] ?? [];
 
+		$posted_ids = [];
+
 		if (!empty($videos)) {
 
 			foreach ($videos as $i => $v) {
@@ -474,9 +476,14 @@ class Lesson extends CI_Controller
 				$video_id   = $v['id'] ?? '';
 				$thumb_name = $v['old_thumbnail'] ?? '';
 
-				if (!empty($files['name'][$i]['video_thumbnail'])) {
+				// Upload thumbnail
+				if (
+					isset($files['name'][$i]['video_thumbnail']) &&
+					$files['name'][$i]['video_thumbnail'] != ''
+				) {
+
 					$tmp  = $files['tmp_name'][$i]['video_thumbnail'];
-					$name = time() . "_" . rand(1000, 9999) . ".jpg";
+					$name = time() . '_' . rand(1000, 9999) . '.jpg';
 
 					move_uploaded_file(
 						$tmp,
@@ -498,7 +505,9 @@ class Lesson extends CI_Controller
 					"updated_by"      => 1
 				];
 
-				if (!empty($video_id)) {
+				if ($video_id) {
+
+					$posted_ids[] = $video_id;
 
 					$this->CommonModel->iudAction(
 						'tbl_lesson_video',
@@ -511,34 +520,25 @@ class Lesson extends CI_Controller
 					$videoData["created_at"] = date("Y-m-d H:i:s");
 					$videoData["created_by"] = 1;
 
-					$this->CommonModel->iudAction(
+					$newId = $this->CommonModel->iudAction(
 						'tbl_lesson_video',
 						$videoData,
 						'insert'
 					);
+
+					$posted_ids[] = $newId;
 				}
 			}
 		}
+
 
 		if (!empty($id)) {
-
-			$posted_ids = [];
-
-			if (!empty($videos)) {
-				foreach ($videos as $v) {
-					if (!empty($v['id'])) {
-						$posted_ids[] = $v['id'];
-					}
-				}
-			}
-
-			if (!empty($posted_ids)) {
-				$this->db
-					->where('lesson_id', $id)
-					->where_not_in('id', $posted_ids)
-					->delete('tbl_lesson_video');
-			}
+			$this->db
+				->where('lesson_id', $lesson_id)
+				->where_not_in('id', $posted_ids)
+				->delete('tbl_lesson_video');
 		}
+
 
 		$this->db->trans_complete();
 
