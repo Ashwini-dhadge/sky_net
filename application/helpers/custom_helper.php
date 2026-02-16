@@ -400,20 +400,23 @@ if (!function_exists('authenticateUser')) {
         $CI->load->model('app/Authentication_model');
         // $CI->load->model('admin/Driver_model');
 
-        $apiToken = $CI->input->post('api_token') ? $CI->input->post('api_token') : 0;
+        // $apiToken = $CI->input->post('api_token') ? $CI->input->post('api_token') : 0;
         // print_r($CI->input->post());
         // die;
         $user_id = $CI->input->post('user_id') ? $CI->input->post('user_id') : 0;
         $header = $CI->input->request_headers();
+        // print_r($header);
+        // die;
         $header = array_change_key_case($header, CASE_LOWER);
         // echo json_encode($token['1']);
         // die;
-        if (!$apiToken && isset($header['X-API-TOKEN'])) {
-            if (preg_match('/Bearer\s(\S+)/', $header['X-API-TOKEN'], $matches)) {
+        if (isset($header['x-api-token'])) {
+            if (preg_match('/Bearer\s(\S+)/', $header['x-api-token'], $matches)) {
                 $apiToken = $matches[1];
             }
         }
-
+        // print_r($apiToken);
+        // die;
         try {
             if ($apiToken) {
                 $userDetail = JWTDecode($apiToken);
