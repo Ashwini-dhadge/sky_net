@@ -96,15 +96,9 @@
                 <li>
                     <a href="javascript:void(0);" class="has-arrow waves-effect">
                         <i class="fas fa-comments"></i>
-                        <span>Forum & Q&A</span>
+                        <span>Forum</span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="<?= base_url('admin/QuestionAnswer/') ?>">
-                                <i class="fas fa-question-circle"></i> Q & A Board
-                            </a>
-                        </li>
-
                         <li>
                             <a href="<?= base_url('admin/Forum/pending') ?>">
                                 <i class="fas fa-clock"></i> Pending Questions
@@ -118,7 +112,13 @@
                         </li>
                     </ul>
                 </li>
-
+                <li class="menu-title">Questions</li>
+                <li>
+                    <a href="<?= base_url('admin/QuestionAnswer'); ?>" class="waves-effect">
+                        <i class="fas fa-question-circle"></i>
+                        <span> Q & A Board</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
