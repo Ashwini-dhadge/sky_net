@@ -27,11 +27,11 @@
                             </a>
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a href="<?= base_url('admin/DurationMaster') ?>">
                                 <i class="fas fa-hourglass-half"></i> Durations
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
 

@@ -21,7 +21,7 @@ class User extends CI_Controller
         $data['title'] = 'Users';
         $data['active'] = 'User';
         $data['role'] = 2;
-    // echo $data['role']; die();
+        // echo $data['role']; die();
         $this->load->view(ADMIN . USER . 'list-user', $data);
     }
     public function index1()
@@ -177,7 +177,7 @@ class User extends CI_Controller
             $instructor['self_code'] = $selfReferral;
             $instructor['otp']       = $otpNumber;
             $instructor['user_from'] = 1;
-            if($role == 2){
+            if ($role == 2) {
                 $instructor['user_type'] = 0;
             }
 
@@ -321,6 +321,7 @@ class User extends CI_Controller
             $result['reason'] = false;
             $result['reason'] = "Data updated successfully";
         }
+        $this->session->set_flashdata('success', 'Data updated successfully');
         echo json_encode($result);
     }
     public function listUsersMyCourses()
@@ -378,6 +379,11 @@ class User extends CI_Controller
                 }
                 array_push($row, $status);
                 array_push($row, $user['order_date']);
+                if ($user["course_type"] == 1) {
+                    array_push($row, '<span class="text-info"><b>Online</b></span>');
+                } else {
+                    array_push($row, '<span class="text-success"><b>Offline</b></span>');
+                }
                 if ($type == 1) {
                     $endDate = date('Y-m-d', strtotime($user['order_date'] . " +" . $user['no_of_days'] . " days"));
                     if ($endDate < date('Y-m-d')) {

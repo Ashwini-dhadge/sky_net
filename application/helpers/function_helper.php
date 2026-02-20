@@ -3,14 +3,35 @@
 
 
 
-function  loginId()
+// function  loginId()
+// {
+//     $CI = &get_instance();
+//     //print_r($CI->session->userdata());die;
+//     if ($CI->session->userdata('user_id')) {
+//         return $CI->session->userdata('user_id');
+//     } else {
+//         redirect(base_url() . 'admin');
+//     }
+// }
+
+function loginId()
 {
     $CI = &get_instance();
-    //print_r($CI->session->userdata());die;
+
+    $timeout = 1800;
+
     if ($CI->session->userdata('user_id')) {
+        $last_activity = $CI->session->userdata('last_activity');
+
+        if ($last_activity && (time() - $last_activity > $timeout)) {
+            $CI->session->sess_destroy();
+            redirect(base_url('admin'));
+        }
+       
+        $CI->session->set_userdata('last_activity', time());
         return $CI->session->userdata('user_id');
     } else {
-        redirect(base_url() . 'admin');
+        redirect(base_url('admin'));
     }
 }
 

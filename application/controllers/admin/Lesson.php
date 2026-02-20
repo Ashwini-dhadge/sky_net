@@ -402,7 +402,10 @@ class Lesson extends CI_Controller
 		$title      = $this->input->post('tags');
 		$desc       = $this->input->post('description');
 		$sequence   = $this->input->post('sequence');
-
+		$no_of_question   = $this->input->post('no_of_question');
+		$exam_duration   = $this->input->post('exam_duration');
+		// echo"<pre>";print_r($exam_duration);
+		// echo"<pre>";print_r($no_of_question);die;
 		$tags = $this->input->post('tags_input');
 		$tags_string = (!empty($tags)) ? implode(" ", $tags) : "";
 
@@ -412,6 +415,8 @@ class Lesson extends CI_Controller
 			"title"       => $title,
 			"sub_title"   => $tags_string,
 			"description" => $desc,
+			"exam_duration" => $exam_duration,
+			"no_of_question" => $no_of_question,
 			"sequence"    => $sequence,
 			"updated_at"  => date("Y-m-d H:i:s"),
 			"updated_by"  => 1
@@ -473,17 +478,29 @@ class Lesson extends CI_Controller
 
 			foreach ($videos as $i => $v) {
 
+				$video_title = trim($v['video_title'] ?? '');
+				$vimo_code   = trim($v['vimo_code'] ?? '');
+				$video_type  = $v['video_type'] ?? '';
+
+				if ($video_title === '' && $vimo_code === '') {
+					continue;
+				}
+
+				if ($video_title === '' || $vimo_code === '') {
+					continue;
+				}
+
 				$video_id   = $v['id'] ?? '';
 				$thumb_name = $v['old_thumbnail'] ?? '';
 
-				// Upload thumbnail
 				if (
 					isset($files['name'][$i]['video_thumbnail']) &&
 					$files['name'][$i]['video_thumbnail'] != ''
 				) {
 
 					$tmp  = $files['tmp_name'][$i]['video_thumbnail'];
-					$name = time() . '_' . rand(1000, 9999) . '.jpg';
+					$ext  = pathinfo($files['name'][$i]['video_thumbnail'], PATHINFO_EXTENSION);
+					$name = time() . '_' . rand(1000, 9999) . '.' . $ext;
 
 					move_uploaded_file(
 						$tmp,
@@ -497,9 +514,9 @@ class Lesson extends CI_Controller
 					"courses_id"      => $course_id,
 					"section_id"      => $section_id,
 					"lesson_id"       => $lesson_id,
-					"video_title"     => $v['video_title'],
-					"vimo_code"       => $v['vimo_code'],
-					"video_type"      => $v['video_type'],
+					"video_title"     => $video_title,
+					"vimo_code"       => $vimo_code,
+					"video_type"      => $video_type,
 					"video_thumbnail" => $thumb_name,
 					"updated_at"      => date("Y-m-d H:i:s"),
 					"updated_by"      => 1
@@ -531,12 +548,22 @@ class Lesson extends CI_Controller
 			}
 		}
 
-
 		if (!empty($id)) {
-			$this->db
-				->where('lesson_id', $lesson_id)
-				->where_not_in('id', $posted_ids)
-				->delete('tbl_lesson_video');
+
+			if (!empty($posted_ids)) {
+
+				$this->db->where('lesson_id', $lesson_id);
+				$this->db->where_not_in('id', $posted_ids);
+				$this->db->delete('tbl_lesson_video');
+			} else {
+
+				$this->CommonModel->iudAction(
+					'tbl_lesson_video',
+					[],
+					'delete',
+					['lesson_id' => $lesson_id]
+				);
+			}
 		}
 
 
