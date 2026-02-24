@@ -46,7 +46,8 @@ class Forum extends CI_Controller
                 $row = [];
 
                 array_push($row, $offset + ($key + 1));
-                array_push($row, $forum['title']);
+                $title = wordwrap($forum['title'], 40, "<br>", true);
+                array_push($row, $title);
                 array_push($row, $forum['asked_by']);
 
                 switch ($status) {
