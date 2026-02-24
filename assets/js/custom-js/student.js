@@ -385,4 +385,59 @@ function listUsersWallet(data = '') {
 
 }
 
+$(document).on("click", ".openAssignModal", function () {
+    var userId = $(this).data("id");
+    $("#assignCourseModal").modal("show");
 
+    $.ajax({
+        url: base_url + _admin + 'Student/get_assign_course_modal',
+        type: "POST",
+        data: { user_id: userId },
+        success: function (response) {
+            $("#assignCourseModalBody").html(response);
+        },
+        error: function () {
+            $("#assignCourseModalBody").html("<p class='text-danger'>Something went wrong.</p>");
+        }
+    });
+});
+
+
+$(document).on("click", ".saveAssignCourse", function () {
+
+    $.ajax({
+        url: base_url + _admin + 'Student/save_assigned_courses',
+        type: "POST",
+        data: $("#assignCourseForm").serialize(),
+        dataType: "json",
+        success: function (res) {
+
+            if (res.status === true) { 
+               
+                $("#assignCourseModal").modal("hide");
+                window.location.reload();
+
+                // toastr.success("Courses updated successfully");
+                setTimeout(function () {
+                    var modalEl = document.getElementById('assignCourseModal');
+                    if (typeof bootstrap !== "undefined") {
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                    } else {
+                        $("#assignCourseModal").modal('hide');
+                    }
+                    location.reload();
+
+                }, 500);
+
+            } else {
+                toastr.error("Something went wrong");
+            }
+        },
+        error: function (xhr) {
+            console.log(xhr.responseText);
+            toastr.error("Server Error");
+        }
+    });
+
+});

@@ -149,6 +149,7 @@ function listUsersCourses(data = "") {
 			{ width: "80px", title: "Courses name" },
 			{ width: "80px", title: "Order No" },
 			{ width: "50px", title: "Status" },
+			{ width: "50px", title: "Type" },
 			{ width: "150px", title: "Purchased Date" },
 			{ width: "150px", title: "Expired Date" },
 			{ width: "50px", title: "Is Expired" },
@@ -286,7 +287,7 @@ function filter_users_challenge_mcq() {
 	listUsersMCQChallenge(data);
 }
 function listUsersMCQChallenge(data = "") {
-	console.log("Sfsf");
+	// console.log("Sfsf");
 	mcq = $("#user_challenge_datatable").DataTable({
 		dom: 'fl<"topbutton">tip',
 		oLanguage: {

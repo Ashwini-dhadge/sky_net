@@ -53,9 +53,9 @@ class Student extends CI_Controller
                 array_push($row, $user['email']);
                 array_push($row, $user['mobile_no']);
                 array_push($row, $user['password']);
-                if($user['user_type']== 0){
+                if ($user['user_type'] == 0) {
                     $user_type = '<span class="badge badge-info ">Offline</span>';
-                }else{
+                } else {
                     $user_type = '<span class="badge badge-warning ">Online</span>';
                 }
                 array_push($row, $user_type);
@@ -66,12 +66,40 @@ class Student extends CI_Controller
                 }
                 array_push($row, $status);
                 $confirm = "confirm('Are you sure you want to delete this Officer?')";
+                $assign_btn = '';
 
-                $action = '
-                <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" title="Edit" class="btn btn-success waves-effect waves-light btn-sm " ><i class="fas fa-edit" aria-hidden="true"></i></a>
-                <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="view" class="btn btn-primary btn-sm waves-effect waves-light" ><i class="fas fa-eye" aria-hidden="true"></i></a>
-                <a onclick="return ' . $confirm . '" href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
-                
+                $action = '';
+
+                if ($user['user_type'] == 0) {
+                    $action .= '
+                    <a href="javascript:void(0);" 
+                    title="Assign Course" 
+                    class="btn btn-info btn-sm waves-effect waves-light openAssignModal"
+                    data-id="' . $user['id'] . '">
+                    <i class="fas fa-book"></i>
+                    </a>
+                    ';
+                }
+
+                $action .= '
+                    <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
+                    title="Edit" 
+                    class="btn btn-success btn-sm waves-effect waves-light">
+                    <i class="fas fa-edit"></i>
+                    </a>
+
+                    <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
+                    title="View" 
+                    class="btn btn-primary btn-sm waves-effect waves-light">
+                    <i class="fas fa-eye"></i>
+                    </a>
+
+                    <a onclick="return ' . $confirm . '" 
+                    href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" 
+                    title="Delete" 
+                    class="btn btn-danger btn-sm waves-effect waves-light">
+                    <i class="fas fa-trash-alt"></i>
+                    </a>
                 ';
 
 
@@ -88,6 +116,149 @@ class Student extends CI_Controller
             'recordsFiltered' => $count
         ];
         echo json_encode($response);
+    }
+
+    public function get_assign_course_modal()
+    {
+        $user_id = $this->input->post('user_id');
+        $this->load->model('UserModel');
+
+        $courses = $this->CommonModel->getData(
+            'tbl_courses',
+            array(
+                'deleted_by' => null,
+                'course_type' => 0
+            )
+        );
+
+
+        $sub_map = $this->UserModel->getUserCourseSubscriptionMap($user_id);
+
+        $data['user_id'] = $user_id;
+        $data['courses'] = $courses;
+        $data['sub_map'] = $sub_map;
+
+        $this->load->view('admin/student/assign_course_modal', $data);
+    }
+
+    public function save_assigned_courses()
+    {
+        $user_id = $this->input->post('user_id');
+        $selected_courses = $this->input->post('course_ids');
+
+        if (!$user_id) {
+            echo json_encode(['status' => false]);
+            exit;
+        }
+
+        if (!is_array($selected_courses)) {
+            $selected_courses = [];
+        }
+
+        $this->db->where('user_id', $user_id);
+        $this->db->where('deleted_on IS NULL', null, false);
+        $allSubs = $this->db->get('tbl_order_courses_subscription')->result_array();
+
+        $all_map = [];
+        foreach ($allSubs as $sub) {
+            $all_map[$sub['course_id']] = $sub;
+        }
+
+        foreach ($all_map as $course_id => $sub) {
+
+            if (!in_array($course_id, $selected_courses) && $sub['active'] == 1) {
+
+                $this->CommonModel->iudAction(
+                    'tbl_order_courses_subscription',
+                    [
+                        'active' => 0,
+                        'deleted_on' => date('Y-m-d H:i:s')
+                    ],
+                    'update',
+                    [
+                        'id' => $sub['id']
+                    ]
+                );
+            }
+        }
+
+        foreach ($selected_courses as $course_id) {
+
+            if (isset($all_map[$course_id])) {
+                if ($all_map[$course_id]['active'] == 0) {
+
+                    $this->CommonModel->iudAction(
+                        'tbl_order_courses_subscription',
+                        [
+                            'active' => 1,
+                            'deleted_on' => null,
+                            'start_date' => date('Y-m-d'),
+                            'end_date' => date('Y-m-d', strtotime('+30 days'))
+                        ],
+                        'update',
+                        [
+                            'id' => $all_map[$course_id]['id']
+                        ]
+                    );
+                }
+                continue;
+            }
+
+            $order_no = 'ORD' . time() . rand(100, 999);
+
+            $orderData = [
+                'order_no' => $order_no,
+                'user_id' => $user_id,
+                'date' => date('Y-m-d'),
+                'order_status' => 1,
+                'payment_status' => 1,
+                'payment_type' => 3,
+                'amount' => 0,
+                'gst_amount' => 0,
+                'total_amount' => 0,
+                'created_on' => date('Y-m-d H:i:s')
+            ];
+
+            $order_id = $this->CommonModel->iudAction('tbl_orders', $orderData, 'insert');
+
+            $orderDetailsData = [
+                'order_id' => $order_id,
+                'courses_id' => $course_id,
+                'courses_duration_id' => 5,
+                'lesson_id' => 0,
+                'qty' => 1,
+                'rate' => 0,
+                'value' => 0,
+                'user_id' => $user_id,
+                'type' => 1,
+                'is_free' => 1,
+                'franchise_id' => 0
+            ];
+
+            $this->CommonModel->iudAction('tbl_order_details', $orderDetailsData, 'insert');
+
+            $subData = [
+                'order_id' => $order_id,
+                'order_no' => $order_no,
+                'user_id' => $user_id,
+                'type' => 1,
+                'courses_duration_id' => 5,
+                'course_id' => $course_id,
+                'start_date' => date('Y-m-d'),
+                'end_date' => date('Y-m-d', strtotime('+30 days')),
+                'active' => 1,
+                'no_of_days' => 30,
+                'is_free' => 1,
+                'created_on' => date('Y-m-d H:i:s')
+            ];
+
+            $this->CommonModel->iudAction('tbl_order_courses_subscription', $subData, 'insert');
+
+            $this->session->set_flashdata('success', 'Courses assigned successfully');
+        }
+
+        echo json_encode(['status' => true]);
+        exit;
     }
 
     public function add_student()
