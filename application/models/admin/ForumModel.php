@@ -102,17 +102,34 @@ class ForumModel extends CI_Model
             ->row_array();
     }
 
-    public function getAnswersWithUser($id)
+    public function getAnswersWithUser($forum_id)
     {
-        return $this->db
-            ->select("a.*, CONCAT(u.first_name,' ',u.last_name) as answered_by")
-            ->from('tbl_forum_answers a')
-            ->join('tbl_users u', 'u.id=a.user_id', 'left')
-            ->where('a.forum_id', $id)
-            ->where('a.deleted_at IS NULL', null, false)
-            ->order_by('a.id', 'DESC')
-            ->get()
-            ->result_array();
+        $this->db->select('a.*, u.first_name as answered_by');
+        $this->db->from('tbl_forum_answers a');
+        $this->db->join('tbl_users u', 'u.id = a.user_id');
+        $this->db->where('a.forum_id', $forum_id);
+        $this->db->where('a.deleted_at IS NULL', null, false);
+        $this->db->order_by('a.created_at', 'ASC');
+
+        $answers = $this->db->get()->result_array();
+        return $this->buildTree($answers);
+    }
+
+    private function buildTree($elements, $parentId = NULL)
+    {
+        $branch = [];
+        foreach ($elements as $element) {
+            if ($element['parent_id'] == $parentId) {
+                $children = $this->buildTree($elements, $element['id']);
+                if ($children) {
+                    $element['replies'] = $children;
+                } else {
+                    $element['replies'] = [];
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
     }
 
     public function getRandomQuestions($limit = 5, $excludeId = 0)
@@ -144,4 +161,41 @@ class ForumModel extends CI_Model
             'insert'
         );
     }
+
+    public function getQuestionsByUser($user_id)
+    {
+        $this->db->select('
+        q.*,
+        COUNT(a.id) as total_answers,
+        CONCAT(asker.first_name, " ", asker.last_name) as asked_by,
+        CONCAT(ans_user.first_name, " ", ans_user.last_name) as latest_answered_by
+    ');
+
+        $this->db->from('tbl_forum_questions q');
+        $this->db->join('tbl_users asker', 'asker.id = q.user_id', 'left');
+        $this->db->join(
+            'tbl_forum_answers a',
+            'a.forum_id = q.id AND a.deleted_at IS NULL',
+            'left'
+        );
+
+        $latestJoin = 'latest.id = (
+        SELECT fa.id
+        FROM tbl_forum_answers fa
+        WHERE fa.forum_id = q.id
+          AND fa.deleted_at IS NULL
+        ORDER BY fa.id DESC
+        LIMIT 1
+    )';
+
+        $this->db->join('tbl_forum_answers latest', $latestJoin, 'left', false);
+        $this->db->join('tbl_users ans_user', 'ans_user.id = latest.user_id', 'left');
+        $this->db->where('q.user_id', $user_id);
+        $this->db->where('q.deleted_at IS NULL', null, false);
+        $this->db->group_by('q.id');
+        $this->db->order_by('q.id', 'DESC');
+
+        return $this->db->get()->result_array();
+    }
+  
 }

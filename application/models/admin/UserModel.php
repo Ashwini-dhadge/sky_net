@@ -176,30 +176,57 @@ class UserModel extends CI_Model
         return $challenges;
     }
 
-    function getUserVideoMCQData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0, $where = '')
-    {
+    public function getUserVideoMCQData(
+        $searchVal = '',
+        $sortColIndex = 0,
+        $sortBy = 'desc',
+        $limit = 0,
+        $offset = 0,
+        $id = 0,
+        $where = ''
+    ) {
 
-        $this->db->select(' cr.lesson_video_id,solved_mcq,result,cr.total_marks ,cr.created_at as exam_date,v.title as exam_title,cr.no_of_question');
+        $this->db->select('
+        cr.lesson_video_id,
+        cr.solved_mcq,
+        cr.result,
+        cr.total_marks,
+        cr.created_at as exam_date,
+        v.title as exam_title,
+        cr.no_of_question
+    ');
+
         $this->db->from('tbl_lesson_user_video cr');
-        $this->db->join('tbl_lesson_video lv', 'lv.id =cr.lesson_video_id');
-        $this->db->join('tbl_video_master v', 'v.id =lv.video_id');
+        $this->db->join('tbl_lesson_video lv', 'lv.id = cr.lesson_video_id');
+        $this->db->join('tbl_video_master v', 'v.id = lv.video_id');
 
-        $this->db->where($where);
-        $searchCondition = "(     
+        if (!empty($where)) {
+            $this->db->where($where);
+        }
 
-                cm.exam_title like '%$searchVal%'  
-               
-            )";
+        if (!empty($searchVal)) {
+            $this->db->like('v.title', $searchVal);
+        }
+
         $this->db->where('cr.deleted_by', NULL);
-        $this->db->where('cr.solved_mcq is not null');
-        $this->db->where('cr.result is not null');
+        $this->db->where('cr.solved_mcq IS NOT NULL', null, false);
+        $this->db->where('cr.result IS NOT NULL', null, false);
+
+        if ($limit) {
+            $this->db->limit($limit, $offset);
+        }
+
+        $this->db->order_by('cr.id', $sortBy);
+
         $result = $this->db->get();
         $challenges = $result->result_array();
+
         foreach ($challenges as $key => $value) {
 
-            $challenges[$key]['no_of_question'] = $value['no_of_question'];
-            $challenges[$key]['out_of_mark'] = $value['no_of_question'] * VIDEO_QUESTION_CORRECT_PER_MARK;;
+            $challenges[$key]['out_of_mark'] =
+                (int)$value['no_of_question'] * VIDEO_QUESTION_CORRECT_PER_MARK;
         }
+
         return $challenges;
     }
     public function getUserWalletData($searchVal = '', $sortColIndex = '0', $sortBy = 'DESC', $limit = '0', $offset = '0', $id = '', $where = '')
@@ -265,6 +292,31 @@ class UserModel extends CI_Model
         }
 
         return $map;
+    }
+
+    public function getUserLessonProgress($user_id)
+    {
+        return $this->db
+            ->select("
+            luv.*,
+            c.title as course_title
+        ")
+            ->from('tbl_lesson_user_video luv')
+            ->join('tbl_courses c', 'c.id = luv.courses_id', 'left')
+            ->where('luv.user_id', $user_id)
+            ->where('luv.deleted_at IS NULL', null, false)
+            ->order_by('luv.id', 'DESC')
+            ->get()
+            ->result_array();
+    }
+
+    public function getLessonQuestions($lesson_id)
+    {
+        return $this->db
+            ->where('lesson_id', $lesson_id)
+            ->where('deleted_at IS NULL', null, false)
+            ->get('tbl_lesson_mcq')
+            ->result_array();
     }
 }
 

@@ -59,7 +59,7 @@ $(document).ready(function () {
             $('#reject_reason').val('');
 
             $('#rejectModal').modal('show');
-            
+
             $('#rejectModal').on('shown.bs.modal', function () {
                 $('#reject_reason').focus();
             });
@@ -168,7 +168,7 @@ $(document).ready(function () {
             $('#questionBody').html(html);
         }
 
-       
+
 
 
 
@@ -244,49 +244,93 @@ $(document).ready(function () {
 
     function loadAnswers() {
 
-        if ($.fn.DataTable.isDataTable('#answersTable')) {
-            $('#answersTable').DataTable().destroy();
-        }
-        $('#answersTable').DataTable({
-            ajax: {
-                url: base_url + _admin + 'Forum/answers_json/' + currentQuestion,
-                dataSrc: 'data'
-            },
-            columns: [
-                { data: 'id', title: 'ID' },
-                { data: 'answer', title: 'Answer', width: '90%' },
-                {
-                    data: null,
-                    title: 'Action',
-                    render: d => `
-                    <button class="btn btn-danger btn-sm delAns"
-                        data-id="${d.id}">
-                        Delete
-                    </button>`
-                }
-            ]
+        $.ajax({
+            url: base_url + _admin + 'Forum/answers_json/' + currentQuestion,
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+
+                let html = renderComments(res.data);
+                $('#answersContainer').html(html);
+            }
         });
     }
 
+    function renderComments(comments, level = 0) {
+
+        let html = '';
+
+        comments.forEach(comment => {
+
+            html += `
+        <div class="comment-box" style="margin-left:${level * 40}px">
+            <div class="comment-header">
+                <strong>${comment.answered_by}</strong>
+                <small>${comment.created_at}</small>
+            </div>
+
+            <div class="comment-body">
+                ${comment.answer}
+            </div>
+
+            <div class="comment-actions mt-2">
+                <button class="btn btn-sm btn-primary replyBtn"
+                    data-id="${comment.id}">
+                    Reply
+                </button>
+
+                <button class="btn btn-sm btn-danger delAns"
+                    data-id="${comment.id}">
+                    Delete
+                </button>
+            </div>
+        </div>
+        `;
+
+            if (comment.replies && comment.replies.length > 0) {
+                html += renderComments(comment.replies, level + 1);
+            }
+
+        });
+
+        return html;
+    }
+
+    let parentAnswerId = null;
+
+    $(document).on('click', '.replyBtn', function () {
+        parentAnswerId = $(this).data('id');
+        let replyingToUser = $(this).data('user');
+
+        $('#answerEditorModal .modal-title')
+            .html(`<i class="fa fa-reply mr-2"></i> Replying to ${replyingToUser}`);
+             $('#answerEditorModal').modal('show');
+    });
 
 
 
 
 
     $('#submitAnswerBtn').click(function () {
+
         let answerHtml = CKEDITOR.instances['newAnswer'].getData();
+
         if (answerHtml.trim() === '') {
             alert('Answer cannot be empty');
             return;
         }
+
         $.post(base_url + _admin + 'Forum/addAnswer', {
             forum_id: currentQuestion,
-            answer: answerHtml
+            answer: answerHtml,
+            parent_id: parentAnswerId
         }, function () {
+
+            parentAnswerId = null;
+            CKEDITOR.instances['newAnswer'].setData('');
             $('#answerEditorModal').modal('hide');
             loadAnswers();
         });
-
     });
 
 
@@ -335,3 +379,70 @@ $(document).ready(function () {
 
 
 });
+
+
+
+
+
+function renderComments(comments, level = 0, parentUser = null) {
+
+    let html = '';
+
+    comments.forEach(comment => {
+
+        let replyingLabel = parentUser
+            ? `<div class="reply-label">↳ Replying to ${parentUser}</div>`
+            : '';
+
+        html += `
+        <div class="thread-item level-${level}">
+
+            <div class="thread-content">
+
+                <div class="thread-header">
+                    <div>
+                        <span class="thread-user">${comment.answered_by || 'User'}</span>
+                        <span class="thread-time">${formatDate(comment.created_at)}</span>
+                    </div>
+                </div>
+
+                ${replyingLabel}
+
+                <div class="thread-body">
+                    ${comment.answer}
+                </div>
+
+                <div class="thread-actions">
+                    <button class="replyBtn"
+                        data-id="${comment.id}"
+                        data-user="${comment.answered_by}">
+                        Reply
+                    </button>
+
+                    <button class="deleteBtn delAns"
+                        data-id="${comment.id}">
+                        Delete
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+        `;
+
+        if (comment.replies && comment.replies.length > 0) {
+            html += renderComments(
+                comment.replies,
+                level + 1,
+                comment.answered_by
+            );
+        }
+
+    });
+
+    return html;
+}
+function formatDate(dateString) {
+    let d = new Date(dateString);
+    return d.toLocaleString();
+}

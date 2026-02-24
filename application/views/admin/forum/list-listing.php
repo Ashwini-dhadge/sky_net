@@ -93,6 +93,162 @@
         color: #374151;
         border-color: #e5e7eb;
     }
+
+    .comment-box {
+        border-left: 3px solid #28a745;
+        padding: 10px 15px;
+        margin-bottom: 25px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .comment-header {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .comment-body {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .comment-wrapper {
+        margin-bottom: 15px;
+    }
+
+    #answersContainer {
+        padding: 10px;
+    }
+
+    /* Each thread block */
+    .thread-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    /* Indentation */
+    .thread-item.level-1 {
+        margin-left: 30px;
+    }
+
+    .thread-item.level-2 {
+        margin-left: 60px;
+    }
+
+    .thread-item.level-3 {
+        margin-left: 90px;
+    }
+
+    /* Vertical thread line */
+    .thread-item::before {
+        content: '';
+        position: absolute;
+        left: -15px;
+        top: 10px;
+        bottom: 0;
+        width: 2px;
+        background: #e0e0e0;
+    }
+
+    /* Main comment box */
+    .thread-content {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        transition: 0.2s;
+    }
+
+    .thread-content:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .thread-header {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .thread-user {
+        font-weight: 600;
+        color: #222;
+        margin-right: 8px;
+    }
+
+    .thread-time {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .thread-body {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+    .reply-label {
+        font-size: 12px;
+        color: #0d6efd;
+        margin-bottom: 5px;
+    }
+
+    .thread-actions button {
+        background: none;
+        border: none;
+        font-size: 13px;
+        margin-right: 15px;
+        cursor: pointer;
+        color: #0d6efd;
+    }
+
+    .thread-actions button:hover {
+        text-decoration: underline;
+    }
+
+    .deleteBtn {
+        color: #dc3545 !important;
+    }
+
+    .main-comment {
+        border-left: 4px solid #28a745;
+    }
+
+    .child-comment {
+        border-left: 4px solid #17a2b8;
+        background: #ffffff;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .comment-user {
+        color: #343a40;
+    }
+
+    .comment-time {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .replying-to {
+        font-size: 12px;
+        color: #17a2b8;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .comment-body {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .comment-actions button {
+        margin-right: 5px;
+    }
 </style>
 <div class="main-content">
     <div class="content-page">

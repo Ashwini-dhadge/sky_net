@@ -9,7 +9,7 @@
                         <div class="card  mb-4 mt-4">
                             <div class="card-body">
                                 <h4 class="card-title"><?= $title ?></h4>
-                                <?php $this->load->view(ADMIN . FORUM . 'table-forum'); ?>
+                                <?php $this->load->view(ADMIN . FORUM . 'table-listing'); ?>
                             </div>
                         </div>
                     </div>

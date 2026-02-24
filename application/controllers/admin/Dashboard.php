@@ -11,7 +11,6 @@ class Dashboard extends CI_Controller
 
     public function index()
     {
-        // echo '<pre>';print_r($_SESSION);die();
         $data['total_users'] = $this->CommonModel->getData('tbl_users', array('status' => 1, 'role' => 3), '', '', 'num_rows');
         $data['total_course'] = $this->CommonModel->getData('tbl_courses', array('status' => 1, 'deleted_by' => NULL, 'category_id !=' => 0), '', '', 'num_rows');
         $data['total_package'] = $this->CommonModel->getData('tbl_courses', array('status' => 1, 'deleted_by' => NULL, 'category_id =' => 0), '', '', 'num_rows');

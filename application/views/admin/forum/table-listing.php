@@ -50,8 +50,7 @@
 
                  <div class="card border-0 shadow-sm">
                      <div class="card-body">
-                         <table id="answersTable" class="table table-hover table-striped table-bordered" style="width:100%">
-                         </table>
+                         <div id="answersContainer"></div>
                      </div>
                  </div>
              </div>

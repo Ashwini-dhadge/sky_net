@@ -441,3 +441,22 @@ $(document).on("click", ".saveAssignCourse", function () {
     });
 
 });
+
+$(document).on("click", ".openReplyModal", function () {
+    var forum_id = $(this).data("id");
+    $("#replyModal").modal("show");
+    $.ajax({
+        url: base_url + _admin + "Forum/getForumReplies",
+        type: "POST",
+        data: {
+            forum_id: forum_id
+        },
+        dataType: "json",
+        success: function (res) {
+            $("#replyModalTitle").text(res.title);
+            $("#replyModalCount").text(res.count + " Replies");
+            $("#replyModalBody").html(res.html);
+        }
+    });
+
+});

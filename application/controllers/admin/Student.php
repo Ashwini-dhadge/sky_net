@@ -11,6 +11,8 @@ class Student extends CI_Controller
         parent::__construct();
         $this->load->model(ADMIN . 'StudentModel');
         $this->load->model(ADMIN . 'UserModel');
+        $this->load->model(ADMIN . 'ForumModel');
+        $this->load->model(ADMIN . 'QuestionModel');
         loginId();
     }
 
@@ -341,16 +343,21 @@ class Student extends CI_Controller
             $data['title'] = 'Users';
             $user = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
             if ($user) {
-                //$data['title'] = 'Users';
                 $data['user'] = $user[0];
+                $data['forum_questions'] = $this->ForumModel->getQuestionsByUser($_id);
+                $data['qna_list'] = $this->QuestionModel->getUserCourseQna($_id);
+                $data['lesson_progress'] = $this->UserModel->getUserLessonProgress($_id);
+                foreach ($data['lesson_progress'] as $key => $row) {
+
+                    $questions = $this->UserModel->getLessonQuestions($row['lesson_id']);
+                    $data['lesson_progress'][$key]['questions'] = $questions;
+                }
                 $this->load->view(ADMIN . USER . 'user_view', $data);
             }
         } else {
             $data['title'] = 'Student';
             $user = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
-            // print_r($user);die;
             if ($user) {
-                //$data['title'] = 'Users';
                 $data['user'] = $user[0];
 
                 $this->load->view(ADMIN . STUDENT . 'student_view', $data);

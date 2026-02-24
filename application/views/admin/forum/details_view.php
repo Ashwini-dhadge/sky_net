@@ -1,157 +1,255 @@
 <?php init_header(); ?>
+
 <style>
-    .q-header {
-        background: linear-gradient(145deg, #ffffff, #fbfbfb);
-        border-radius: 16px;
-        padding: 26px;
-        box-shadow:
-            0 10px 30px rgba(0, 0, 0, .04),
-            0 2px 6px rgba(0, 0, 0, .03);
-        margin-bottom: 24px;
-        border: 1px solid rgba(0, 0, 0, .04);
+    .main-content {
+        background: #f6f8fa;
     }
 
-    .q-title {
+    .question-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 30px;
+        border: 1px solid #e6e8eb;
+        margin-bottom: 35px;
+        transition: 0.2s ease;
+    }
+
+    .question-card:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .question-title {
         font-size: 24px;
-        font-weight: 700;
-        letter-spacing: .2px;
+        font-weight: 600;
         margin-bottom: 12px;
     }
 
-    .q-desc {
-        color: #555;
-        line-height: 1.75;
+    .question-meta {
+        font-size: 13px;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .question-desc {
         font-size: 15px;
-        margin-bottom: 12px; 
+        line-height: 1.75;
+        margin-bottom: 18px;
     }
 
-    .q-tags span {
+    .question-tags span {
         background: #eef2ff;
-        color: #3b5bdb;
-        padding: 6px 12px;
-        border-radius: 30px;
+        color: #4c6ef5;
         font-size: 12px;
-        margin-right: 5px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin-right: 6px;
+    }
+
+    .discussion-header {
+        font-size: 18px;
         font-weight: 600;
+        margin: 35px 0 20px;
     }
 
-    .reply-item {
-        position: relative;
+    .thread {
         display: flex;
-        margin-bottom: 26px;
+        gap: 15px;
+        margin-bottom: 28px;
     }
 
-    .reply-item::before {
-        content: '';
-        position: absolute;
-        left: 17px;
-        top: 40px;
-        bottom: -26px;
-        width: 2px;
-        background: #e6e9f2;
+    .thread.level-1 {
+        margin-left: 35px;
     }
 
-    .reply-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ca151c, #ff4b2b);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        margin-right: 16px;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, .15);
-        z-index: 1;
+    .thread.level-2 {
+        margin-left: 70px;
     }
 
-    .reply-body {
+    .vote-box {
+        width: 42px;
+        text-align: center;
+        font-size: 18px;
+        color: #6c757d;
+    }
+
+    .vote-box div {
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .vote-box div:hover {
+        color: #4c6ef5;
+        transform: scale(1.2);
+    }
+
+    .vote-count {
+        font-size: 14px;
+        margin: 4px 0;
+    }
+
+    .thread-content {
         flex: 1;
         background: #ffffff;
+        border: 1px solid #e6e8eb;
         border-radius: 14px;
-        padding: 18px 20px;
-        box-shadow:
-            0 6px 18px rgba(0, 0, 0, .05),
-            0 1px 3px rgba(0, 0, 0, .04);
-        border: 1px solid rgba(0, 0, 0, .05);
-        transition: .18s ease;
+        padding: 20px;
+        transition: 0.2s ease;
     }
 
-    .reply-body:hover {
-        transform: translateY(-2px);
-        box-shadow:
-            0 14px 28px rgba(0, 0, 0, .08),
-            0 2px 6px rgba(0, 0, 0, .05);
+    .thread-content:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
     }
 
-    .reply-title {
-        font-size: 15px;
-        margin-bottom: 10px;
-        font-weight: 600;
-
-    }
-
-    .reply-meta {
+    .thread-header {
         display: flex;
-        justify-content: space-between;
-        font-size: 13px;
-        color: #888;
+        align-items: center;
+        gap: 8px;
         margin-bottom: 8px;
     }
 
-    .reply-text {
+    .thread-user {
+        font-weight: 600;
         font-size: 14px;
-        color: #444;
-        line-height: 1.7;
     }
 
-    .card {
-        border: none;
+    .thread-date {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .badge-owner {
+        background: #e7f5ff;
+        color: #1971c2;
+        font-size: 11px;
+        padding: 3px 7px;
+        border-radius: 20px;
+    }
+
+    .accepted-badge {
+        display: inline-block;
+        background: #e6fcf5;
+        color: #087f5b;
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .op-highlight .thread-content {
+        border-left: 4px solid #1971c2;
+    }
+
+    .thread-text {
+        font-size: 14px;
+        line-height: 1.7;
+        margin-top: 6px;
+        max-height: 130px;
+        overflow: hidden;
+        transition: 0.3s ease;
+        text-align: justify;
+    }
+
+    .thread-text.expanded {
+        max-height: 1000px;
+        text-align: justify;
+
+    }
+
+    .reaction-bar {
+        margin-top: 12px;
+    }
+
+    .reaction {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f1f3f5;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-right: 6px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .reaction:hover {
+        background: #dee2e6;
+        transform: scale(1.05);
+    }
+
+    .toggle-replies {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #1971c2;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .toggle-replies:hover {
+        text-decoration: underline;
+    }
+
+    .side-card {
+        background: #ffffff;
         border-radius: 14px;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, .05);
+        padding: 22px;
+        border: 1px solid #e6e8eb;
+        transition: 0.2s ease;
+    }
+
+    .side-card:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .side-title {
+        font-weight: 600;
+        margin-bottom: 15px;
     }
 
     .empty-thread {
+        padding: 22px;
         background: #ffffff;
         border-radius: 12px;
-        padding: 26px;
-        text-align: center;
+        border: 1px solid #e6e8eb;
         color: #999;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, .05);
+
     }
 </style>
+
 <div class="main-content mb-5">
     <div class="content-page">
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12">
-                        <a href="<?= base_url(ADMIN . FORUM . 'listing'); ?>" class="btn btn-primary float-right mt-3 mb-3">Back</a>
+
+                    <!-- Back Button -->
+                    <div class="col-12 text-right p-3">
+                        <a href="<?= base_url(ADMIN . FORUM . 'listing'); ?>"
+                            class="btn btn-outline-primary back-btn">
+                            ← Back to Listing
+                        </a>
                     </div>
-                    <div class="col-lg-8  mt-4">
 
-                        <div class="q-header">
+                    <!-- LEFT SIDE -->
+                    <div class="col-lg-8 mt-3">
 
-                            <div class="q-user">
-                                <!-- <div class="avatar">
-                                    <?= strtoupper(substr($question['asked_by'], 0, 1)) ?>
-                                </div> -->
-                                <div>
-                                    <div class="q-asked"></div>
-                                    <div class="q-date"><b><?= $question['asked_by'] ?></b> Asked Question</div>
-                                </div>
+                        <!-- Question -->
+                        <div class="question-card">
+
+                            <div class="question-meta">
+                                Asked by <strong><?= $question['asked_by'] ?></strong>
                             </div>
 
-                            <div class="q-title">
+                            <div class="question-title">
                                 <?= $question['title'] ?>
                             </div>
 
-                            <div class="q-desc">
+                            <div class="question-desc">
                                 <?= $question['description'] ?>
                             </div>
 
-                            <div class="q-tags">
+                            <div class="question-tags">
                                 <?php
                                 $tags = !empty($question['tags']) ? explode(',', $question['tags']) : [];
                                 foreach ($tags as $tag):
@@ -162,8 +260,8 @@
 
                         </div>
 
-
-                        <div class="reply-title">
+                        <!-- Discussion -->
+                        <div class="discussion-header">
                             Discussion
                         </div>
 
@@ -171,56 +269,79 @@
                             <div class="empty-thread">
                                 No replies yet — start the discussion 🙂
                             </div>
+                        <?php else: ?>
+
+                            <?php
+                            function renderThread($comments, $level = 0, $questionUser = '')
+                            {
+                                foreach ($comments as $comment):
+                                    $isOwner = ($comment['answered_by'] === $questionUser);
+                            ?>
+                                    <div class="thread level-<?= $level ?> <?= $isOwner ? 'op-highlight' : '' ?>">
+                                        <div class="thread-content">
+                                            <div class="thread-header">
+                                                <span class="thread-user">
+                                                    <?= $comment['answered_by'] ?>
+                                                </span>
+                                                <?php if ($isOwner): ?>
+                                                    <span class="badge-owner">Author</span>
+                                                <?php endif; ?>
+                                                <span class="thread-date">
+                                                    <?= date('d M Y H:i', strtotime($comment['created_at'])) ?>
+                                                </span>
+                                            </div>
+
+                                            <?php if ($level == 0 && $comment === reset($comments)): ?>
+                                                <span class="accepted-badge">✔ Accepted</span>
+                                            <?php endif; ?>
+
+                                            <div class="thread-text collapsible">
+                                                <?= nl2br(htmlspecialchars($comment['answer'])) ?>
+                                            </div>
+                                            <?php if (!empty($comment['replies'])): ?>
+                                                <div class="toggle-replies" onclick="toggleReplies(this)">
+                                                    View <?= count($comment['replies']) ?> replies
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php if (!empty($comment['replies'])): ?>
+                                        <div class="reply-container" style="display:none;">
+                                            <?php renderThread($comment['replies'], $level + 1, $questionUser); ?>
+                                        </div>
+                                    <?php endif; ?>
+                            <?php
+                                endforeach;
+                            }
+                            renderThread($answers, 0, $question['asked_by']);
+                            ?>
                         <?php endif; ?>
 
-
-                        <?php foreach ($answers as $ans): ?>
-                            <div class="reply-item">
-
-                                <div class="reply-avatar">
-                                    <?= strtoupper(substr($ans['answered_by'], 0, 1)) ?>
-                                </div>
-
-                                <div class="reply-body">
-
-                                    <div class="reply-meta">
-                                        <b><?= $ans['answered_by'] ?></b>
-                                        <span><?= date('d M Y', strtotime($ans['created_at'])) ?></span>
-                                    </div>
-
-                                    <div class="reply-text">
-                                        <?= nl2br(htmlspecialchars($ans['answer'])) ?>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        <?php endforeach; ?>
-
                     </div>
 
-                    <div class="col-lg-4 mb-4 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="card-title">Recent Questions</p>
+                    <!-- RIGHT SIDEBAR -->
+                    <div class="col-lg-4 mt-3">
 
-                                <?php if (!empty($recentQuestions)): ?>
-                                    <ul style="padding-left:15px;margin-bottom:0;">
-                                        <?php foreach ($recentQuestions as $rq): ?>
-                                            <li style="margin-bottom:8px;">
-                                                <a href="<?= base_url(ADMIN . 'Forum/detail_view/' . $rq['id']) ?>">
-                                                    <?= htmlspecialchars($rq['title']) ?>
-                                                </a>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php else: ?>
-                                    <div class="text-muted small">No questions found</div>
-                                <?php endif; ?>
-                            </div>
+                        <div class="side-card">
+                            <div class="side-title">Recent Questions</div>
 
+                            <?php if (!empty($recentQuestions)): ?>
+                                <?php foreach ($recentQuestions as $rq): ?>
+                                    <div style="margin-bottom:10px;">
+                                        <a href="<?= base_url(ADMIN . 'Forum/detail_view/' . $rq['id']) ?>">
+                                            <?= htmlspecialchars($rq['title']) ?>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="text-muted small">
+                                    No questions found
+                                </div>
+                            <?php endif; ?>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -229,11 +350,46 @@
 
 <?php init_footer(); ?>
 <script>
-    $("#tags_input").select2({
-        tags: true,
-        tokenSeparators: [','],
-        placeholder: "Type and press Enter to add tag",
-        width: '100%'
+    document.querySelectorAll('.vote-up').forEach(btn => {
+        btn.addEventListener('click', function() {
+            let count = this.nextElementSibling;
+            count.innerText = parseInt(count.innerText) + 1;
+        });
     });
+
+    document.querySelectorAll('.vote-down').forEach(btn => {
+        btn.addEventListener('click', function() {
+            let count = this.previousElementSibling;
+            count.innerText = parseInt(count.innerText) - 1;
+        });
+    });
+
+    document.querySelectorAll('.collapsible').forEach(el => {
+        if (el.scrollHeight > 130) {
+            let more = document.createElement('div');
+            more.innerText = "Read more";
+            more.style.color = "#1971c2";
+            more.style.cursor = "pointer";
+            more.style.marginTop = "6px";
+            more.onclick = function() {
+                el.classList.toggle('expanded');
+                this.innerText = el.classList.contains('expanded') ?
+                    "Show less" :
+                    "Read more";
+            };
+
+            el.after(more);
+        }
+    });
+
+    function toggleReplies(btn) {
+        let container = btn.parentElement.parentElement.nextElementSibling;
+        if (container.style.display === "none") {
+            container.style.display = "block";
+            btn.innerText = "Hide replies";
+        } else {
+            container.style.display = "none";
+            btn.innerText = btn.innerText.replace("Hide", "View");
+        }
+    }
 </script>
-<script src="<?= base_url(); ?>assets/js/custom-js/forum.js"></script>

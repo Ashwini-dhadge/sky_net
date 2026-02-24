@@ -58,4 +58,22 @@ class QuestionModel extends CI_Model
 
         return $this->db->get()->result_array();
     }
+
+    public function getUserCourseQna($user_id)
+    {
+        return $this->db
+            ->select("
+            qna.*,
+            c.title as course_title,
+            CONCAT(u.first_name,' ',u.last_name) as asked_by
+        ")
+            ->from('tbl_course_qna qna')
+            ->join('tbl_courses c', 'c.id = qna.course_id', 'left')
+            ->join('tbl_users u', 'u.id = qna.user_id', 'left')
+            ->where('qna.user_id', $user_id)
+            ->where('qna.deleted_at IS NULL', null, false)
+            ->order_by('qna.id', 'DESC')
+            ->get()
+            ->result_array();
+    }
 }

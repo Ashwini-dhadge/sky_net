@@ -307,7 +307,7 @@ class Forum extends CI_Controller
 
     public function answers_json($id)
     {
-        $list = $this->ForumModel->getAnswersByQuestion($id);
+        $list = $this->ForumModel->getAnswersWithUser($id); 
         echo json_encode([
             "data" => $list
         ]);
@@ -358,14 +358,16 @@ class Forum extends CI_Controller
         $this->CommonModel->iudAction(
             'tbl_forum_answers',
             [
-                'forum_id' => $this->input->post('forum_id'),
-                'answer' => $this->input->post('answer'),
-                'user_id' => loginId(),
+                'forum_id'  => $this->input->post('forum_id'),
+                'answer'    => $this->input->post('answer'),
+                'parent_id' => $this->input->post('parent_id') ?: NULL,
+                'user_id'   => loginId(),
                 'created_at' => date('Y-m-d H:i:s')
             ],
             'insert'
         );
-        $this->session->set_flashdata('success', 'Answer added successfully');
+
+        echo json_encode(['status' => true]);
     }
 
 
@@ -417,5 +419,51 @@ class Forum extends CI_Controller
         $data['recentQuestions'] = $recentQuestions;
 
         $this->load->view(ADMIN . FORUM . 'details_view', $data);
+    }
+
+    public function getForumReplies()
+    {
+        $forum_id = $this->input->post('forum_id');
+
+        $this->load->model('ForumModel');
+        $question = $this->ForumModel->getQuestionById($forum_id);
+        $replies = $this->ForumModel->getAnswersWithUser($forum_id);
+        // echo"<pre>";print_r($replies);exit;
+        $html = '';
+        if (!empty($replies)) {
+            foreach ($replies as $reply) {
+
+                $created_at = !empty($reply['created_at'])
+                    ? date('d M Y H:i', strtotime($reply['created_at']))
+                    : '-';
+
+                $html .= '
+                <div class="mb-4 p-3 border rounded">
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong>' . $reply['answered_by'] . '</strong>
+                        <small class="text-muted">' . $created_at . '</small>
+                    </div>
+                    <hr>
+                    <div style="font-size:14px;">
+                        ' . nl2br($reply['answer']) . '
+                    </div>
+                </div>
+            ';
+            }
+        } else {
+
+            $html = '
+            <div class="text-center py-5">
+                <i class="far fa-comment-dots fa-2x text-muted mb-2"></i>
+                <p class="text-muted">No replies yet.</p>
+            </div>
+        ';
+        }
+
+        echo json_encode([
+            'title' => $question['title'] ?? 'Discussion',
+            'count' => count($replies),
+            'html'  => $html
+        ]);
     }
 }
