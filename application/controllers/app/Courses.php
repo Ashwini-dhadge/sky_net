@@ -90,6 +90,46 @@ class Courses extends CI_Controller
             // print_r($courseList);
             // die;
             $sub = array();
+            if (!empty($courseList)) {
+
+                foreach ($courseList as $key => $course) {
+
+                    $ratingData = $this->getCourseRating($course['courses_id']);
+                    $no_of_course_lesson_video = $this->CommonModel->getData(
+                        'tbl_lesson_video',
+                        array('courses_id' => $course['courses_id']),
+                        'count(id) as total_videos',
+                        '',
+                        'row_array'
+                    );
+
+                    $no_of_watch_user_video = $this->CommonModel->getData(
+                        'tbl_lesson_user_video',
+                        array(
+                            'courses_id' => $course['courses_id'],
+                            'user_id' => $user_id,
+                            'view_video' => 1
+                        ),
+                        'count(id) as watched_videos',
+                        '',
+                        'row_array'
+                    );
+
+                    $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
+                    $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
+                    if ($totalVideos > 0) {
+                        $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    } else {
+                        $watchPercentage = 0;
+                    }
+                    $courseList[$key]['course_rating']   = $ratingData['course_rating'];
+                    $courseList[$key]['no_of_review'] = $ratingData['no_of_review'];
+                    $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
+                    $courseList[$key]['watched_videos'] = $watchedVideos;
+                    $courseList[$key]['total_videos'] = $totalVideos;
+                }
+            }
+
             // foreach ($courseList as $key => $value) {
 
             //     $where2['cd.courses_id'] = $value['courses_id'];
@@ -197,6 +237,135 @@ class Courses extends CI_Controller
         }
         echo json_encode($response);
     }
+    public function getWatchCourses()
+    {
+        authenticateUser();
+        // echo "<pre>";
+        // print_r($_POST);
+        // echo json_encode($_POST);
+        // die;
+        // die;
+        $response = array();
+        $categoryId = trim($this->input->post('category_id')) ? trim($this->input->post('category_id')) : 0;
+        $user_id = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : "";
+        $search = trim($this->input->post('search')) ? trim($this->input->post('search')) : "";
+        $page     = $this->input->post('page_no') ? $this->input->post('page_no') : 1;
+        // $reg_email = $this->reg_email;
+        // echo "<pre>";
+        // print_r($this->user_type);
+        // die;
+
+        if ($user_id) {
+            $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
+            if (empty($this->user_type)) {
+                $response['result'] = false;
+                $response['message'] = "User Type Not Found";
+                echo json_encode($response);
+                die;
+            }
+
+            if ($page) {
+                $limit = 10;
+                $offset = ($page - 1) * $limit;
+            } else {
+                $limit = 0;
+                $offset = 0;
+            }
+            $where = array();
+            if ($categoryId && strpos($categoryId, ',') !== false) {
+                $categoryId = explode(',', $categoryId);
+            }
+            if ($categoryId) {
+                $where['category_id'] = $categoryId;
+            }
+            $where['c.status'] = ACTIVE;
+            if (isset($this->user_type) && !empty($this->user_type)) {
+                $where['c.course_type'] = $this->user_type;
+            }
+            if (isset($user_id) && !empty($user_id)) {
+                $where['uv.user_id'] = $user_id;
+                // $where['o.user_id'] = $user_id;
+            }
+            // echo "<pre>";
+            // print_r($where);
+            // die;
+            // $where['o.user_id'] = $user_id;
+            //FRANCHISE
+
+            $total_records = count($this->Courses_model->getWatchCoursesData($where, $search, 0, 0));
+            $courseList = $this->Courses_model->getWatchCoursesData($where, $search, $limit, $offset);
+            $total_pages = ($limit > 0) ? ceil($total_records / $limit) : 1;
+            // echo $this->db->last_query();
+            // die;
+            $response['course_list'] = $courseList;
+            // print_r($courseList);
+            // die;
+            $sub = array();
+            if (!empty($courseList)) {
+
+                foreach ($courseList as $key => $course) {
+
+                    $ratingData = $this->getCourseRating($course['courses_id']);
+                    $no_of_course_lesson_video = $this->CommonModel->getData(
+                        'tbl_lesson_video',
+                        array('courses_id' => $course['courses_id']),
+                        'count(id) as total_videos',
+                        '',
+                        'row_array'
+                    );
+
+                    $no_of_watch_user_video = $this->CommonModel->getData(
+                        'tbl_lesson_user_video_view',
+                        array(
+                            'courses_id' => $course['courses_id'],
+                            'user_id' => $user_id,
+                            'view_video' => 1
+                        ),
+                        'count(id) as watched_videos',
+                        '',
+                        'row_array'
+                    );
+
+                    $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
+                    $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
+                    if ($totalVideos == $watchedVideos) {
+                        unset($courseList[$key]);
+                    }
+                    if ($totalVideos > 0) {
+                        $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    } else {
+                        $watchPercentage = 0;
+                    }
+                    $courseList[$key]['course_rating']   = $ratingData['course_rating'];
+                    $courseList[$key]['no_of_review'] = $ratingData['no_of_review'];
+                    $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
+                    $courseList[$key]['watched_videos'] = $watchedVideos;
+                    $courseList[$key]['total_videos'] = $totalVideos;
+                }
+            }
+            $courseList = array_values($courseList);
+
+            if ($courseList) {
+                $response['course_list'] = $courseList;
+                $response['result'] = true;
+                $response['message'] = "Courses found";
+                $response['course_path'] = base_url() . COURSE_IMAGES;
+                $response['pagination'] = [
+                    'total_records' => (int)$total_records,
+                    'total_pages'   => (int)$total_pages,
+                    'current_page'  => (int)$page,
+                    'per_page'      => (int)$limit
+                ];
+            } else {
+                $response['result'] = false;
+                $response['message'] = "No Courses found";
+            }
+        } else {
+            $response['result'] = false;
+            $response['message'] = 'Invalid Input';
+        }
+        echo json_encode($response);
+    }
 
     public function getCoursesDetails()
     {
@@ -222,11 +391,17 @@ class Courses extends CI_Controller
             // print_r($courseDetailsList[0]['skill_name']);
             // die;
             // echo $this->db->last_query();
-            $skill_name = explode(',', $courseDetailsList[0]['skill_name']);
+            $skill_name = [];
 
+            if (isset($courseDetailsList[0]['skill_name']) && !empty($courseDetailsList[0]['skill_name'])) {
+                $skill_name = explode(',', $courseDetailsList[0]['skill_name']);
+            }
             // $skill_details
             $courseDetailsList[0]['skill_details'] = $skill_name;
-            $courseDetailsList[0]['course_rating'] = "4.5";
+            $ratingData = $this->getCourseRating($courseId);
+
+            $courseDetailsList[0]['course_rating']  = $ratingData['course_rating'] ?? 0;
+            $courseDetailsList[0]['no_of_review'] = $ratingData['no_of_review'] ?? 0;
             // echo "<pre>";
             // print_r($skill_ids);
             // print_r($skill_details);
@@ -235,18 +410,88 @@ class Courses extends CI_Controller
 
             //print_r($courseDetailsList);die();
             foreach ($courseDetailsList as $key => $value) {
+                $where2['cd.courses_id'] = $courseId;
+                $courseDetailsList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+                // print_r($courseDetailsList[$key]['duration']);
+                // die;
+                foreach ($courseDetailsList[$key]['duration'] as $key2 => $value2) {
+                    $packege_subscribe = calcuateDate($user_id, $value['courses_id'], 0, 0, $value2['duration_id']);
+                    // print_r($packege_subscribe);
+                    // die;
+                    if ($packege_subscribe) {
 
+                        if ($packege_subscribe['is_expired']) {
+
+                            $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                            // $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        } else {
+                            $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                            // $sub[0] = $packege_subscribe;
+                            // $courseList[$key]['duration'][$key2]['package_plan'] = $sub;
+                        }
+                    } else {
+                        // $getPackage_id = $this->CommonModel->getData('tbl_courses_packages', array('courses_id' => $value2['courses_id'], 'courses_duration_id' => $value2['duration_id']), 'package_id');
+
+                        // if ($getPackage_id) {
+                        //     foreach ($getPackage_id as $key1 => $value1) {
+                        //         $packege_subscribe1 = calcuateDate($user_id, $value['courses_id'], 0, $value1['package_id'], 0);
+                        //         //    print_r($packege_subscribe1);die;
+                        //         if ($packege_subscribe1) {
+                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                        //             if (isset($packege_subscribe1['courses'][0])) {
+                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = $packege_subscribe1['courses'][0];
+                        //             } else {
+                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        //             }
+                        //         } else {
+                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                        //             $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        //         }
+                        //     }
+                        // } else {
+                        $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                        // $courseDetailsList[$key]['duration'][$key2]['package_plan'] = [];
+                        // }
+                    }
+                }
                 $courseSection = $this->Courses_model->getSectionData($courseId);
 
                 $courseDetailsList[$key]['sections'] = $courseSection;
                 $courseResourse = $this->Courses_model->getCourseResourse($courseId);
                 $courseDetailsList[$key]['resources'] = $courseResourse;
                 foreach ($courseSection as $key1 => $value1) {
+                    $watch_count = 0;
                     $where1['l.section_id'] = $value1['section_id'];
                     $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
+                    foreach ($courseSectionLesson as $key2 => $lessonList) {
+                        if ($key2 == 0) {
+                            $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                        } else {
+                            $view_previous = array();
+                            $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $courseSectionLesson[$key2 - 1]['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
+                            // $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $lessonList['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
+                            // echo $this->db->last_query();
+                            // die;
+                            // $courseSectionLesson[$key2]['is_lock_lesson_query'] = $this->db->last_query();
+                            //if(count(is_countable($view_previous)?$view_previous:[])){
+                            if (!empty($view_previous)) {
+
+                                if (is_null($view_previous['solved_mcq']) && is_null($view_previous['result'])) {
+                                    //  $lessonList[$key2]['asas1']=1;
+                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                                } else {
+                                    //   $lessonList[$key2]['asas1']=2;
+                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                                    $watch_count++;
+                                }
+                            } else {
+                                $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                            }
+                        }
+                    }
                     $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
                     $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
-                    $courseDetailsList[$key]['sections'][$key1]['lesson_watch'] = count($courseSectionLesson);
+                    $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
                 }
             }
             if ($courseDetailsList) {
@@ -274,6 +519,7 @@ class Courses extends CI_Controller
         $lessonId = trim($this->input->post('lesson_id')) ? trim($this->input->post('lesson_id')) : 0;
         $user_id = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : 0;
 
+        $lesson_view = $this->Common_model->getData('tbl_lesson_user_video', array('lesson_id' => $lessonId, 'user_id' => $user_id), 'view_video,solved_mcq,result,id', '', 'row_array');
         if ($lessonId && $user_id) {
             $where = array();
 
@@ -281,8 +527,28 @@ class Courses extends CI_Controller
                 $where['tl.id'] = $lessonId;
             }
             $lessonDetails = $this->Courses_model->getLessonsData('', '', $lessonId);
+            // Show Exam Flag
+            if (isset($lesson_view['view_video']) && $lesson_view['view_video'] == 1) {
+                $lessonDetails[0]['show_exam'] = true;
+            } else {
+                $lessonDetails[0]['show_exam'] = false;
+            }
 
 
+            // Already Test Submitted Flag
+            if (
+                empty($lesson_view) ||
+                (
+                    is_null($lesson_view['solved_mcq'] ?? null) &&
+                    is_null($lesson_view['result'] ?? null)
+                )
+            ) {
+                $lessonDetails[0]['already_test_submitted'] = false; // Not submitted
+                $lessonDetails[0]['result_id'] = null;
+            } else {
+                $lessonDetails[0]['already_test_submitted'] = true; // Submitted
+                $lessonDetails[0]['result_id'] = $lessonDetails[0]['id'];
+            }
             //print_r($courseDetailsList);die();
             foreach ($lessonDetails as $key => $value) {
                 $lessonVideo = $this->Courses_model->getLessonVideoData($lessonId);
@@ -293,6 +559,7 @@ class Courses extends CI_Controller
             }
             if ($lessonDetails) {
                 $response['lesson_details_list'] = $lessonDetails;
+
                 $response['result'] = true;
                 $response['message'] = "Lesson Details found";
                 $response['video_thumbnail_path'] = base_url() . VIDEO_IMAGES;
@@ -474,36 +741,356 @@ class Courses extends CI_Controller
         echo json_encode($response);
         return;
     }
+    public function courseResources()
+    {
+        authenticateUser();
+        $login_user_id = $this->regId;
+        $course_id = trim($this->input->post('course_id'));
+        if (empty($course_id)) {
+            $response = [
+                'result' => false,
+                'message' => 'Course Id is required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $course_resoureses = $this->CommonModel->getData('tbl_course_resources', ['course_id' => $course_id], 'file_notes AS file_name, file', '', 'result_array');
+
+        $response = [
+            'result' => true,
+            'message' => 'Course Resources Fetched Successfully',
+            'data' => $course_resoureses,
+            'resource_path' => base_url() . COURSE_RESOURCES
+        ];
+        echo json_encode($response);
+        return;
+    }
+
+    public function addCourseReview()
+    {
+        authenticateUser();
+
+        $user_id   = $this->regId; // logged in user id
+        $course_id = trim($this->input->post('course_id'));
+        $rate      = trim($this->input->post('rate'));
+        $review    = trim($this->input->post('review'));
+
+        $chekec_course_id = $this->CommonModel->getData('tbl_courses', ['id' => $course_id], 'id', '', 'row_array');
+        if (empty($chekec_course_id)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Invalid Course id'
+            ]);
+            return;
+        }
+        // Validation
+        if (empty($course_id)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Course id is required'
+            ]);
+            return;
+        }
+
+        if (empty($rate)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Rating is required'
+            ]);
+            return;
+        }
+
+        if ($rate < 1 || $rate > 5) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Rating must be between 1 to 5'
+            ]);
+            return;
+        }
+
+        if (empty($review)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Review is required'
+            ]);
+            return;
+        }
+
+        $insertData = [
+            'user_id'    => $user_id,
+            'course_id'  => $course_id,
+            'rate'       => $rate,
+            'review'     => $review,
+            'created_at' => date('Y-m-d H:i:s'),
+
+        ];
+
+        $insert = $this->CommonModel->iudAction(
+            'tbl_order_courses_review',
+            $insertData,
+            'insert'
+        );
+
+        if ($insert) {
+            $response = [
+                'result'  => true,
+                'message' => 'Review added successfully'
+            ];
+        } else {
+            $response = [
+                'result'  => false,
+                'message' => 'Something went wrong'
+            ];
+        }
+
+        echo json_encode($response);
+        return;
+    }
+
+    public function updateCourseReview()
+    {
+        authenticateUser();
+
+        $user_id   = $this->regId;
+        $review_id = trim($this->input->post('review_id'));
+        $rate      = trim($this->input->post('rate'));
+        $review    = trim($this->input->post('review'));
+
+        if (empty($review_id)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Review id is required'
+            ]);
+            return;
+        }
+
+        if (empty($rate)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Rating is required'
+            ]);
+            return;
+        }
+
+        if ($rate < 1 || $rate > 5) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Rating must be between 1 to 5'
+            ]);
+            return;
+        }
+
+        if (empty($review)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Review is required'
+            ]);
+            return;
+        }
+
+        // Check review exists
+        $check = $this->CommonModel->getData(
+            'tbl_order_courses_review',
+            [
+                'id' => $review_id,
+                'user_id' => $user_id,
+                'deleted_by' => NULL
+            ],
+            'id',
+            '',
+            'row_array'
+        );
+
+        if (empty($check)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Review not found'
+            ]);
+            return;
+        }
+
+        $updateData = [
+            'rate'       => $rate,
+            'review'     => $review,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $user_id
+        ];
+
+        $update = $this->CommonModel->iudAction(
+            'tbl_order_courses_review',
+            $updateData,
+            'update',
+            ['id' => $review_id]
+        );
+
+        if ($update) {
+            $response = [
+                'result' => true,
+                'message' => 'Review updated successfully'
+            ];
+        } else {
+            $response = [
+                'result' => false,
+                'message' => 'Nothing changed or update failed'
+            ];
+        }
+
+        echo json_encode($response);
+    }
+    public function deleteCourseReview()
+    {
+        authenticateUser();
+
+        $user_id   = $this->regId;
+        $review_id = trim($this->input->post('review_id'));
+
+        if (empty($review_id)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Review id is required'
+            ]);
+            return;
+        }
+
+        // Check review exists
+        $check = $this->CommonModel->getData(
+            'tbl_order_courses_review',
+            [
+                'id' => $review_id,
+                'user_id' => $user_id,
+                'deleted_by' => NULL
+            ],
+            'id',
+            '',
+            'row_array'
+        );
+
+        if (empty($check)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Review not found'
+            ]);
+            return;
+        }
+
+        $deleteData = [
+            'deleted_by' => $user_id,
+            'deleted_at' => date('Y-m-d H:i:s')
+        ];
+
+        $delete = $this->CommonModel->iudAction(
+            'tbl_order_courses_review',
+            $deleteData,
+            'update',
+            ['id' => $review_id]
+        );
+
+        if ($delete) {
+            $response = [
+                'result' => true,
+                'message' => 'Review deleted successfully'
+            ];
+        } else {
+            $response = [
+                'result' => false,
+                'message' => 'Delete failed'
+            ];
+        }
+
+        echo json_encode($response);
+    }
+    public function courseReviewList()
+    {
+        authenticateUser();
+
+        $user_id   = $this->regId;
+        $course_id = trim($this->input->post('course_id'));
+        $page      = trim($this->input->post('page')) ?: 1;
+        $limit     = trim($this->input->post('limit')) ?: 10;
+
+        if (empty($course_id)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Course id is required'
+            ]);
+            return;
+        }
+        $check_course = $this->CommonModel->getData(
+            'tbl_courses',
+            ['id' => $course_id],
+            'id',
+            '',
+            'row_array'
+        );
+
+        if (empty($check_course)) {
+            echo json_encode([
+                'result' => false,
+                'message' => 'Invalid course id'
+            ]);
+            return;
+        }
+        $offset = ($page - 1) * $limit;
+
+        $data  = $this->Courses_model->getCourseReviewList($course_id, $limit, $offset, 'list');
+        $total = $this->Courses_model->getCourseReviewList($course_id, 0, 0, 'count');
+
+        // Add is_my_review flag
+        if (!empty($data)) {
+            foreach ($data as &$row) {
+                $row['is_my_review'] = ($row['user_id'] == $user_id) ? true : false;
+            }
+        }
+
+        $total_pages = ($limit > 0) ? ceil($total / $limit) : 1;
+
+        $response = [
+            'result'       => true,
+            'message'      => 'Course review list fetched successfully',
+            'data'         => $data,
+            'total'        => $total,
+            'total_pages'  => $total_pages,
+            'page'         => (int)$page,
+            'limit'        => (int)$limit,
+            'user_image_path' => base_url(USER_IMAGES)
+        ];
+
+        echo json_encode($response);
+    }
+
 
     public function getMcqQuestionDetails()
     {
         authenticateUser();
         $response = array();
 
-        $lesson_video_id = trim($this->input->post('lesson_video_id')) ? trim($this->input->post('lesson_video_id')) : 0;
+        $lesson_id = trim($this->input->post('lesson_id')) ? trim($this->input->post('lesson_id')) : 0;
 
-        if ($lesson_video_id) {
+        if ($lesson_id) {
             $where = array();
 
-            if ($lesson_video_id) {
-                $where['lesson_video_id'] = $lesson_video_id;
+            if ($lesson_id) {
+                $where['lesson_id'] = $lesson_id;
             }
             // die();
-            $no_of_question = $this->CommonModel->getData('tbl_lesson_video', array('id' => $lesson_video_id), 'no_of_question', '', 'row_array');
+            $no_of_question = $this->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'no_of_question,exam_duration', '', 'row_array');
             $count = count($this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']));
             $questionDetailsList = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']);
 
             if ($questionDetailsList) {
-                $response['lesson_question_details_list'] = $questionDetailsList;
-                $response['no_of_question'] = $no_of_question['no_of_question'];
-                $response['mcq_instructions '] = MCQ_VIDEO_INSTRUCTIONS;
-
                 $response['result'] = true;
                 $response['reason'] = "Lesson found";
-                $response['course_path'] = base_url() . COURSE_IMAGES;
+                $response['lesson_id'] = $lesson_id;
+                $response['no_of_question'] = $no_of_question['no_of_question'];
+                $response['exam_duration'] = $no_of_question['exam_duration'];
+                $response['question_list'] = $questionDetailsList;
+                // $response['mcq_instructions '] = MCQ_VIDEO_INSTRUCTIONS;
+
+
+                // $response['course_path'] = base_url() . COURSE_IMAGES;
             } else {
                 $response['result'] = false;
-                $response['reason'] = "No Lesson found";
+                $response['reason'] = "No Question found";
             }
         } else {
             $response['result'] = false;
@@ -707,5 +1294,32 @@ class Courses extends CI_Controller
             $response['reason'] = 'Invalid Input';
         }
         echo json_encode($response);
+    }
+
+    private function getCourseRating($course_id)
+    {
+        $rating = $this->CommonModel->getData(
+            'tbl_order_courses_review',
+            [
+                'course_id'  => $course_id,
+                'deleted_by' => NULL
+            ],
+            'AVG(rate) as avg_rating, COUNT(id) as no_of_review'
+        );
+
+        if (!empty($rating)) {
+
+            $avg = ($rating[0]['avg_rating']) ? $rating[0]['avg_rating'] : 0;
+
+            return [
+                'course_rating'   => round($avg, 2),
+                'no_of_review' => (int)$rating[0]['no_of_review']
+            ];
+        }
+
+        return [
+            'course_rating'   => 0,
+            'no_of_review' => 0
+        ];
     }
 }

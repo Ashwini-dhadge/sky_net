@@ -82,10 +82,23 @@ $route['app_dashboard'] = 'app/Authentication/getDashboard';
 // Course
 $route['category_list'] = 'app/Courses/getCategoriesList'; #done
 $route['app_courses_list'] = 'app/Courses/getCourses';
+$route['watch_course'] = 'app/Courses/getWatchCourses';
 $route['app_courses_details'] = 'app/Courses/getCoursesDetails';
 $route['lesson_details'] = 'app/Courses/getLessonsDetails';
 $route['question_answer_list'] = 'app/Courses/getQuestionAnswerList';
 $route['create_qna'] = 'app/Courses/createQnA';
+$route['app_video_mark_watched'] = 'app/MCQVideo/update_view_video';
+$route['test_question_list'] = 'app/Courses/getMcqQuestionDetails';
+$route['submit_test'] = 'app/MCQVideo/getResultMCQ';
+$route['show_result'] = 'app/MCQVideo/getSolvedvideoMCQ';
+// Course Resources
+$route['course_resources'] = 'app/Courses/courseResources';
+
+// Course Review
+$route['create_course_review'] = 'app/Courses/addCourseReview';
+$route['update_course_review'] = 'app/Courses/updateCourseReview';
+$route['delete_course_review'] = 'app/Courses/deleteCourseReview';
+$route['course_review_list'] = 'app/Courses/courseReviewList';
 $route['testing'] = 'app/Test/testapi';
 
 // Discussion Forum
@@ -99,3 +112,7 @@ $route['forum_post_reply'] = 'app/Forum/replyToComment';
 $route['forum_post_comment_update'] = 'app/Forum/postCommentUpdate';
 $route['post_comment_delete'] = 'app/Forum/postCommentDelete';
 $route['my_forum_list'] = 'app/Forum/myForumList';
+
+
+//Order
+$route['app_place_order'] = "app/Orders/placeOrder";

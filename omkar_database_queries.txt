@@ -4,3 +4,13 @@ ALTER TABLE `tbl_forum_questions` ADD `remark` TEXT NULL AFTER `is_approved`;
 ALTER TABLE `tbl_forum_questions` CHANGE `is_approved` `is_approved` TINYINT(4) NULL DEFAULT '0' COMMENT '0:Pending/un-public, 1:Approved/public, 2:Reject/un-public';
 
 ALTER TABLE `tbl_courses` CHANGE `skill_id` `skill_id` JSON NULL;
+
+
+18-02-2026
+ALTER TABLE `tbl_order_courses_review` CHANGE `created_on` `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `tbl_order_courses_review` CHANGE `updated_on` `updated_at` DATETIME NULL DEFAULT NULL;
+ALTER TABLE `tbl_order_courses_review` CHANGE `deleted_on` `deleted_at` DATETIME NULL DEFAULT NULL;
+
+19-02-2026
+ALTER TABLE `tbl_lesson` ADD `no_of_question` INT NULL AFTER `sub_title`;
+ALTER TABLE `tbl_lesson` ADD `exam_duration` TIME NULL AFTER `no_of_question`;

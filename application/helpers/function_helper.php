@@ -167,6 +167,14 @@ function fileUploadForRepeter($path, $repeter_name, $image_field_name)
 }
 function calcuateDate($user_id, $courses_id = 0, $lesson_id = 0, $package_id = 0, $courses_duration_id = 0)
 {
+    // print_r($user_id);
+    // echo "<br>";
+    // print_r($courses_id);
+    // echo "<br>";
+    // print_r($package_id);
+    // echo "<br>";
+    // print_r($courses_duration_id);
+    // die;
     $CI = &get_instance();
     $CI->load->model('app/Courses_model');
     $response = array();

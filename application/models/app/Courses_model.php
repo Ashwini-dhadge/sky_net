@@ -126,6 +126,50 @@ class Courses_model extends CI_Model
         // print_r($this->db->last_query());die;
         return $result->result_array();
     }
+    function getWatchCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
+    {
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,c.skill as skill_name,
+        ");
+
+        $this->db->from('tbl_lesson_user_video_view uv');
+        $this->db->join('tbl_courses c', 'c.id =uv.courses_id');
+        $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
+        $this->db->join('tbl_users u', 'u.id =c.instructor_id');
+        $this->db->group_by('uv.courses_id');
+
+        if ($search) {
+            $searchVal = "(
+                        u.first_name like '%$search%' or
+                        u.last_name like '%$search%' or
+                        sm.name like '%$search%' or
+                        u.mobile_no like '%$search%' or
+                        c.title like '%$search%' or
+                        main.category_name like '%$search%' or
+                         c.benefits like '%$search%'
+                        )";
+            $this->db->where($searchVal);
+        }
+
+        if ($limit || $offset) {
+            $this->db->limit($limit, $offset);
+        }
+        if (isset($where['category_id']) && is_array($where['category_id'])) {
+            $this->db->where_in('c.category_id', $where['category_id']);
+            unset($where['category_id']);
+        }
+        $this->db->where($where);
+        if ($where1) {
+            $this->db->where($where1);
+        }
+        //$this->db->where('c.status',ACTIVE);
+        $this->db->where('c.deleted_by', NULL);
+
+        $this->db->order_by('c.sort_by', 'asc');
+
+        $result = $this->db->get();
+        // print_r($this->db->last_query());die;
+        return $result->result_array();
+    }
 
     function getLessonData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
@@ -248,14 +292,22 @@ class Courses_model extends CI_Model
     function getLessonVideoMCQData($where = array(), $search = "", $limit = 0, $offset = 0, $where_in = "", $no_of_question = 0)
     {
 
-        $this->db->select('id as q_id, skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5,""as user_answer ');
-        $this->db->from('view_lesson_video_question');
-
+        // $this->db->select('id as q_id, skill_id,is_challenge,question,answer,explantion,option_1,option_2,option_3,option_4,option_5,""as user_answer ');
+        // $this->db->from('view_lesson_video_question');
+        $this->db->select('
+        id as question_id,
+        question,
+        option_a,
+        option_b,
+        option_d,
+        option_d,
+        correct_option,
+        ');
+        $this->db->from('tbl_lesson_mcq');
         if ($search) {
 
             $searchVal = "(
-                        question like '%$search%' or
-                        answer like '%$search%' 
+                        question like '%$search%'
                         )";
             $this->db->where($searchVal);
         }
@@ -276,16 +328,12 @@ class Courses_model extends CI_Model
         if ($no_of_question) {
             $this->db->limit($no_of_question);
         } else {
-            $this->db->limit(DISPLAY_NO_OF_QUESTION);
+            // $this->db->limit(DISPLAY_NO_OF_QUESTION);
         }
-        //$this->db->limit(DISPLAY_NO_OF_QUESTION);
+
         $result = $this->db->get();
-        // print_r($this->db->last_query());die;
+
         return $result->result_array();
-
-
-        // print_r($this->db->last_query());die;
-        // return $query->result_array();
     }
     function getPackagesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
@@ -616,6 +664,37 @@ class Courses_model extends CI_Model
         $this->db->select('name');
         $this->db->from('tbl_skill_master');
         $this->db->where_in('id', $ids);
+        return $this->db->get()->result_array();
+    }
+
+    public function getCourseReviewList($course_id, $limit = 0, $offset = 0, $type = 'list')
+    {
+        $this->db->from('tbl_order_courses_review ocr');
+        $this->db->join('tbl_users u', 'u.id = ocr.user_id', 'left');
+
+        $this->db->where('ocr.course_id', $course_id);
+        $this->db->where('ocr.deleted_by', NULL);
+
+        if ($type == 'count') {
+            return $this->db->count_all_results();
+        }
+
+        // list
+        $this->db->select([
+            'ocr.id as review_id',
+            'ocr.rate',
+            'ocr.review',
+            'u.id as user_id',
+            'u.first_name as user_name',
+            'u.image as user_image'
+        ]);
+
+        $this->db->order_by('ocr.id', 'desc');
+
+        if (!empty($limit)) {
+            $this->db->limit($limit, $offset);
+        }
+
         return $this->db->get()->result_array();
     }
 }

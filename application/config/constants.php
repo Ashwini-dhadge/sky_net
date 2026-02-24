@@ -132,3 +132,12 @@ define('CAT', 'category' . DS);
 define('CATEGORY_IMAGES', 'assets/uploads/category_thumbnails/');
 
 define('COURSE_RESOURCES', 'assets/uploads/course_resources/');
+
+
+
+define('ORDER_NUMBER_PREFIX', 'ORDERLD');
+define('ORDER_NEW', '1');
+define('ORDER_CANCELLED', '2');
+
+define('DISPLAY_NO_OF_QUESTION', '3');
+define('VIDEO_QUESTION_CORRECT_PER_MARK', '2');

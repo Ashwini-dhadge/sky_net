@@ -185,6 +185,101 @@ return [
         ]
     ],
 
+
+    // Course Review APIs
+    'create_course_review' => [
+        'summary' => 'Add Course Review',
+        'tags' => 'Course Review',
+        'method' => 'POST',
+        'headers' => [
+            'Authorization' => [
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+            ]
+        ],
+        'parameters' => [
+            'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
+            'rate'      => ['type' => 'number', 'required' => true, 'example' => '5'],
+            'review'    => ['type' => 'string', 'required' => true, 'example' => 'Excellent course with clear explanation'],
+        ],
+        'response' => [
+            'result'  => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Review added successfully'],
+        ]
+    ],
+
+    'update_course_review' => [
+        'summary' => 'Update Course Review',
+        'tags' => 'Course Review',
+        'method' => 'POST',
+        'headers' => [
+            'Authorization' => [
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+            ]
+        ],
+        'parameters' => [
+            'review_id' => ['type' => 'number', 'required' => true, 'example' => '10'],
+            'rate'      => ['type' => 'number', 'required' => true, 'example' => '4'],
+            'review'    => ['type' => 'string', 'required' => true, 'example' => 'Updated review text'],
+        ],
+        'response' => [
+            'result'  => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Review updated successfully'],
+        ]
+    ],
+
+    'delete_course_review' => [
+        'summary' => 'Delete Course Review',
+        'tags' => 'Course Review',
+        'method' => 'POST',
+        'headers' => [
+            'Authorization' => [
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Bearer token_here'
+            ]
+        ],
+        'parameters' => [
+            'review_id' => ['type' => 'number', 'required' => true, 'example' => '10'],
+        ],
+        'response' => [
+            'result'  => ['type' => 'boolean', 'example' => true],
+            'message' => ['type' => 'string', 'example' => 'Review deleted successfully'],
+        ]
+    ],
+
+    'course_review_list' => [
+        'summary' => 'Course Review List',
+        'tags' => 'Course Review',
+        'method' => 'POST',
+        'headers' => [
+            'Authorization' => [
+                'type' => 'string',
+                'required' => true,
+                'example' => 'Bearer token_here'
+            ]
+        ],
+        'parameters' => [
+            'course_id' => ['type' => 'number', 'required' => true, 'example' => '1'],
+            'page'      => ['type' => 'number', 'required' => false, 'example' => '1'],
+            'limit'     => ['type' => 'number', 'required' => false, 'example' => '10'],
+        ],
+        'response' => [
+            'result'          => ['type' => 'boolean', 'example' => true],
+            'message'         => ['type' => 'string', 'example' => 'Course review list fetched successfully'],
+            'data'            => ['type' => 'array'],
+            'total'           => ['type' => 'number', 'example' => 25],
+            'total_pages'     => ['type' => 'number', 'example' => 3],
+            'page'            => ['type' => 'number', 'example' => 1],
+            'limit'           => ['type' => 'number', 'example' => 10],
+            'user_image_path' => ['type' => 'string', 'example' => 'https://example.com/uploads/users/'],
+        ]
+    ],
+
+
     'create_forum_post' => [
         'summary' => 'Create a Forum Post',
         'tags' => ['Discussion Forum'],
