@@ -21,125 +21,21 @@ class Dashboard extends CI_Controller
             ['deleted_at' => null],
             'id, title'
         );
-        $data['course_student_chart'] = $this->db
-            ->select('c.title, COUNT(s.id) as total_students')
-            ->from('tbl_courses c')
-            ->join(
-                'tbl_order_courses_subscription s',
-                's.course_id = c.id AND s.active = 1 AND s.deleted_on IS NULL',
-                'left'
-            )
-            ->where('c.status', 1)
-            ->group_by('c.id')
-            ->order_by('total_students', 'DESC')
-            ->limit(5)
-            ->get()
-            ->result();
+        $data['course_student_chart'] = $this->DashboardModel->getCourseStudentChart();
+        $data['pending_forum'] = $this->DashboardModel->getPendingForum();
+        $data['rejected_forum'] = $this->DashboardModel->getRejectedForum();
+        $data['unanswered_qna'] = $this->DashboardModel->getUnansweredQna();
 
-        $data['pending_forum'] = $this->db
-            ->where('is_approved', 0)
-            ->where('deleted_at IS NULL', null, false)
-            ->order_by('id', 'DESC')
-            ->get('tbl_forum_questions')
-            ->result();
+        $data['online_students'] = $this->DashboardModel->getOnlineStudents();
+        $data['offline_students'] = $this->DashboardModel->getOfflineStudents();
 
-        $data['rejected_forum'] = $this->db
-            ->where('is_approved', 2)
-            ->where('deleted_at IS NULL', null, false)
-            ->order_by('id', 'DESC')
-            ->get('tbl_forum_questions')
-            ->result();
+        $data['online_courses'] = $this->DashboardModel->getOnlineCourses();
+        $data['offline_courses'] = $this->DashboardModel->getOfflineCourses();
 
-        $data['unanswered_qna'] = $this->db
-            ->select('q.*, c.title as course_title')
-            ->from('tbl_course_qna q')
-            ->join('tbl_courses c', 'c.id = q.course_id', 'left')
-            ->where('q.answer IS NULL', null, false)
-            ->where('q.deleted_at IS NULL', null, false)
-            ->order_by('q.id', 'DESC')
-            ->get()
-            ->result();
-
-        $data['online_students'] = $this->db
-            ->where(['status' => 1, 'is_deleted' => 0, 'role' => 3, 'user_type' => 1])
-            ->count_all_results('tbl_users');
-
-        $data['offline_students'] = $this->db
-            ->where(['status' => 1, 'is_deleted' => 0, 'role' => 3, 'user_type' => 0])
-            ->count_all_results('tbl_users');
-
-        $data['online_courses'] = $this->db
-            ->where('status', 1)
-            ->where('course_type', 1)
-            ->where('deleted_at IS NULL', null, false)
-            ->count_all_results('tbl_courses');
-
-        $data['offline_courses'] = $this->db
-            ->where('status', 1)
-            ->where('course_type', 0)
-            ->where('deleted_at IS NULL', null, false)
-            ->count_all_results('tbl_courses');
-
-
-        $data['enroll_online_student_online_course'] = $this->db
-            ->from('tbl_order_courses_subscription s')
-            ->join('tbl_users u', 'u.id = s.user_id', 'inner')
-            ->join('tbl_courses c', 'c.id = s.course_id', 'inner')
-            ->where('s.active', 1)
-            ->where('s.deleted_on IS NULL', null, false)
-            ->where('u.role', 3)
-            ->where('u.status', 1)
-            ->where('u.is_deleted', 0)
-            ->where('u.user_type', 1)
-            ->where('c.status', 1)
-            ->where('c.deleted_at IS NULL', null, false)
-            ->where('c.course_type', 1)
-            ->count_all_results();
-
-        $data['enroll_offline_student_offline_course'] = $this->db
-            ->from('tbl_order_courses_subscription s')
-            ->join('tbl_users u', 'u.id = s.user_id', 'inner')
-            ->join('tbl_courses c', 'c.id = s.course_id', 'inner')
-            ->where('s.active', 1)
-            ->where('s.deleted_on IS NULL', null, false)
-            ->where('u.role', 3)
-            ->where('u.status', 1)
-            ->where('u.is_deleted', 0)
-            ->where('u.user_type', 0)
-            ->where('c.status', 1)
-            ->where('c.deleted_at IS NULL', null, false)
-            ->where('c.course_type', 0)
-            ->count_all_results();
-
-        $data['enroll_online_student_offline_course'] = $this->db
-            ->from('tbl_order_courses_subscription s')
-            ->join('tbl_users u', 'u.id = s.user_id', 'inner')
-            ->join('tbl_courses c', 'c.id = s.course_id', 'inner')
-            ->where('s.active', 1)
-            ->where('s.deleted_on IS NULL', null, false)
-            ->where('u.role', 3)
-            ->where('u.status', 1)
-            ->where('u.is_deleted', 0)
-            ->where('u.user_type', 1)
-            ->where('c.status', 1)
-            ->where('c.deleted_at IS NULL', null, false)
-            ->where('c.course_type', 0)
-            ->count_all_results();
-
-        $data['enroll_offline_student_online_course'] = $this->db
-            ->from('tbl_order_courses_subscription s')
-            ->join('tbl_users u', 'u.id = s.user_id', 'inner')
-            ->join('tbl_courses c', 'c.id = s.course_id', 'inner')
-            ->where('s.active', 1)
-            ->where('s.deleted_on IS NULL', null, false)
-            ->where('u.role', 3)
-            ->where('u.status', 1)
-            ->where('u.is_deleted', 0)
-            ->where('u.user_type', 0)
-            ->where('c.status', 1)
-            ->where('c.deleted_at IS NULL', null, false)
-            ->where('c.course_type', 1)
-            ->count_all_results();
+        $data['enroll_online_student_online_course'] = $this->DashboardModel->enrollOnlineStudentOnlineCourse();
+        $data['enroll_offline_student_offline_course'] = $this->DashboardModel->enrollOfflineStudentOfflineCourse();
+        $data['enroll_online_student_offline_course'] = $this->DashboardModel->enrollOnlineStudentOfflineCourse();
+        $data['enroll_offline_student_online_course'] = $this->DashboardModel->enrollOfflineStudentOnlineCourse();
         // echo"<pre>";print_r($data);die();
         $this->load->view(ADMIN . DASHBOARD . 'dashboard', $data);
     }
