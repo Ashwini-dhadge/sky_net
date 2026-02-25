@@ -641,8 +641,8 @@ class Authentication extends CI_Controller
         $first_name = trim($this->input->post('full_name')) ? trim($this->input->post('full_name')) : '';
         // $last_name = trim($this->input->post('last_name')) ? trim($this->input->post('last_name')) : '';
         $email = trim($this->input->post('email')) ? trim($this->input->post('email')) : '';
-        // $gender = trim($this->input->post('gender')) ? trim($this->input->post('gender')) : '';
-        // $birthdate = trim($this->input->post('birthdate')) ? trim($this->input->post('birthdate')) : '';
+        $gender = trim($this->input->post('gender')) ? trim($this->input->post('gender')) : '';
+        $birthdate = trim($this->input->post('birthdate')) ? trim($this->input->post('birthdate')) : '';
 
         $response = array();
         if ($user_id && strlen($first_name) && strlen($email)) {
@@ -656,11 +656,21 @@ class Authentication extends CI_Controller
                     // 'last_name' => $last_name,
                     'email' => $email
                 );
+                if (isset($_FILES['image']) && $_FILES['image']['name'] != "") {
 
+                    if (!empty($_FILES['image']['name'])) {
+                        $uploadStatus = fileUpload(USER_IMAGES, "image", FALSE);
+                        if ($uploadStatus['status'] == true) {
+                            $userUpdatedArray['image'] = $uploadStatus['image_name'];
+                        } else {
+                            unset($userUpdatedArray['image']);
+                        }
+                    }
+                }
                 $res = $this->Common_model->iudAction('tbl_users', $userUpdatedArray, 'update', array('id' => $user_id));
                 $userUpdatedArray1 = array(
-                    // 'gender' => $gender,
-                    // 'birthdate' => $birthdate,
+                    'gender' => $gender,
+                    'birthdate' => $birthdate,
                     'updated_by' => $user_id,
                     'updated_on' => date('Y-m-d H:i:s')
                 );
@@ -862,6 +872,31 @@ class Authentication extends CI_Controller
         } else {
             $response['result'] = false;
             $response['reason'] = INVALID_INPUT;
+        }
+
+        echo json_encode($response);
+    }
+
+    public function getProfile()
+    {
+        authenticateUser();
+
+        $response = array();
+        // $user_id = $this->input->post('user_id') ? $this->input->post('user_id') : "";
+        $user_id   = $this->regId;
+
+        $userData = $this->Common_model->getData('tbl_users', array('id' => $user_id, 'is_otp_verified' => 1, 'status' => 1), 'id,first_name as full_name,email,mobile_no,image', '', 'row_array');
+        if ($userData) {
+            $user_profile = $this->Common_model->getData('user_profile', array('user_id' => $user_id), 'gender,birthdate', '', 'row_array');
+            $userData['gender'] = $user_profile['gender'] ?? '';
+            $userData['birthdate'] = $user_profile['birthdate'] ?? '';
+            $response['result'] = true;
+            $response['reason'] = "data found";
+            $response['user_data'] = $userData;
+            $response['user_profile_path'] = base_url() . USER_IMAGES;
+        } else {
+            $response['result'] = false;
+            $response['reason'] = "User not found Or Not active";
         }
 
         echo json_encode($response);
