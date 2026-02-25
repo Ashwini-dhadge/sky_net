@@ -73,6 +73,7 @@ $route['resend_otp'] = 'app/Authentication/sendLoginOTP'; #done
 $route['login_user'] = 'app/Authentication/userLogin'; #done
 $route['update_profile'] = 'app/Authentication/updateProfile'; #done
 $route['update_profile_pic'] = 'app/Authentication/updateProfilePic';
+$route['get_profile'] = 'app/Authentication/getProfile';
 $route['forgot_password'] = 'app/Authentication/forgotPassword'; #done
 $route['app_changed_password'] = 'app/Authentication/changedPassword';
 
