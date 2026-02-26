@@ -296,7 +296,7 @@
                                             <?php endif; ?>
 
                                             <div class="thread-text collapsible">
-                                                <?= nl2br(htmlspecialchars($comment['answer'])) ?>
+                                                <?= $comment['answer'] ?>
                                             </div>
                                             <?php if (!empty($comment['replies'])): ?>
                                                 <div class="toggle-replies" onclick="toggleReplies(this)">
@@ -350,20 +350,6 @@
 
 <?php init_footer(); ?>
 <script>
-    document.querySelectorAll('.vote-up').forEach(btn => {
-        btn.addEventListener('click', function() {
-            let count = this.nextElementSibling;
-            count.innerText = parseInt(count.innerText) + 1;
-        });
-    });
-
-    document.querySelectorAll('.vote-down').forEach(btn => {
-        btn.addEventListener('click', function() {
-            let count = this.previousElementSibling;
-            count.innerText = parseInt(count.innerText) - 1;
-        });
-    });
-
     document.querySelectorAll('.collapsible').forEach(el => {
         if (el.scrollHeight > 130) {
             let more = document.createElement('div');
