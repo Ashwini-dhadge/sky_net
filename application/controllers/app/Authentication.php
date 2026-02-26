@@ -110,10 +110,10 @@ class Authentication extends CI_Controller
                     $response['result'] = true;
                     $response['message'] = 'Thank you for registering, Please verify your number';
 
-                    $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Lalit Dangre";
+                    $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
                     // sendMobileMessage($verificationMessage, $userMobile, '1507163947670092160');
                     // $name=$userFirstName." ".$userLastName;
-                    //    $verificationMessage = "Dear ".$name.", Welcome to Lalit Dangre app. Your Username:".$userMobile." and Password:".$password." Thanks. Team Lalit Dangre";
+                    //    $verificationMessage = "Dear ".$name.", Welcome to Skynet app. Your Username:".$userMobile." and Password:".$password." Thanks. Team Lalit Dangre";
                     //    sendMobileMessage($verificationMessage, $userMobile,'1507163947710162091');
 
                 } else {
@@ -152,7 +152,7 @@ class Authentication extends CI_Controller
                 }
                 $otpNumber = '1234'; //create6NumRandom();
                 $otpNumber = create6NumRandom();
-                $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Lalit Dangre";
+                $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
                 // sendMobileMessage($verificationMessage, $userMobile, '1507163947670092160');
 
 
