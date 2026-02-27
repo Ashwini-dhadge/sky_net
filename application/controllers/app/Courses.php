@@ -93,8 +93,49 @@ class Courses extends CI_Controller
             if (!empty($courseList)) {
 
                 foreach ($courseList as $key => $course) {
+                    $where2['cd.courses_id'] = $course['id'];
+                    $ratingData = $this->getCourseRating($course['id']);
+                    $courseList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+                    foreach ($courseList[$key]['duration'] as $key2 => $value2) {
+                        $packege_subscribe = calcuateDate($user_id, $course['id'], 0, 0, $value2['duration_id']);
+                        // print_r($packege_subscribe);
+                        // die;
+                        if ($packege_subscribe) {
 
-                    $ratingData = $this->getCourseRating($course['courses_id']);
+                            if ($packege_subscribe['is_expired']) {
+
+                                $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                                // $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                            } else {
+                                $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                                // $sub[0] = $packege_subscribe;
+                                // $courseList[$key]['duration'][$key2]['package_plan'] = $sub;
+                            }
+                        } else {
+                            // $getPackage_id = $this->CommonModel->getData('tbl_courses_packages', array('courses_id' => $value2['courses_id'], 'courses_duration_id' => $value2['duration_id']), 'package_id');
+
+                            // if ($getPackage_id) {
+                            //     foreach ($getPackage_id as $key1 => $value1) {
+                            //         $packege_subscribe1 = calcuateDate($user_id, $value['courses_id'], 0, $value1['package_id'], 0);
+                            //         //    print_r($packege_subscribe1);die;
+                            //         if ($packege_subscribe1) {
+                            //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                            //             if (isset($packege_subscribe1['courses'][0])) {
+                            //                 $courseList[$key]['duration'][$key2]['package_plan'] = $packege_subscribe1['courses'][0];
+                            //             } else {
+                            //                 $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                            //             }
+                            //         } else {
+                            //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                            //             $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                            //         }
+                            //     }
+                            // } else {
+                            $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                            // $courseDetailsList[$key]['duration'][$key2]['package_plan'] = [];
+                            // }
+                        }
+                    }
                     $no_of_course_lesson_video = $this->CommonModel->getData(
                         'tbl_lesson_video',
                         array('courses_id' => $course['courses_id']),
@@ -235,6 +276,170 @@ class Courses extends CI_Controller
             $response['result'] = false;
             $response['message'] = 'Invalid Input';
         }
+        echo json_encode($response);
+    }
+    public function getMyCoursesList()
+    {
+        authenticateUser();
+        // echo "<pre>";
+        // print_r($_POST);
+        // echo json_encode($_POST);
+        // die;
+        // die;
+        $response = array();
+        $categoryId = trim($this->input->post('category_id')) ? trim($this->input->post('category_id')) : 0;
+        $user_id = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : "";
+        $search = trim($this->input->post('search')) ? trim($this->input->post('search')) : "";
+        $page     = $this->input->post('page_no') ? $this->input->post('page_no') : 1;
+        $login_user_id = $this->regId;
+        // $reg_email = $this->reg_email;
+        // echo "<pre>";
+        // print_r($this->user_type);
+        // die;
+
+        // if ($user_id) {
+        $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
+        if (empty($this->user_type)) {
+            $response['result'] = false;
+            $response['message'] = "User Type Not Found";
+            echo json_encode($response);
+            die;
+        }
+
+        if ($page) {
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
+        } else {
+            $limit = 0;
+            $offset = 0;
+        }
+        $where = array();
+        if ($categoryId && strpos($categoryId, ',') !== false) {
+            $categoryId = explode(',', $categoryId);
+        }
+        if ($categoryId) {
+            $where['category_id'] = $categoryId;
+        }
+        $where['c.status'] = ACTIVE;
+        if (isset($this->user_type) && !empty($this->user_type)) {
+            $where['c.course_type'] = $this->user_type;
+        }
+        // echo "<pre>";
+        // print_r($where);
+        // die;
+        $where['o.user_id'] = $login_user_id;
+        //FRANCHISE
+
+        $total_records = count($this->Courses_model->getMyCoursesList($where, $search, 0, 0));
+        $courseList = $this->Courses_model->getMyCoursesList($where, $search, $limit, $offset);
+        $total_pages = ($limit > 0) ? ceil($total_records / $limit) : 1;
+        // echo $this->db->last_query();
+        // die;
+        $response['course_list'] = $courseList;
+        // print_r($courseList);
+        // die;
+        $sub = array();
+        if (!empty($courseList)) {
+
+            foreach ($courseList as $key => $course) {
+                $where2['cd.courses_id'] = $course['id'];
+                $ratingData = $this->getCourseRating($course['id']);
+                $courseList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+                foreach ($courseList[$key]['duration'] as $key2 => $value2) {
+                    $packege_subscribe = calcuateDate($user_id, $course['id'], 0, 0, $value2['duration_id']);
+                    // print_r($packege_subscribe);
+                    // die;
+                    if ($packege_subscribe) {
+
+                        if ($packege_subscribe['is_expired']) {
+
+                            $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                            // $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        } else {
+                            $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                            // $sub[0] = $packege_subscribe;
+                            // $courseList[$key]['duration'][$key2]['package_plan'] = $sub;
+                        }
+                    } else {
+                        // $getPackage_id = $this->CommonModel->getData('tbl_courses_packages', array('courses_id' => $value2['courses_id'], 'courses_duration_id' => $value2['duration_id']), 'package_id');
+
+                        // if ($getPackage_id) {
+                        //     foreach ($getPackage_id as $key1 => $value1) {
+                        //         $packege_subscribe1 = calcuateDate($user_id, $value['courses_id'], 0, $value1['package_id'], 0);
+                        //         //    print_r($packege_subscribe1);die;
+                        //         if ($packege_subscribe1) {
+                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+                        //             if (isset($packege_subscribe1['courses'][0])) {
+                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = $packege_subscribe1['courses'][0];
+                        //             } else {
+                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        //             }
+                        //         } else {
+                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                        //             $courseList[$key]['duration'][$key2]['package_plan'] = [];
+                        //         }
+                        //     }
+                        // } else {
+                        $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+                        // $courseDetailsList[$key]['duration'][$key2]['package_plan'] = [];
+                        // }
+                    }
+                }
+                $no_of_course_lesson_video = $this->CommonModel->getData(
+                    'tbl_lesson_video',
+                    array('courses_id' => $course['courses_id']),
+                    'count(id) as total_videos',
+                    '',
+                    'row_array'
+                );
+
+                $no_of_watch_user_video = $this->CommonModel->getData(
+                    'tbl_lesson_user_video',
+                    array(
+                        'courses_id' => $course['courses_id'],
+                        'user_id' => $user_id,
+                        'view_video' => 1
+                    ),
+                    'count(id) as watched_videos',
+                    '',
+                    'row_array'
+                );
+
+                $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
+                $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
+                if ($totalVideos > 0) {
+                    $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                } else {
+                    $watchPercentage = 0;
+                }
+                $courseList[$key]['course_rating']   = $ratingData['course_rating'];
+                $courseList[$key]['no_of_review'] = $ratingData['no_of_review'];
+                $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
+                $courseList[$key]['watched_videos'] = $watchedVideos;
+                $courseList[$key]['total_videos'] = $totalVideos;
+            }
+        }
+
+
+        if ($courseList) {
+            $response['course_list'] = $courseList;
+            $response['result'] = true;
+            $response['message'] = "Courses found";
+            $response['course_path'] = base_url() . COURSE_IMAGES;
+            $response['pagination'] = [
+                'total_records' => (int)$total_records,
+                'total_pages'   => (int)$total_pages,
+                'current_page'  => (int)$page,
+                'per_page'      => (int)$limit
+            ];
+        } else {
+            $response['result'] = false;
+            $response['message'] = "No Courses found";
+        }
+        // } else {
+        //     $response['result'] = false;
+        //     $response['message'] = 'Invalid Input';
+        // }
         echo json_encode($response);
     }
     public function getWatchCourses()
@@ -547,7 +752,7 @@ class Courses extends CI_Controller
                 $lessonDetails[0]['result_id'] = null;
             } else {
                 $lessonDetails[0]['already_test_submitted'] = true; // Submitted
-                $lessonDetails[0]['result_id'] = $lessonDetails[0]['id'];
+                $lessonDetails[0]['result_id'] = $lessonDetails[0]['lesson_id'];
             }
             //print_r($courseDetailsList);die();
             foreach ($lessonDetails as $key => $value) {
@@ -677,27 +882,76 @@ class Courses extends CI_Controller
         }
     }
 
+    // public function getQuestionAnswerList()
+    // {
+    //     authenticateUser();
+    //     // echo "1";
+    //     // die;
+    //     $login_user_id = $this->regId;
+    //     // echo $login_user_id;
+    //     // die;
+    //     $page      = (int) $this->input->post('page') ?: 1;
+    //     $per_page  = (int) $this->input->post('per_page') ?: 10;
+    //     $offset = ($page - 1) * $per_page;
+    //     $response = array();
+    //     $course_id = trim($this->input->post('course_id')) ? trim($this->input->post('course_id')) : '';
+    //     if (empty($course_id)) {
+    //         $response['result'] = false;
+    //         $response['message'] = 'Invalid Input';
+    //         echo json_encode($response);
+    //         die;
+    //     }
+    //     $getQuestionAnswersListing = $this->Courses_model->getQuestionAnswersData($course_id, $login_user_id, $per_page, $offset);
+    //     $total_records = $result['total'];
+    //     $response['result'] = true;
+    //     $response['message'] = "Q&A List Fectched Successfully";
+    //     $response['image_path'] = base_url() . USER_IMAGES;
+    //     $response['data'] = $getQuestionAnswersListing;
+    //     $response['pagination'] = [
+    //         'total_records' => $total_records,
+    //         'total_pages'   => ceil($total_records / $per_page),
+    //         'current_page'  => $page,
+    //         'per_page'      => $per_page
+    //     ];
+    //     echo json_encode($response);
+    // }
     public function getQuestionAnswerList()
     {
         authenticateUser();
-        // echo "1";
-        // die;
+
         $login_user_id = $this->regId;
-        // echo $login_user_id;
-        // die;
         $response = array();
-        $course_id = trim($this->input->post('course_id')) ? trim($this->input->post('course_id')) : '';
+
+        $course_id = trim($this->input->post('course_id')) ?: '';
+        $page      = (int) $this->input->post('page') ?: 1;
+        $per_page  = (int) $this->input->post('per_page') ?: 10;
+
         if (empty($course_id)) {
             $response['result'] = false;
             $response['message'] = 'Invalid Input';
             echo json_encode($response);
-            die;
+            return;
         }
-        $getQuestionAnswersListing = $this->Courses_model->getQuestionAnswersData($course_id, $login_user_id);
+
+        $offset = ($page - 1) * $per_page;
+
+        $result = $this->Courses_model
+            ->getQuestionAnswersData($course_id, $login_user_id, $per_page, $offset);
+
+        $total_records = $result['total'];
+
         $response['result'] = true;
-        $response['message'] = "Q&A List Fectched Successfully";
+        $response['message'] = "Q&A List Fetched Successfully";
         $response['image_path'] = base_url() . USER_IMAGES;
-        $response['data'] = $getQuestionAnswersListing;
+        $response['data'] = $result['questions'];
+
+        $response['pagination'] = [
+            'total_records' => $total_records,
+            'total_pages'   => ceil($total_records / $per_page),
+            'current_page'  => $page,
+            'per_page'      => $per_page
+        ];
+
         echo json_encode($response);
     }
     public function createQnA()

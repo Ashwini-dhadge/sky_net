@@ -341,8 +341,18 @@ class Authentication extends CI_Controller
     public function userLogin()
     {
         $response = array();
-        $userEmail = $this->input->post('email') ? $this->input->post('email') : "";
-        $userMobile = $this->input->post('mobile_no') ? $this->input->post('mobile_no') : "";
+        $login_input = $this->input->post('login_input') ? trim($this->input->post('login_input')) : "";
+        $userEmail = "";
+        $userMobile = "";
+        if (!empty($login_input)) {
+            if (ctype_digit($login_input)) {
+                $userMobile = $login_input;   // login by mobile
+            } else {
+                $userEmail = $login_input;    // login by email
+            }
+        }
+        // $userEmail = $this->input->post('email') ? $this->input->post('email') : "";
+        // $userMobile = $this->input->post('mobile_no') ? $this->input->post('mobile_no') : "";
         $password = $this->input->post('password') ? $this->input->post('password') : "";
         $notification_token = $this->input->post('notification_token') ? $this->input->post('notification_token') : "";
         $device_details = $this->input->post('device_details') ? $this->input->post('device_details') : "";

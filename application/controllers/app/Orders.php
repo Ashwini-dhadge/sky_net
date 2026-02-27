@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use Razorpay\Api\Api;
+
 class Orders extends CI_Controller
 {
 
@@ -286,7 +288,12 @@ class Orders extends CI_Controller
 
         $response = array();
         authenticateUser();
+        // echo "<pre>";
+        // print_r($_POST);
+        // die;
+
         $login_user_id = $this->regId;
+        // $api = new Api($this->key_id, $this->key_secret);
         // $user_id         = $this->input->post('user_id') ? $this->input->post('user_id') : '';
         $payment_status    = $this->input->post('payment_status') ? $this->input->post('payment_status') : 0; //0 = Pending, 1 = Paid
         $payment_type    = $this->input->post('payment_type') ? $this->input->post('payment_type') : 1;  //1 = cod, 2 = online
@@ -312,11 +319,12 @@ class Orders extends CI_Controller
         $offer_amount    = $this->input->post('offer_amount') ? $this->input->post('offer_amount') : 0.00;
         $offer_id     = $this->input->post('offer_id') ? $this->input->post('offer_id') : 0;
         $wallet_amount    = $this->input->post('wallet_amount') ? $this->input->post('wallet_amount') : 0.00;
-
+        $keyId = "rzp_test_xxxxx";
+        $keySecret = "xxxxxxxx";
 
         // if ($login_user_id != "" && $type != ""  && ($total_amount != "" || ($total_amount == "" && ($wallet_amount != 0.00 || $offer_amount != 0.00)))) {
         if ($login_user_id != ""   && $total_amount != "" && $courses_id != "") {
-            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $courses_id), 'id as duration_id', '', 'row_array');
+            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('courses_id' => $courses_id), 'duration_id', '', 'row_array');
             // print_r($coursesDuratoion);
             // die;
             $userDetails = $this->CommonModel->getData('tbl_users', array('id' => $login_user_id, 'status' => 1));
@@ -331,155 +339,207 @@ class Orders extends CI_Controller
                     } */
                 //  // $cartDetails = $this->CommonModel->getData('tbl_cart', array('user_id' => $user_id));
                 //  if($cartDetails){
+                // $api = new Api($keyId, $keySecret);
+                // print_r($api);
+                // die;
+                $amount_paise = $total_amount * 100; // Razorpay works in paise
                 $orderNo = ORDER_NUMBER_PREFIX . "" . $login_user_id . "" . strtotime(date('Y-m-d H:i:s'));
-                $insOrder = array(
-                    'order_no' => $orderNo,
-                    'user_id' => $login_user_id,
-                    'date' => date('Y-m-d'),
-                    'order_status' => ORDER_NEW,
-                    'payment_status' => $payment_status,
-                    'payment_type' => $payment_type,
-                    'amount' => $amount,
-                    'delivery_charges' => $delivery_charges,
-                    // 'discount_amount' => $discount_amount,
-                    'offer_amount' => $offer_amount,
-                    'offer_id' => $offer_id,
-                    'gst_amount' => $gst_amount,
-                    'wallet_amount' => $wallet_amount,
-                    'total_amount' => $total_amount,
-                    'extra_note' => $extra_note,
-                    'created_by' => $login_user_id
-                );
+                try {
 
-                $orderID = $this->CommonModel->iudAction('tbl_orders', $insOrder, 'insert');
-                if ($orderID) {
-                    $name = '';
+                    // $order = $api->order->create([
+                    //     'receipt' => $orderNo,
+                    //     'amount' => $amount_paise,
+                    //     'currency' => 'INR',
+                    //     'payment_capture' => 1
+                    // ]);
 
 
-                    $name = $userDetails[0]['first_name'];
-                    $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $courses_id));
-                    $cname = strlen($course_name[0]['title']);
-                    if ($cname > 30) {
-                        $course_name1 = substr($course_name[0]['title'], 0, 30) . "..";
-                    } else {
-                        $course_name1 = $course_name[0]['title'];
-                    }
-                    $verificationMessage = " Dear " . $name . ", Your Course " . $course_name1 . " have been Purchased Successfully. Thanks Team Lalit Dangre";
-                    // sendMobileMessage($verificationMessage, $userDetails[0]['mobile_no'], '1507163947849507459');
 
-                    $insCart = array(
+                    $insOrder = array(
+                        'order_no' => $orderNo,
+                        // 'razorpay_order_id' => $order['id'],
+                        // 'razorpay_order_id' => 1,
                         'user_id' => $login_user_id,
-                        'courses_id' => $courses_id,
-                        // 'lesson_id' => $lesson_id,
-                        'courses_duration_id' => $coursesDuratoion['duration_id'],
-                        // 'type' => $type,
-                        'rate' => $rate,
-                        'order_id' => $orderID
-
+                        'date' => date('Y-m-d'),
+                        'order_status' => "CREATED",
+                        'payment_status' => 'PENDING',
+                        'payment_type' => $payment_type,
+                        'amount' => $amount,
+                        'delivery_charges' => $delivery_charges,
+                        // 'discount_amount' => $discount_amount,
+                        'offer_amount' => $offer_amount,
+                        'offer_id' => $offer_id,
+                        'gst_amount' => $gst_amount,
+                        'wallet_amount' => $wallet_amount,
+                        'total_amount' => $total_amount,
+                        'extra_note' => $extra_note,
+                        'created_by' => $login_user_id
                     );
+                    // print_r($insOrder);
+                    // die;
+                    $orderID = $this->CommonModel->iudAction('tbl_orders', $insOrder, 'insert');
+                    // print_r($orderID);
+                    // die;
+                    if ($orderID) {
+                        $name = '';
 
-                    $cartStatus = $this->CommonModel->iudAction('tbl_order_details', $insCart, 'insert');
-
-                    if ($payment_type == 2) {
-                        $payArr = array(
-                            'transaction_id' => $transaction_id,
+                        $order_payment_detail = [
                             'user_id' => $login_user_id,
                             'order_id' => $orderID,
-                            'transaction_date' => date('Y-m-d'),
-                            'payment_id' => $payment_id,
-                        );
+                            'razorpay_order_id' => 1,
+                            // 'razorpay_order_id' => $order['id'],
+                            'amount' =>  $amount,
+                        ];
+                        $this->CommonModel->iudAction('tbl_order_payment_details', $order_payment_detail, 'insert');
 
-                        $payStatus = $this->CommonModel->iudAction('tbl_payments', $payArr, 'insert');
-                    }
+                        $name = $userDetails[0]['first_name'];
+                        $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $courses_id));
+                        $cname = strlen($course_name[0]['title']);
+                        if ($cname > 30) {
+                            $course_name1 = substr($course_name[0]['title'], 0, 30) . "..";
+                        } else {
+                            $course_name1 = $course_name[0]['title'];
+                        }
+                        $verificationMessage = " Dear " . $name . ", Your Course " . $course_name1 . " have been Purchased Successfully. Thanks Team Lalit Dangre";
+                        // sendMobileMessage($verificationMessage, $userDetails[0]['mobile_no'], '1507163947849507459');
 
-                    //offer reedeem
-                    if ($offer_id) {
-                        $offerArr = array(
-                            'offer_id' => $offer_id,
+                        $insCart = array(
                             'user_id' => $login_user_id,
+                            'courses_id' => $courses_id,
+                            // 'lesson_id' => $lesson_id,
+                            'courses_duration_id' => $coursesDuratoion['duration_id'],
+                            // 'type' => $type,
+                            'rate' => $rate,
                             'order_id' => $orderID
+
                         );
-                        $offerStatus = $this->CommonModel->iudAction('tbl_offer_redeemed', $offerArr, 'insert');
+
+                        $cartStatus = $this->CommonModel->iudAction('tbl_order_details', $insCart, 'insert');
+
+                        // if ($payment_type == 2) {
+                        //     $payArr = array(
+                        //         'transaction_id' => $transaction_id,
+                        //         'user_id' => $login_user_id,
+                        //         'order_id' => $orderID,
+                        //         'transaction_date' => date('Y-m-d'),
+                        //         'payment_id' => $payment_id,
+                        //     );
+
+                        //     $payStatus = $this->CommonModel->iudAction('tbl_payments', $payArr, 'insert');
+                        // }
+
+                        //offer reedeem
+                        // if ($offer_id) {
+                        //     $offerArr = array(
+                        //         'offer_id' => $offer_id,
+                        //         'user_id' => $login_user_id,
+                        //         'order_id' => $orderID
+                        //     );
+                        //     $offerStatus = $this->CommonModel->iudAction('tbl_offer_redeemed', $offerArr, 'insert');
+                        // }
+
+                        //wallet  amount update wallet trancation
+                        // if ($wallet_amount) {
+                        //     withdraw_wallet_amount_user($login_user_id, $orderID, $wallet_amount);
+                        //     // updateQuickWallentAMount($user_id,2,$wallet_amount);
+                        //     $response['query'] = $this->db->last_query();
+                        // }
+
+
+                        //add in order subscrbption 
+                        // if ($type == 1) {
+                        //course subscribtion
+                        // $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $courses_duration_id), 'duration_id', '', 'row_array');
+
+                        $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
+                        // print_r($duratoion_no_of_days);
+                        // die;
+                        $order_date = date('Y-m-d');
+                        $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
+                        $order_subscrb = array(
+                            'order_id' => $orderID,
+                            'order_no' => $orderNo,
+                            'user_id' => $login_user_id,
+                            // 'type' => $type,
+                            // 'courses_duration_id' => $courses_duration_id,
+                            'courses_duration_id' => $coursesDuratoion['duration_id'],
+                            'course_id' => $courses_id,
+                            'start_date' => date('Y-m-d'),
+                            'end_date' => $endDate,
+                            'active' => 1,
+                            'no_of_days' => $duratoion_no_of_days['no_of_days'],
+                            'created_on' => date('Y-m-d H:i:s'),
+                        );
+                        $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
+
+                        // } else {
+                        //     //package subscrbption
+                        //     if ($type == 3) {
+                        //         $where3['package_id'] = $courses_id;
+                        //         $courses = $this->CommonModel->getData('tbl_courses_packages', $where3);
+                        //         foreach ($courses as $key3 => $course1) {
+
+                        //             $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $course1['courses_duration_id']), 'duration_id', '', 'row_array');
+                        //             $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
+                        //             $order_date = date('Y-m-d');
+                        //             $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
+                        //             $order_subscrb = array(
+                        //                 'order_id' => $orderID,
+                        //                 'order_no' => $orderNo,
+                        //                 'user_id' => $user_id,
+                        //                 'type' => $type,
+                        //                 'package_id' => $courses_id,
+                        //                 'courses_duration_id' => $course1['courses_duration_id'],
+                        //                 'course_id' => $course1['courses_id'],
+                        //                 'start_date' => date('Y-m-d'),
+                        //                 'end_date' => $endDate,
+                        //                 'active' => 1,
+                        //                 'no_of_days' => $duratoion_no_of_days['no_of_days'],
+                        //                 'created_on' => date('Y-m-d H:i:s'),
+                        //             );
+                        //             $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
+                        //         }
+                        //     }
+                        // }
+                        // $response['query_subscription'] = $this->db->last_query();
+
+                        // if ($userDetails[0]['referral_code'] != NULL) {
+                        //     if ($total_amount) {
+                        //         add_commsion_user($user_id, $orderID, $userDetails[0]['referral_code'], $total_amount);
+                        //         $response['query_commision'] = $this->db->last_query();
+                        //     }
+                        // }
+
+
+                        // $response['result'] = true;
+                        // $response['reason'] = 'Order placed succefully.';
+                        $response = [
+                            "status" => true,
+                            "message" => "Order created successfully",
+                            "data" => [
+                                "order_id" => $orderID,
+                                // "razorpay_order_id" => $order['id'],
+                                "razorpay_order_id" =>  1,
+                                "amount" => $amount_paise,
+                                "currency" => "INR",
+                                "key_id" => $keyId
+                            ]
+                        ];
+                    } else {
+                        $response['result'] = false;
+                        $response['reason'] = SOMETHING_WRONG;
                     }
-
-                    //wallet  amount update wallet trancation
-                    if ($wallet_amount) {
-                        withdraw_wallet_amount_user($login_user_id, $orderID, $wallet_amount);
-                        // updateQuickWallentAMount($user_id,2,$wallet_amount);
-                        $response['query'] = $this->db->last_query();
-                    }
-
-
-                    //add in order subscrbption 
-                    // if ($type == 1) {
-                    //course subscribtion
-                    // $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $courses_duration_id), 'duration_id', '', 'row_array');
-
-                    $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
-
-                    $order_date = date('Y-m-d');
-                    $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
-                    $order_subscrb = array(
-                        'order_id' => $orderID,
-                        'order_no' => $orderNo,
-                        'user_id' => $login_user_id,
-                        // 'type' => $type,
-                        // 'courses_duration_id' => $courses_duration_id,
-                        'courses_duration_id' => $coursesDuratoion['duration_id'],
-                        'course_id' => $courses_id,
-                        'start_date' => date('Y-m-d'),
-                        'end_date' => $endDate,
-                        'active' => 1,
-                        'no_of_days' => $duratoion_no_of_days['no_of_days'],
-                        'created_on' => date('Y-m-d H:i:s'),
-                    );
-                    $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
-
-                    // } else {
-                    //     //package subscrbption
-                    //     if ($type == 3) {
-                    //         $where3['package_id'] = $courses_id;
-                    //         $courses = $this->CommonModel->getData('tbl_courses_packages', $where3);
-                    //         foreach ($courses as $key3 => $course1) {
-
-                    //             $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $course1['courses_duration_id']), 'duration_id', '', 'row_array');
-                    //             $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
-                    //             $order_date = date('Y-m-d');
-                    //             $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
-                    //             $order_subscrb = array(
-                    //                 'order_id' => $orderID,
-                    //                 'order_no' => $orderNo,
-                    //                 'user_id' => $user_id,
-                    //                 'type' => $type,
-                    //                 'package_id' => $courses_id,
-                    //                 'courses_duration_id' => $course1['courses_duration_id'],
-                    //                 'course_id' => $course1['courses_id'],
-                    //                 'start_date' => date('Y-m-d'),
-                    //                 'end_date' => $endDate,
-                    //                 'active' => 1,
-                    //                 'no_of_days' => $duratoion_no_of_days['no_of_days'],
-                    //                 'created_on' => date('Y-m-d H:i:s'),
-                    //             );
-                    //             $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
-                    //         }
-                    //     }
-                    // }
-                    // $response['query_subscription'] = $this->db->last_query();
-
-                    // if ($userDetails[0]['referral_code'] != NULL) {
-                    //     if ($total_amount) {
-                    //         add_commsion_user($user_id, $orderID, $userDetails[0]['referral_code'], $total_amount);
-                    //         $response['query_commision'] = $this->db->last_query();
-                    //     }
-                    // }
-
-
-                    $response['result'] = true;
-                    $response['reason'] = 'Order placed succefully.';
-                } else {
-                    $response['result'] = false;
-                    $response['reason'] = SOMETHING_WRONG;
+                } catch (Exception $e) {
+                    // print_r("hille");
+                    // print_r($e->getMessage());
+                    // die;
+                    echo json_encode([
+                        "status" => false,
+                        "message" => $e->getMessage()
+                    ]);
                 }
+
+
                 /* }else{
          			$response['result'] = false;
                     $response['reason'] = "No item in cart";
@@ -493,6 +553,95 @@ class Orders extends CI_Controller
             $response['reason'] = INVALID_INPUT;
         }
         echo json_encode($response);
+    }
+
+    public function updateOrderPaymentStatus()
+    {
+        $post = json_decode($this->input->raw_input_stream, true);
+        authenticateUser();
+
+
+        $login_user_id = $this->regId;
+
+        $order_id = $post['order_id'] ? $post['order_id'] : '';
+        $course_id = $post['course_id'] ? $post['course_id'] : '';
+        $razorpay_order_id = $post['razorpay_order_id'] ? $post['razorpay_order_id'] : '';
+        $razorpay_payment_id = $post['razorpay_payment_id'] ? $post['razorpay_payment_id'] : '';
+        $razorpay_signature = $post['razorpay_signature'] ? $post['razorpay_signature'] : '';
+        $payment_status = $post['payment_status'] ? $post['payment_status'] : '';
+        if (empty($order_id) || empty($razorpay_order_id) || empty($razorpay_payment_id) || empty($razorpay_signature) || empty($payment_status)) {
+            echo json_encode([
+                "status" => false,
+                "message" => "Invalid input"
+            ]);
+            die;
+        }
+        $update_order = [
+            'order_status' => "COMPLETED",
+            'payment_status' => $payment_status,
+        ];
+        $this->CommonModel->iudAction('tbl_orders', $update_order, 'update', array('id' => $order_id));
+        $update_payment_order = [
+            'razorpay_payment_id' => $razorpay_payment_id,
+            'razorpay_signature' => $razorpay_signature,
+            'status' => $payment_status,
+            'transaction_date' => date('Y-m-d H:i:s'),
+            'payment_response' => json_encode($post)
+        ];
+        $this->CommonModel->iudAction('tbl_order_payment_details', $update_payment_order, 'update', array('order_id' => $order_id, 'user_id' => $login_user_id, 'razorpay_order_id' => $razorpay_order_id));
+        if ($payment_status == 'CAPTURED') {
+            $get_order_details = $this->CommonModel->getData('tbl_orders', array('user_id' => $login_user_id, 'id' => $order_id), 'order_no', '', 'row_array');
+            $userDetails = $this->CommonModel->getData('tbl_users', array('id' => $login_user_id, 'status' => 1));
+            $name = $userDetails[0]['first_name'];
+            $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $course_id));
+            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $course_id), 'duration_id', '', 'row_array');
+            $cname = strlen($course_name[0]['title']);
+            if ($cname > 30) {
+                $course_name1 = substr($course_name[0]['title'], 0, 30) . "..";
+            } else {
+                $course_name1 = $course_name[0]['title'];
+            }
+            $verificationMessage = " Dear " . $name . ", Your Course " . $course_name1 . " have been Purchased Successfully. Thanks Team Lalit Dangre";
+            // sendMobileMessage($verificationMessage, $userDetails[0]['mobile_no'], '1507163947849507459');
+            // update course subscription
+            $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
+
+            $order_date = date('Y-m-d');
+            $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
+            $order_subscrb = array(
+                'order_id' => $order_id,
+                'order_no' => $get_order_details['order_no'],
+                'user_id' => $login_user_id,
+                // 'type' => $type,
+                // 'courses_duration_id' => $courses_duration_id,
+                'courses_duration_id' => $coursesDuratoion['duration_id'],
+                'course_id' => $course_id,
+                'start_date' => date('Y-m-d'),
+                'end_date' => $endDate,
+                'active' => 1,
+                'no_of_days' => $duratoion_no_of_days['no_of_days'],
+                'created_on' => date('Y-m-d H:i:s'),
+            );
+            $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
+        } else {
+            $this->CommonModel->iudAction('tbl_orders', array('order_status' => "CANCELLED", 'payment_status' => "FAILED"), 'update', array('id' => $order_id, 'user_id' => $login_user_id));
+            $this->CommonModel->iudAction('tbl_order_payment_details', array('status' => 'FAILED'), 'update', array('order_id' => $order_id, 'user_id' => $login_user_id, 'razorpay_order_id' => $razorpay_order_id));
+            // echo json_encode([
+            //     "status" => false,
+            //     "message" => "Payment failed"
+            // ]);
+            // die;
+        }
+        echo json_encode([
+            "status" => true,
+            "message" => "Payment Status update successful",
+            "data" => [
+                "order_id" => $order_id,
+                "course_id" => $course_id,
+                "payment_status" => $payment_status,
+            ]
+        ]);
+        die;
     }
 
     public function cancelOrder()

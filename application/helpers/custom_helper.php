@@ -424,7 +424,9 @@ if (!function_exists('authenticateUser')) {
                 // var_dump($userDetail);
                 $checkExist = $CI->Authentication_model->checkUserExist($userDetail->reg_email, $userDetail->reg_mobile, $userDetail->reg_type, '', false, $apiToken);
                 // print_r($CI->db->last_query());die;
-
+                // echo "<pre>";
+                // print_r($checkExist);
+                // die;
                 // echo json_encode($checkExist);
                 // die;
                 // if ($checkExist['id'] !== $user_id) {
@@ -435,6 +437,8 @@ if (!function_exists('authenticateUser')) {
                 //     die;
                 // }
                 if (($checkExist)) {
+                    // echo "existis";
+                    // die;
                     $CI->regId = $userDetail->reg_id;
                     $CI->regType = $userDetail->reg_type;
                     $CI->regEmail = $userDetail->reg_email;
@@ -442,6 +446,8 @@ if (!function_exists('authenticateUser')) {
                     $CI->user_type = $userDetail->user_type;
                     return true;
                 } else {
+                    // echo "existis not";
+                    // die;
                     $response['result'] = false;
                     $response['isSessionExpired'] = true;
                     $response['message'] = 'Authentication failed. Please login again.';

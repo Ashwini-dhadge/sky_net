@@ -227,43 +227,45 @@ class MCQVideo extends CI_Controller
                 $lesson_count = $this->Common_model->getData('tbl_lesson_video', ['courses_id' => $getlesson['courses_id'], 'section_id' => $getlesson['section_id'], 'lesson_id' => $getlesson['lesson_id']], 'count(id) as total_video', '', 'row_array');
                 //    echo $this->db->last_query();
                 $lesson_video_view_count = $this->Common_model->getData('tbl_lesson_user_video_view', ['courses_id' => $getlesson['courses_id'], 'section_id' => $getlesson['section_id'], 'lesson_id' => $getlesson['lesson_id'], 'user_id' => $login_user_id, 'view_video' => 1], 'count(id) as total_video_view', '', 'row_array');
+                $view = 0;
                 if ($lesson_count['total_video'] == $lesson_video_view_count['total_video_view']) {
+                    $view = 1;
+                }
 
-                    if (empty($user_lesson_video_view)) {
-
-
-                        $this->Common_model->iudAction(
-                            'tbl_lesson_user_video',
-                            [
-                                'courses_id' => $getlesson['courses_id'],
-                                'section_id' => $getlesson['section_id'],
-                                'lesson_id'  => $getlesson['lesson_id'],
-                                'view_video' => 1,
-                                'user_id'    => $login_user_id,
-                                'created_by' => $login_user_id,
-                                'created_at' => date('Y-m-d H:i:s')
-                            ],
-                            'insert'
-                        );
-                    } else {
+                if (empty($user_lesson_video_view)) {
 
 
-                        $this->Common_model->iudAction(
-                            'tbl_lesson_user_video',
-                            [
-                                'view_video' => 1,
-                                'updated_by' => $login_user_id,
-                                'updated_at' => date('Y-m-d H:i:s')
-                            ],
-                            'update',
-                            [
-                                'courses_id' => $getlesson['courses_id'],
-                                'section_id' => $getlesson['section_id'],
-                                'lesson_id'  => $getlesson['lesson_id'],
-                                'user_id'    => $login_user_id
-                            ]
-                        );
-                    }
+                    $this->Common_model->iudAction(
+                        'tbl_lesson_user_video',
+                        [
+                            'courses_id' => $getlesson['courses_id'],
+                            'section_id' => $getlesson['section_id'],
+                            'lesson_id'  => $getlesson['lesson_id'],
+                            'view_video' => $view,
+                            'user_id'    => $login_user_id,
+                            'created_by' => $login_user_id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ],
+                        'insert'
+                    );
+                } else {
+
+
+                    $this->Common_model->iudAction(
+                        'tbl_lesson_user_video',
+                        [
+                            'view_video' => $view,
+                            'updated_by' => $login_user_id,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ],
+                        'update',
+                        [
+                            'courses_id' => $getlesson['courses_id'],
+                            'section_id' => $getlesson['section_id'],
+                            'lesson_id'  => $getlesson['lesson_id'],
+                            'user_id'    => $login_user_id
+                        ]
+                    );
                 }
                 $lesson_view = $this->Common_model->getData('tbl_lesson_user_video', array('lesson_id' => $getlesson['lesson_id'], 'user_id' => $login_user_id), 'view_video', '', 'row_array');
 

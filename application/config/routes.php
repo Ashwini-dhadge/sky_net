@@ -83,6 +83,7 @@ $route['app_dashboard'] = 'app/Authentication/getDashboard';
 // Course
 $route['category_list'] = 'app/Courses/getCategoriesList'; #done
 $route['app_courses_list'] = 'app/Courses/getCourses';
+$route['my_courses_list'] = 'app/Courses/getMyCoursesList';
 $route['watch_course'] = 'app/Courses/getWatchCourses';
 $route['app_courses_details'] = 'app/Courses/getCoursesDetails';
 $route['lesson_details'] = 'app/Courses/getLessonsDetails';
@@ -117,3 +118,4 @@ $route['my_forum_list'] = 'app/Forum/myForumList';
 
 //Order
 $route['app_place_order'] = "app/Orders/placeOrder";
+$route['update_payment_status'] = "app/Orders/updateOrderPaymentStatus";
