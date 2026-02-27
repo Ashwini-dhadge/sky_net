@@ -21,7 +21,7 @@ class UserModel extends CI_Model
 
     );
 
-    public function getUserData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0, $role_id = 0)
+    public function getUserData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0, $role_id = 0, $student_type = '')
     {
 
         $this->db->select('u.*');
@@ -43,6 +43,9 @@ class UserModel extends CI_Model
 
         if ($role_id) {
             $this->db->where('u.role', $role_id);
+        }
+        if ($student_type !== '' && $student_type !== null) {
+            $this->db->where('user_type', $student_type);
         }
         $this->db->where('u.is_deleted', 0);
 

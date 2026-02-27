@@ -81,8 +81,9 @@
 
                                     <?php
                                     $selectedSkills = [];
+
                                     if (!empty($course['skill'])) {
-                                        $selectedSkills = explode(',', $course['skill']);
+                                        $selectedSkills = array_map('trim', explode(',', $course['skill']));
                                     }
                                     ?>
 
@@ -90,23 +91,11 @@
                                         <label class="col-form-label">Select Skill</label>
 
                                         <select class="custom-select" id="skill" name="skill[]" multiple>
-
-                                            <?php foreach ($skill as $value): ?>
-
-                                                <option value="<?= $value['name'] ?>"
-                                                    <?= in_array($value['name'], $selectedSkills) ? 'selected' : '' ?>>
-                                                    <?= $value['name'] ?>
+                                            <?php foreach ($selectedSkills as $skillValue): ?>
+                                                <option value="<?= $skillValue ?>" selected>
+                                                    <?= $skillValue ?>
                                                 </option>
-
                                             <?php endforeach; ?>
-
-                                            <!-- Show custom saved skills not in master -->
-                                            <?php foreach ($selectedSkills as $s):
-                                                if (!in_array($s, array_column($skill, 'name'))) : ?>
-                                                    <option value="<?= $s ?>" selected><?= $s ?></option>
-                                            <?php endif;
-                                            endforeach; ?>
-
                                         </select>
                                     </div>
 
