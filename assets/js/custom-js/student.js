@@ -36,7 +36,7 @@ function listUsers(data = '') {
             //dataSrc: "data",
             data: function (d) {
                 d.role = $('#role').val();
-
+                d.student_type = $('#student_type_filter').val();
             },
         },
         columnDefs: [{ responsivePriority: 1, targets: 2 }],
@@ -57,7 +57,9 @@ function listUsers(data = '') {
 
 }
 
-
+$(document).on('change', '#student_type_filter', function () {
+    $('#student_datatable').DataTable().ajax.reload();
+});
 
 $(document).ready(function () {
 

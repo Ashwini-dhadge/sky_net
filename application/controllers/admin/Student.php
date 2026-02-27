@@ -36,11 +36,11 @@ class Student extends CI_Controller
         $sortBy = $data['order'][0]['dir'];
         $role_id = $this->input->post('role');
         //print_r($role_id);die;
-
-        $count = count($this->UserModel->getUserData($searchVal, 0, 0, 0, 0, 0, $role_id));
+        $student_type = $this->input->post('student_type');
+        $count = count($this->UserModel->getUserData($searchVal, 0, 0, 0, 0, 0, $role_id, $student_type));
         // print_r($count);die;
         if ($count) {
-            $userData = $this->UserModel->getUserData($searchVal, $sortColIndex, $sortBy, $limit, $offset, 0, $role_id);
+            $userData = $this->UserModel->getUserData($searchVal, $sortColIndex, $sortBy, $limit, $offset, 0, $role_id, $student_type);
 
             foreach ($userData as $key => $user) {
                 $row = [];
