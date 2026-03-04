@@ -52,58 +52,68 @@
                                                     value="<?= (isset($last_name)) ? $last_name : ''; ?>">
                                             </div>
                                         </div> -->
-                                        <div class="form-group col-md-6">
-                                            <label>Email</label>
-                                            <input type="text" class="form-control" required
-                                                placeholder="Enter Email" name="email" id="checkemail"
-                                                value="<?= (isset($email)) ? $email : ''; ?>">
+                                            <input type="hidden" id="user_id" name="user_id" value="<?= isset($id) ? $id : 0 ?>">
+                                            <div class="form-group col-md-6">
+                                                <label>Email</label>
+                                                <input type="text"
+                                                    class="form-control"
+                                                    required
+                                                    placeholder="Enter Email"
+                                                    name="email"
+                                                    id="checkemail"
+                                                    value="<?= isset($email) ? $email : '' ?>">
 
-                                            <small id="email_msg"></small>
-                                        </div>
-
-
-                                        <div class="form-group col-md-6">
-                                            <label>Mobile No</label>
-                                            <input type="number" class="form-control" required
-                                                placeholder="Enter Mobile No" name="mobile_no" id="mobile_no"
-                                                value="<?= (isset($mobile_no)) ? $mobile_no : ''; ?>">
-
-                                            <small id="mobile_msg"></small>
-                                        </div>
-
-                                        <div class="form-group col-md-6">
-                                            <label>Password</label>
-                                            <div class="text">
-                                                <input type="text" class="form-control" required
-                                                    placeholder="Enter Password" name="password"
-                                                    value="<?= (isset($password)) ? $password : '123456'; ?>">
-
+                                                <small id="email_msg"></small>
                                             </div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label>Profile Image</label>
-                                            <div>
-                                                <input type="file" class="form-control" name="image">
-                                                <?= (isset($image)) ? '<img src="' . base_url() . USER_IMAGES . $image . '" width="80">' : ''; ?>
+
+                                            <div class="form-group col-md-6">
+                                                <label>Mobile No</label>
+                                                <input type="number"
+                                                    class="form-control"
+                                                    required
+                                                    placeholder="Enter Mobile No"
+                                                    name="mobile_no"
+                                                    id="mobile_no"
+                                                    value="<?= isset($mobile_no) ? $mobile_no : '' ?>">
+
+                                                <small id="mobile_msg"></small>
                                             </div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label>Status</label>
-                                            <div>
-                                                <input type="radio" required value="1" name="status"
-                                                    <?= (isset($status) && $status == 1) ? 'checked' : ''; ?> checked>
-                                                &nbsp;&nbsp;Active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <input type="radio" required value="0" name="status"
-                                                    <?= (isset($status) && $status == 0) ? 'checked' : ''; ?>>
-                                                &nbsp;&nbsp;In-Active
-                                            </div>
-                                        </div>
 
 
-                                        <div class="col-md-12 mb-4">
-                                            <input type="submit" id="submit_btn" class="btn btn-primary float-left" value="Submit">
-                                        </div>
-                                    </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Password</label>
+                                                <div class="text">
+                                                    <input type="text" class="form-control" required
+                                                        placeholder="Enter Password" name="password"
+                                                        value="<?= (isset($password)) ? $password : '123456'; ?>">
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label>Profile Image</label>
+                                                <div>
+                                                    <input type="file" class="form-control" name="image">
+                                                    <?= (isset($image)) ? '<img src="' . base_url() . USER_IMAGES . $image . '" width="80">' : ''; ?>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <label>Status</label>
+                                                <div>
+                                                    <input type="radio" required value="1" name="status"
+                                                        <?= (isset($status) && $status == 1) ? 'checked' : ''; ?> checked>
+                                                    &nbsp;&nbsp;Active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <input type="radio" required value="0" name="status"
+                                                        <?= (isset($status) && $status == 0) ? 'checked' : ''; ?>>
+                                                    &nbsp;&nbsp;In-Active
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group col-md-12">
+                                                <button type="submit" id="submit_btn" class="btn btn-primary">
+                                                    Submit
+                                                </button>
+                                            </div>
                                 </form>
                             </div>
                         </div>
@@ -132,68 +142,80 @@
             $("#submit_btn").prop("disabled", true);
         }
     }
-    $("#checkemail").keyup(function() {
+    $("#submit_btn").prop("disabled", true);
 
+    $("#checkemail").keyup(function() {
         let email = $(this).val();
+        let user_id = $("#user_id").val();
 
         if (email.length > 3) {
-
             $.ajax({
                 url: "<?= base_url('admin/Student/check_email') ?>",
                 type: "POST",
                 data: {
-                    email: email
+                    email: email,
+                    user_id: user_id
                 },
                 success: function(res) {
 
                     if (res == "exists") {
-                        $("#email_msg").html("Email already exists").css("color", "red");
+                        $("#email_msg")
+                            .html("Email already exists")
+                            .css("color", "red");
                         emailValid = false;
                     } else {
-                        $("#email_msg").html("Email available").css("color", "green");
+
+                        $("#email_msg")
+                            .html("Email available")
+                            .css("color", "green");
                         emailValid = true;
                     }
-
                     checkSubmit();
                 }
             });
-
         }
 
     });
-
-
     $("#mobile_no").keyup(function() {
-
         let mobile = $(this).val();
+        let user_id = $("#user_id").val();
 
         if (mobile.length >= 10) {
-
             $.ajax({
                 url: "<?= base_url('admin/Student/check_mobile') ?>",
                 type: "POST",
                 data: {
-                    mobile: mobile
+                    mobile: mobile,
+                    user_id: user_id
                 },
                 success: function(res) {
-
                     if (res == "exists") {
-                        $("#mobile_msg").html("Mobile number already exists").css("color", "red");
+                        $("#mobile_msg")
+                            .html("Mobile number already exists")
+                            .css("color", "red");
                         mobileValid = false;
                     } else {
-                        $("#mobile_msg").html("Mobile available").css("color", "green");
+                        $("#mobile_msg")
+                            .html("Mobile available")
+                            .css("color", "green");
+
                         mobileValid = true;
                     }
-
                     checkSubmit();
                 }
             });
-
         }
 
     });
 
+    $(document).ready(function() {
+        let user_id = $("#user_id").val();
 
-    /* DISABLE SUBMIT BY DEFAULT */
-    $("#submit_btn").prop("disabled", true);
+        if (user_id > 0) {
+            emailValid = true;
+            mobileValid = true;
+            checkSubmit();
+        }
+
+    });
 </script>
