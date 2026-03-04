@@ -3,7 +3,7 @@
                    <div class="row">
                        <div class="col-12">
                            © <script>
-                           document.write(new Date().getFullYear())
+                               document.write(new Date().getFullYear())
                            </script> <?= PROJECTNAME ?>
                        </div>
                    </div>
@@ -12,7 +12,11 @@
 
            </div>
            </div>
-
+           <script>
+               window.addEventListener("load", function() {
+                   document.getElementById("page-loader").style.display = "none";
+               });
+           </script>
            <!-- ============================================================== -->
            <!-- End Right content here -->
            <!-- ============================================================== -->

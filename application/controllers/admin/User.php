@@ -308,7 +308,6 @@ class User extends CI_Controller
     public function updateIMEINO()
     {
         $post = $this->input->post();
-
         if ($post['action'] == 1) {
             $res = $this->CommonModel->iudAction('tbl_users', array('imei_no' => $post['imei_no'], 'commsion_percentage' => $post['commsion_percentage']), 'update', array('id' => $post['id']));
         } else {
@@ -364,18 +363,15 @@ class User extends CI_Controller
                 }
                 $order_no = '<a href="' . base_url() . ADMIN . 'Order/view/' . $user['order_id'] . '" title="View" class="text-primary waves-effect waves-ligh " >' . $user['order_no'] . '</a>';
                 array_push($row, $order_no);
-                if ($user['order_status'] == 1) {
-                    $class = 'success';
-                    $status = '<span class="badge badge-' . $class . '" >New</span>';
-                } else if ($user['order_status'] == 2) {
-                    $class = 'secondary';
-                    $status = '<span class="badge badge-' . $class . '" >Changed Courses</span>';
-                } else if ($user['order_status'] == 3) {
-                    $class = 'danger';
-                    $status = '<span class="badge badge-' . $class . '" >Cancel</span>';
-                } else if ($user['order_status'] == 0) {
-                    $class = 'danger';
-                    $status = '<span class="badge badge-' . $class . '" >In Active</span>';
+                if ($user['order_status'] == 'COMPLETED') {
+
+                    $status = '<span class="badge badge-success">Completed</span>';
+                } elseif ($user['order_status'] == 'CREATED') {
+
+                    $status = '<span class="badge badge-warning">Created</span>';
+                } elseif ($user['order_status'] == 'CANCELLED') {
+
+                    $status = '<span class="badge badge-danger">Cancelled</span>';
                 }
                 array_push($row, $status);
                 array_push($row, $user['order_date']);
@@ -399,7 +395,7 @@ class User extends CI_Controller
                     if ($is_expired) {
                         $status = '<span class="badge badge-danger">Expired</span>';
                     } else {
-                        $status = '<span class="badge badge-sucess">Current</span>';
+                        $status = '<span class="badge badge-success">Current</span>';
                     }
                     array_push($row, $status);
                 } else {

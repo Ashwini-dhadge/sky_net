@@ -212,8 +212,9 @@ class Student extends CI_Controller
                 'order_no' => $order_no,
                 'user_id' => $user_id,
                 'date' => date('Y-m-d'),
-                'order_status' => 1,
-                'payment_status' => 1,
+
+                'order_status' => 'COMPLETED',
+
                 'payment_type' => 3,
                 'amount' => 0,
                 'gst_amount' => 0,
@@ -239,6 +240,15 @@ class Student extends CI_Controller
 
             $this->CommonModel->iudAction('tbl_order_details', $orderDetailsData, 'insert');
 
+            $duration_id = 5;
+
+            $duration = $this->db
+                ->where('id', $duration_id)
+                ->get('tbl_duration_master')
+                ->row();
+
+            $no_of_days = $duration ? $duration->no_of_days : 30;
+
             $subData = [
                 'order_id' => $order_id,
                 'order_no' => $order_no,
@@ -247,9 +257,9 @@ class Student extends CI_Controller
                 'courses_duration_id' => 5,
                 'course_id' => $course_id,
                 'start_date' => date('Y-m-d'),
-                'end_date' => date('Y-m-d', strtotime('+30 days')),
+                'end_date' => date('Y-m-d', strtotime('+' . $no_of_days . ' days')),
                 'active' => 1,
-                'no_of_days' => 30,
+                'no_of_days' => $no_of_days,
                 'is_free' => 1,
                 'created_on' => date('Y-m-d H:i:s')
             ];
@@ -268,6 +278,31 @@ class Student extends CI_Controller
         $data['title'] = 'Add Student';
         $data['role'] = 3;
         $this->load->view(ADMIN . STUDENT . 'add-student', $data);
+    }
+
+    public function check_email()
+    {
+        $email = $this->input->post('email');
+        $this->db->where('email', $email);
+        $query = $this->db->get('tbl_users');
+        if ($query->num_rows() > 0) {
+            echo "exists";
+        } else {
+            echo "available";
+        }
+    }
+
+    public function check_mobile()
+    {
+        $mobile = $this->input->post('mobile');
+        $this->db->where('mobile_no', $mobile);
+        $query = $this->db->get('tbl_users');
+
+        if ($query->num_rows() > 0) {
+            echo "exists";
+        } else {
+            echo "available";
+        }
     }
 
     public function add($id = '')
@@ -298,30 +333,7 @@ class Student extends CI_Controller
 
             $student['user_from'] = 1;
             $student['user_type'] = 0;
-            if ($post['id'] == '') {
-                $student['is_otp_verified'] = 0;
-                if ($id = $this->CommonModel->iudAction('tbl_users', $student, 'insert')) {
-                    if ($role == 4) {
-                        $this->session->set_flashdata('success', 'Instructor Added Successfully');
-                    } else {
-
-                        $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Lalit Dangre";
-                        // sendMobileMessage($verificationMessage, $student['mobile_no'],'1507163947670092160');
-
-                        $this->session->set_flashdata('success', 'User Added Successfully');
-                    }
-                } else {
-                    $this->session->set_flashdata('error', 'Fail To Add Student');
-                }
-            } else {
-                $student['is_otp_verified'] = 1;
-                $this->CommonModel->iudAction('tbl_users', $student, 'update', array('id' => $post['id']));
-                if ($role == 4) {
-                    $this->session->set_flashdata('success', 'Student Updated Successfully');
-                } else {
-                    $this->session->set_flashdata('success', 'User Updated Successfully');
-                }
-            }
+            $student['is_otp_verified'] = 0;
             if ($role == 3) {
                 redirect(base_url(ADMIN . 'Student'));
             } else {
@@ -359,7 +371,6 @@ class Student extends CI_Controller
             $user = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
             if ($user) {
                 $data['user'] = $user[0];
-
                 $this->load->view(ADMIN . STUDENT . 'student_view', $data);
             }
         }

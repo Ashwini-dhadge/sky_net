@@ -54,24 +54,23 @@
                                         </div> -->
                                         <div class="form-group col-md-6">
                                             <label>Email</label>
-                                            <div>
-                                                <input type="text" class="form-control" required
-                                                    placeholder="Enter Email" name="email"
-                                                    value="<?= (isset($email)) ? $email : ''; ?>">
-                                            </div>
+                                            <input type="text" class="form-control" required
+                                                placeholder="Enter Email" name="email" id="checkemail"
+                                                value="<?= (isset($email)) ? $email : ''; ?>">
+
+                                            <small id="email_msg"></small>
                                         </div>
+
 
                                         <div class="form-group col-md-6">
                                             <label>Mobile No</label>
-                                            <div class="text">
-                                                <input type="number" class="form-control" required
-                                                    placeholder="Enter Mobile No" name="mobile_no"
-                                                    data-parsley-trigger="keyup" data-parsley-length="[10,12]"
-                                                    value="<?= (isset($mobile_no)) ? $mobile_no : ''; ?>"
-                                                    data-parsley-mobile_no="<?= (isset($id)) ? $id : '0'; ?>">
+                                            <input type="number" class="form-control" required
+                                                placeholder="Enter Mobile No" name="mobile_no" id="mobile_no"
+                                                value="<?= (isset($mobile_no)) ? $mobile_no : ''; ?>">
 
-                                            </div>
+                                            <small id="mobile_msg"></small>
                                         </div>
+
                                         <div class="form-group col-md-6">
                                             <label>Password</label>
                                             <div class="text">
@@ -102,7 +101,7 @@
 
 
                                         <div class="col-md-12 mb-4">
-                                            <input type="submit" class="btn btn-primary float-left" value="Submit">
+                                            <input type="submit" id="submit_btn" class="btn btn-primary float-left" value="Submit">
                                         </div>
                                     </div>
                                 </form>
@@ -118,3 +117,83 @@
 </div>
 <!-- content -->
 <?php init_footer(); ?>
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let emailValid = false;
+    let mobileValid = false;
+
+    function checkSubmit() {
+        if (emailValid && mobileValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
+    }
+    $("#checkemail").keyup(function() {
+
+        let email = $(this).val();
+
+        if (email.length > 3) {
+
+            $.ajax({
+                url: "<?= base_url('admin/Student/check_email') ?>",
+                type: "POST",
+                data: {
+                    email: email
+                },
+                success: function(res) {
+
+                    if (res == "exists") {
+                        $("#email_msg").html("Email already exists").css("color", "red");
+                        emailValid = false;
+                    } else {
+                        $("#email_msg").html("Email available").css("color", "green");
+                        emailValid = true;
+                    }
+
+                    checkSubmit();
+                }
+            });
+
+        }
+
+    });
+
+
+    $("#mobile_no").keyup(function() {
+
+        let mobile = $(this).val();
+
+        if (mobile.length >= 10) {
+
+            $.ajax({
+                url: "<?= base_url('admin/Student/check_mobile') ?>",
+                type: "POST",
+                data: {
+                    mobile: mobile
+                },
+                success: function(res) {
+
+                    if (res == "exists") {
+                        $("#mobile_msg").html("Mobile number already exists").css("color", "red");
+                        mobileValid = false;
+                    } else {
+                        $("#mobile_msg").html("Mobile available").css("color", "green");
+                        mobileValid = true;
+                    }
+
+                    checkSubmit();
+                }
+            });
+
+        }
+
+    });
+
+
+    /* DISABLE SUBMIT BY DEFAULT */
+    $("#submit_btn").prop("disabled", true);
+</script>
