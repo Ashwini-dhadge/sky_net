@@ -141,13 +141,15 @@
                                     <div class="tab-pane fade" id="profile1">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h6 class="font-weight-bold mb-0">Assigned Courses</h6>
-                                            <a href="javascript:void(0);"
-                                                title="Assign Course"
-                                                class="btn btn-primary btn-sm openAssignModal"
-                                                data-id="<?= $user['id'] ?>"
-                                                style="border-radius:20px;padding:6px 16px;">
-                                                <i class="fas fa-plus mr-1"></i> Assign Course
-                                            </a>
+                                            <?php if ($user['user_type'] == 0) { ?>
+                                                <a href="javascript:void(0);"
+                                                    title="Assign Course"
+                                                    class="btn btn-primary btn-sm openAssignModal"
+                                                    data-id="<?= $user['id'] ?>"
+                                                    style="border-radius:20px;padding:6px 16px;">
+                                                    <i class="fas fa-plus mr-1"></i> Assign Course
+                                                </a>
+                                            <?php } ?>
                                         </div>
                                         <div class="modal fade" id="assignCourseModal" tabindex="-1">
                                             <div class="modal-dialog modal-xl">
