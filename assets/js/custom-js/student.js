@@ -42,10 +42,10 @@ function listUsers(data = '') {
         columnDefs: [{ responsivePriority: 1, targets: 2 }],
 
         columns: [
-            { "width": "50px", title: "Sr. No.", orderable: false },
-            { "width": "80px", title: "Image" },
-            { "width": "150px", title: "Name" },
-            { "width": "150px", title: "Email" },
+            { "width": "20px", title: "Sr. No.", orderable: false },
+            { "width": "50px", title: "Image" },
+            { "width": "100px", title: "Name" },
+            { "width": "100px", title: "Email" },
             { "width": "50px", title: "Mobile" },
             { "width": "50px", title: "Password" },
             { "width": "50px", title: "Student Type" },
@@ -461,4 +461,45 @@ $(document).on("click", ".openReplyModal", function () {
         }
     });
 
+});
+
+
+$(document).on("click", ".certificateModal", function () {
+    var userId = $(this).data("id");
+    $("#certificateModal").modal("show");
+
+    $.ajax({
+        url: base_url + _admin + 'Student/make_certificate_modal',
+        type: "POST",
+        data: { user_id: userId },
+        success: function (response) {
+            $("#certificateModalBody").html(response);
+        },
+        error: function () {
+            $("#certificateModalBody").html("<p class='text-danger'>Something went wrong.</p>");
+        }
+    });
+});
+
+
+
+$(document).on("submit", "#certificateForm", function (e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    $.ajax({
+        url: base_url + _admin + "Student/save_certificate",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+
+        success: function (res) {
+            let data = JSON.parse(res);
+            if (data.status) {
+                alert(data.message);
+                $("#certificateModal").modal("hide");
+                location.reload();
+            }
+        }
+    });
 });

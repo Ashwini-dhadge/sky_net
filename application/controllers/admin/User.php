@@ -120,7 +120,6 @@ class User extends CI_Controller
         $data['title'] = 'Add Instructor';
 
         $post = $this->input->post();
-
         $role = $post['role'] ?? null;
 
         if ($role == 2) {
@@ -129,12 +128,10 @@ class User extends CI_Controller
             $data['role'] = 4;
         }
 
-
-        // echo '<pre>';
-        // print_r($post);
-        // die();
-
         if ($post) {
+
+            /* REMOVE EXTRA FIELD */
+            unset($post['user_id']);
 
             /* ================= MOBILE UNIQUE CHECK ================= */
 
@@ -142,7 +139,6 @@ class User extends CI_Controller
             $this->db->where('is_deleted', 0);
 
             if (!empty($post['id'])) {
-                // EDIT MODE → exclude current user
                 $this->db->where('id !=', $post['id']);
             }
 
@@ -151,23 +147,56 @@ class User extends CI_Controller
             if ($mobileExists > 0) {
                 $this->session->set_flashdata('error', 'Mobile number already exists');
                 redirect($_SERVER['HTTP_REFERER']);
-                return; // 🔥 STOP EXECUTION
+                return;
             }
 
             /* ================= CONTINUE SAVE ================= */
 
             $instructor = $post;
 
+            /* ===== IMAGE UPLOAD ===== */
+
             if (!empty($_FILES['image']['name'])) {
-                $result = fileUpload(USER_IMAGES, 'image');
+
+                $_FILES['profile_file'] = [
+                    'name'     => $_FILES['image']['name'],
+                    'type'     => $_FILES['image']['type'],
+                    'tmp_name' => $_FILES['image']['tmp_name'],
+                    'error'    => $_FILES['image']['error'],
+                    'size'     => $_FILES['image']['size'],
+                ];
+
+                $result = fileUpload(USER_PROFILE, 'profile_file', false);
+
                 if ($result['status']) {
+
                     $instructor['image'] = $result['image_name'];
-                } else {
-                    unset($instructor['image']);
+
+                    /* DELETE OLD IMAGE ON UPDATE */
+
+                    if (!empty($post['id'])) {
+
+                        $old = $this->CommonModel->getData(
+                            'tbl_users',
+                            ['id' => $post['id']],
+                            '',
+                            '',
+                            'row_array'
+                        );
+
+                        if (!empty($old['image']) && file_exists(FCPATH . USER_PROFILE . $old['image'])) {
+                            unlink(FCPATH . USER_PROFILE . $old['image']);
+                        }
+                    }
                 }
             } else {
-                unset($instructor['image']);
+
+                if (empty($post['id'])) {
+                    unset($instructor['image']);
+                }
             }
+
+            /* ===== OTHER DATA ===== */
 
             $role = $post['role'];
 
@@ -177,12 +206,15 @@ class User extends CI_Controller
             $instructor['self_code'] = $selfReferral;
             $instructor['otp']       = $otpNumber;
             $instructor['user_from'] = 1;
+
             if ($role == 2) {
                 $instructor['user_type'] = 0;
             }
 
+            /* ===== INSERT ===== */
+
             if (empty($post['id'])) {
-                /* ===== INSERT ===== */
+
                 $instructor['is_otp_verified'] = 0;
 
                 if ($this->CommonModel->iudAction('tbl_users', $instructor, 'insert')) {
@@ -192,10 +224,13 @@ class User extends CI_Controller
                         ($role == 4) ? 'Instructor Added Successfully' : 'User Added Successfully'
                     );
                 } else {
+
                     $this->session->set_flashdata('error', 'Fail To Add Instructor');
                 }
             } else {
+
                 /* ===== UPDATE ===== */
+
                 $instructor['is_otp_verified'] = 1;
 
                 $this->CommonModel->iudAction(
@@ -211,6 +246,7 @@ class User extends CI_Controller
                 );
             }
 
+            /* ===== REDIRECT ===== */
 
             if ($role == 2) {
                 redirect(base_url(ADMIN . 'User'));
@@ -225,6 +261,7 @@ class User extends CI_Controller
         }
 
         /* ================= EDIT VIEW ================= */
+
         if ($_id) {
 
             $instructor = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
@@ -234,8 +271,6 @@ class User extends CI_Controller
             }
 
             $data = $instructor[0];
-
-            // VERY IMPORTANT
             $data['role'] = $data['role'];
 
             $data['title'] = ($data['role'] == 4)
@@ -246,7 +281,6 @@ class User extends CI_Controller
             return;
         }
 
-
         if ($role == 2) {
             redirect(base_url(ADMIN . 'User'));
         } elseif ($role == 4) {
@@ -255,7 +289,6 @@ class User extends CI_Controller
             redirect(base_url(ADMIN . 'User'));
         }
     }
-
 
     public function add_user($role = 2)
     {

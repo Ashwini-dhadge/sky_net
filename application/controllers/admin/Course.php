@@ -446,13 +446,13 @@ class Course extends CI_Controller
 				? implode(',', array_map('trim', $post['skill']))
 				: null,
 
-			'language'      => $post['language'],
-			'certificate'   => $post['certificate'],
-			'assessment'    => $post['assessment'],
+			'language'      => $post['language'] ?? 1,
+			'certificate'   => $post['certificate'] ?? 0,
+			'assessment'    => $post['assessment'] ?? 0,
 			'benefits'      => $post['benefits'] ?? null,
 			'notes'         => $post['notes'],
-			'status'        => $post['status'],
-			'is_free'       => $post['is_free'],
+			'status'        => $post['status'] ?? 1,
+			'is_free'       => $post['is_free'] ?? 0,
 		];
 
 		if (!empty($_FILES['image']['name'])) {

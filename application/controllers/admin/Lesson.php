@@ -300,7 +300,21 @@ class Lesson extends CI_Controller
 			$optionC  = trim($row['D'] ?? '');
 			$optionD  = trim($row['E'] ?? '');
 			$correct  = strtoupper(trim($row['F'] ?? ''));
+			
+			if ($question == '') {
+				$errors[] = "Row $index : Question is required.";
+				continue;
+			}
 
+			if ($optionA == '' || $optionB == '' || $optionC == '' || $optionD == '') {
+				$errors[] = "Row $index : All 4 options (A,B,C,D) are required.";
+				continue;
+			}
+
+			if (!in_array($correct, ['A', 'B', 'C', 'D'])) {
+				$errors[] = "Row $index : Correct answer must be A,B,C or D.";
+				continue;
+			}
 			if (
 				$question === '' ||
 				$optionA === '' ||

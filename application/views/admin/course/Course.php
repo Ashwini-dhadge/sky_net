@@ -101,7 +101,7 @@
 
                                     <div class="form-group">
                                         <label>Select Language</label>
-                                        <select id="language" name="language" required class="form-control select2">
+                                        <select id="language" name="language" class="form-control select2">
                                             <option value="">Language</option>
                                             <option value="1"
                                                 <?= (isset($course) && $course['language'] == 1) ? 'selected' : ''; ?>>
@@ -127,26 +127,9 @@
                                     </div>
                                 </div>
 
-                                <!-- <div class="col-12 col-md-12">
-                                    <div class="form-group">
-                                        <label>Benefits</label>
-                                        <textarea class="form-control summernote" rows="2"
-                                            name="benefits"><?= (isset($course)) ? $course['benefits'] : ''; ?></textarea>
-                                    </div>
-                                </div> -->
-
                                 <div class="col-12 col-md-6">
                                     <div class="d-flex gap-2">
                                         <div class="mr-5">
-                                            <div class="form-group">
-                                                <label>Certificate</label><br>
-                                                <input type="radio" value="1" name="certificate"
-                                                    <?= (isset($course) && $course['certificate'] == 1) ? 'checked' : ''; ?>>
-                                                YES
-                                                <input type="radio" value="0" name="certificate"
-                                                    <?= (isset($course) && $course['certificate'] == 0) ? 'checked' : ''; ?>>
-                                                NO
-                                            </div>
                                             <div class="form-group">
                                                 <label>Assessment</label><br>
                                                 <input type="radio" value="1" name="assessment"
@@ -166,15 +149,6 @@
                                                 <input type="radio" value="0" name="status"
                                                     <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
                                                 In-Active
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Is Free</label><br>
-                                                <input type="radio" value="1" name="is_free"
-                                                    <?= (isset($course['is_free']) && $course['is_free'] == 1) ? 'checked' : ''; ?>>
-                                                Yes
-                                                <input type="radio" value="0" name="is_free"
-                                                    <?= (isset($course['is_free']) && $course['is_free'] == 0) ? 'checked' : ''; ?>>
-                                                No
                                             </div>
                                         </div>
                                     </div>
@@ -211,14 +185,11 @@
                                         class="form-control" value="<?= $course_duration['offer_amount'] ?? ''; ?>">
                                 </div>
 
-
-
                                 <div class="form-group col-md-3">
                                     <label>Final Price</label>
                                     <input type="number" step="0.01" name="price" id="price" class="form-control"
                                         readonly value="<?= $course_duration['price'] ?? ''; ?>">
                                 </div>
-
                             </div>
 
 

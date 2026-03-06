@@ -125,6 +125,7 @@ define('USER_IMAGES', 'assets/uploads/user_image/');
 define('COURSE_IMAGES', 'assets/uploads/thumbnails/course_thumbnails/');
 define('VIDEO_IMAGES', 'assets/uploads/thumbnails/video_thumbnails/');
 define('USER_PROFILE', 'assets/uploads/user_image/');
+define('CERTIFICATE_FILES', 'assets/uploads/certificates/');
 define('COMMISION_PERCENTAGE', '5');
 
 define('ACTIVE', '1');

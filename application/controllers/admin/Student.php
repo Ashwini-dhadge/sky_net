@@ -84,6 +84,12 @@ class Student extends CI_Controller
                 }
 
                 $action .= '
+                    <a href="javascript:void(0);" 
+                    title="Certificate" 
+                    class="btn btn-warning btn-sm waves-effect waves-light certificateModal" data-id="' . $user['id'] . '">
+                    <i class="fas fa-award"></i>
+                    </a>
+
                     <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
                     title="Edit" 
                     class="btn btn-success btn-sm waves-effect waves-light">
@@ -141,6 +147,70 @@ class Student extends CI_Controller
         $data['sub_map'] = $sub_map;
 
         $this->load->view('admin/student/assign_course_modal', $data);
+    }
+
+    public function make_certificate_modal()
+    {
+        $user_id = $this->input->post('user_id');
+
+        $data['user_details'] = $this->CommonModel->getData(
+            'tbl_users',
+            ['id' => $user_id],
+            '',
+            '',
+            'row_array'
+        );
+        $data['courses'] = $this->CommonModel->getAllData(
+            'tbl_courses',
+            ['status' => 1]
+        );
+
+        $this->load->view('admin/student/certificate_modal', $data);
+    }
+
+    public function save_certificate()
+    {
+        $post = $this->input->post();
+
+        $data = [
+            'user_id' => $post['user_id'],
+            'course_id' => !empty($post['course_id']) ? $post['course_id'] : NULL,
+            'external_course' => $post['external_course'] ?? NULL,
+            'certificate_title' => $post['certificate_title'],
+            'score' => $post['score'] ?? NULL,
+            'grade' => $post['grade'] ?? NULL,
+            'issued_date' => $post['issued_date'],
+            'certificate_number' => 'CERT' . time(),
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        if (!empty($_FILES['certificate_file']['name'])) {
+
+            $_FILES['cert_file'] = [
+                'name'     => $_FILES['certificate_file']['name'],
+                'type'     => $_FILES['certificate_file']['type'],
+                'tmp_name' => $_FILES['certificate_file']['tmp_name'],
+                'error'    => $_FILES['certificate_file']['error'],
+                'size'     => $_FILES['certificate_file']['size'],
+            ];
+
+            $upload = fileUpload(CERTIFICATE_FILES, 'cert_file', false);
+
+            if ($upload['status']) {
+                $data['certificate_file'] = $upload['image_name'];
+            }
+        }
+
+        $this->CommonModel->iudAction(
+            'tbl_certificates',
+            $data,
+            'insert'
+        );
+
+        echo json_encode([
+            'status' => true,
+            'message' => 'Certificate Generated Successfully'
+        ]);
     }
 
     public function save_assigned_courses()
@@ -319,47 +389,70 @@ class Student extends CI_Controller
     public function add($id = '')
     {
         $data['title'] = 'Add Student';
-        $data['role'] = 3;
-
+        $data['role']  = 3;
         $post = $this->input->post();
+
         if ($post) {
             $student = $post;
-            if ($_FILES) {
-                $result = fileUpload(USER_IMAGES, 'image');
-                if ($result['status'] == true) {
-                    $student['image'] = $result['image_name'];
-                } else {
-                    unset($student['image']);
-                }
-            } else {
-                unset($student['image']);
-            }
-            $role = $this->input->post('role');
-            //   $student['role']=4;
-            // print_r($student);die;
-            $otpNumber = create6NumRandom();
-            $selfReferral = "LMS" . $student['mobile_no'];
-            $student['self_code'] = $selfReferral;
-            $student['otp'] = $otpNumber;
+            unset($student['user_id']);
+            if (!empty($_FILES['image']['name'])) {
 
+                $_FILES['profile_file'] = [
+                    'name'     => $_FILES['image']['name'],
+                    'type'     => $_FILES['image']['type'],
+                    'tmp_name' => $_FILES['image']['tmp_name'],
+                    'error'    => $_FILES['image']['error'],
+                    'size'     => $_FILES['image']['size'],
+                ];
+
+                $upload = fileUpload(USER_PROFILE, 'profile_file', false);
+
+                if ($upload['status']) {
+                    $student['image'] = $upload['image_name'];
+                }
+            }
+            $student['self_code'] = "LMS" . $student['mobile_no'];
+            $student['otp'] = create6NumRandom();
             $student['user_from'] = 1;
             $student['user_type'] = 0;
             $student['is_otp_verified'] = 0;
-            if ($role == 3) {
-                redirect(base_url(ADMIN . 'Student'));
+
+            if (!empty($post['id'])) {
+
+                $this->CommonModel->iudAction(
+                    'tbl_users',
+                    $student,
+                    'update',
+                    ['id' => $post['id']]
+                );
             } else {
-                redirect(base_url(ADMIN . 'Student/index'));
+
+                $this->CommonModel->iudAction(
+                    'tbl_users',
+                    $student,
+                    'insert'
+                );
             }
+
+            redirect(base_url(ADMIN . 'Student'));
         }
+
         if ($id) {
-            $student = $this->UserModel->getUserData('', 0, 0, 0, 0, $id);
-            $data = $student[0];
+
+            $student = $this->CommonModel->getData(
+                'tbl_users',
+                ['id' => $id],
+                '',
+                '',
+                'row_array'
+            );
+
+            $data = $student;
             $data['title'] = 'Edit Student';
         }
-        //  print_r($data);die;
+
         $this->load->view(ADMIN . STUDENT . 'add-student', $data);
     }
-
     public function view($_id, $_role)
     {
         if ($_role == 3) {
@@ -375,6 +468,14 @@ class Student extends CI_Controller
                     $questions = $this->UserModel->getLessonQuestions($row['lesson_id']);
                     $data['lesson_progress'][$key]['questions'] = $questions;
                 }
+
+                $data['certificates'] = $this->CommonModel->getData(
+                    'tbl_certificates',
+                    ['user_id' => $_id],
+                    '',
+                    '',
+                    ''
+                );
                 $this->load->view(ADMIN . USER . 'user_view', $data);
             }
         } else {
@@ -385,5 +486,18 @@ class Student extends CI_Controller
                 $this->load->view(ADMIN . STUDENT . 'student_view', $data);
             }
         }
+    }
+
+    function getCourseName($id)
+    {
+        $CI = &get_instance();
+        $course = $CI->CommonModel->getData(
+            'tbl_courses',
+            ['id' => $id],
+            'title',
+            '',
+            'row_array'
+        );
+        return $course['title'] ?? '-';
     }
 }
