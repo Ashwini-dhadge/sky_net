@@ -71,7 +71,7 @@ class CourseModel extends CI_Model
 
 
 
-    public function getCourseData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0)
+    public function getCourseData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0,  $where = '')
     {
 
         $this->db->select('c.*,cc.category_name');
@@ -87,7 +87,9 @@ class CourseModel extends CI_Model
             )";
             $this->db->where($searchCondition);
         }
-
+        if ($where) {
+            $this->db->where($where);
+        }
 
         $this->db->from('tbl_courses c');
         $this->db->join('tbl_categories as cc', 'cc.id =c.category_id');
@@ -96,8 +98,10 @@ class CourseModel extends CI_Model
         if ($limit) {
             $this->db->limit($limit, $offset);
         }
-        $this->db->order_by($this->dt_Column[$sortColIndex], $sortBy);
 
+        
+        $this->db->order_by('c.id', 'DESC');
+        
         $query = $this->db->get();
 
         return $query->result_array();
@@ -449,9 +453,7 @@ class CourseModel extends CI_Model
             $this->db->group_end();
         }
 
-        if (!empty($sortColIndex) && isset($columns[$sortColIndex])) {
-            $this->db->order_by($columns[$sortColIndex], $sortBy);
-        }
+        $this->db->order_by('ts.id', 'DESC');
 
         if ($limit > 0) {
             $this->db->limit($limit, $offset);

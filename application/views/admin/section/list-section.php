@@ -16,7 +16,8 @@
                 <div class="row">
                   <div class="col-md-4">
                     <select id="filter_course" class="form-control select2">
-                      <option value="">All Courses</option>
+                      <!-- <option value="">All Courses</option> -->
+                      <option>Select Courses</option>
                       <?php foreach ($course as $c) { ?>
                         <option value="<?= $c['id']; ?>"><?= $c['title']; ?></option>
                       <?php } ?>

@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
-
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Lesson extends CI_Controller
 {
@@ -99,34 +99,134 @@ class Lesson extends CI_Controller
 
 	public function saveMcqBulk()
 	{
+		$user_id = $this->session->userdata('user_id');
+		$jsonRows = $this->input->post('rows');
+
+		if ($jsonRows) {
+
+			$rows = json_decode($jsonRows, true);
+
+			if (!empty($rows) && is_array($rows)) {
+
+				$insertData = [];
+				$seenQuestions = [];
+
+				foreach ($rows as $row) {
+
+					$lesson_id = (int)($row['lesson_id'] ?? 0);
+					$question  = trim($row['question'] ?? '');
+					$optionA   = trim($row['option_a'] ?? '');
+					$optionB   = trim($row['option_b'] ?? '');
+					$optionC   = trim($row['option_c'] ?? '');
+					$optionD   = trim($row['option_d'] ?? '');
+					$correct   = strtoupper(trim($row['correct_option'] ?? ''));
+
+					if (
+						$lesson_id <= 0 ||
+						$question === '' ||
+						$optionA === '' ||
+						$optionB === '' ||
+						$optionC === '' ||
+						$optionD === '' ||
+						!in_array($correct, ['A', 'B', 'C', 'D'])
+					) {
+						continue;
+					}
+
+					$key = strtolower(preg_replace('/\s+/', ' ', $question));
+
+					if (isset($seenQuestions[$key])) {
+						continue;
+					}
+
+					$seenQuestions[$key] = true;
+
+					$exists = $this->db
+						->where('lesson_id', $lesson_id)
+						->where('question', $question)
+						->count_all_results('tbl_lesson_mcq');
+
+					if ($exists) continue;
+
+					$insertData[] = [
+						'lesson_id'      => $lesson_id,
+						'question'       => $question,
+						'option_a'       => $optionA,
+						'option_b'       => $optionB,
+						'option_c'       => $optionC,
+						'option_d'       => $optionD,
+						'correct_option' => $correct,
+						'created_at'     => date('Y-m-d H:i:s'),
+						'created_by'     => $user_id,
+						'updated_at'     => date('Y-m-d H:i:s'),
+						'updated_by'     => $user_id
+					];
+				}
+
+				if ($insertData) {
+
+					$chunks = array_chunk($insertData, 1000);
+
+					foreach ($chunks as $chunk) {
+						$this->db->insert_batch('tbl_lesson_mcq', $chunk);
+					}
+				}
+
+				echo json_encode([
+					'status' => true,
+					'msg' => 'MCQs uploaded successfully',
+					'inserted' => count($insertData)
+				]);
+
+				exit;
+			}
+		}
+
+
 		$post = $this->input->post();
 		$lesson_id = $post['lesson_id'];
 
-		foreach ($post['question'] as $i => $q) {
+		if (!empty($post['question'])) {
 
-			if (empty($q) || empty($post['option_a'][$i]) || empty($post['option_b'][$i])) {
-				continue;
+			foreach ($post['question'] as $i => $q) {
+
+				if (
+					empty($q) ||
+					empty($post['option_a'][$i]) ||
+					empty($post['option_b'][$i])
+				) {
+					continue;
+				}
+
+				$this->CommonModel->iudAction(
+					'tbl_lesson_mcq',
+					[
+						'lesson_id'      => $lesson_id,
+						'question'       => $q,
+						'option_a'       => $post['option_a'][$i],
+						'option_b'       => $post['option_b'][$i],
+						'option_c'       => $post['option_c'][$i] ?? null,
+						'option_d'       => $post['option_d'][$i] ?? null,
+						'correct_option' => $post['correct_option'][$i],
+						'created_at'     => date('Y-m-d H:i:s'),
+						'created_by'     => $user_id,
+						'updated_at'     => date('Y-m-d H:i:s'),
+						'updated_by'     => $user_id
+					],
+					'insert'
+				);
 			}
-			$current_userid = $this->session->userdata('user_id');
 
-			$this->CommonModel->iudAction('tbl_lesson_mcq', [
-				'lesson_id'      => $lesson_id,
-				'question'       => $q,
-				'option_a'       => $post['option_a'][$i],
-				'option_b'       => $post['option_b'][$i],
-				'option_c'       => $post['option_c'][$i] ?? null,
-				'option_d'       => $post['option_d'][$i] ?? null,
-				'correct_option' => $post['correct_option'][$i],
-				'created_at'     => date('Y-m-d H:i:s'),
-				'created_by'     => $current_userid,
-				'updated_at'     => date('Y-m-d H:i:s'),
-				'updated_by'     => $current_userid
-			], 'insert');
+			redirect(ADMIN . 'Lesson/mcq/' . $lesson_id);
 		}
 
-		redirect(ADMIN . 'Lesson/mcq/' . $lesson_id);
+		echo json_encode([
+			'status' => false,
+			'msg' => 'No data found'
+		]);
 	}
-
+	
+	
 	public function updateMcq()
 	{
 		$post = $this->input->post();
@@ -271,7 +371,189 @@ class Lesson extends CI_Controller
 		exit;
 	}
 
+	public function previewMcqXlsx()
+	{
+		$lesson_id = (int)$this->input->post('lesson_id');
 
+		if (empty($lesson_id)) {
+			echo json_encode([
+				'status' => false,
+				'msg'    => 'Lesson ID missing'
+			]);
+			exit;
+		}
+
+		if (!isset($_FILES['mcq_file']) || $_FILES['mcq_file']['error'] !== UPLOAD_ERR_OK) {
+			echo json_encode([
+				'status' => false,
+				'msg'    => 'File upload error'
+			]);
+			exit;
+		}
+
+		try {
+			$fileTmp = $_FILES['mcq_file']['tmp_name'];
+			$spreadsheet = IOFactory::load($fileTmp);
+			$sheet = $spreadsheet->getActiveSheet();
+			$highestRow = $sheet->getHighestDataRow();
+
+			$preview = [];
+			$fileDuplicates = [];
+			$totalRows = 0;
+			$validRows = 0;
+			$invalidRows = 0;
+
+			for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++) {
+				$question = trim((string)$sheet->getCell("A{$rowIndex}")->getValue());
+				$optionA  = trim((string)$sheet->getCell("B{$rowIndex}")->getValue());
+				$optionB  = trim((string)$sheet->getCell("C{$rowIndex}")->getValue());
+				$optionC  = trim((string)$sheet->getCell("D{$rowIndex}")->getValue());
+				$optionD  = trim((string)$sheet->getCell("E{$rowIndex}")->getValue());
+				$correct  = strtoupper(trim((string)$sheet->getCell("F{$rowIndex}")->getValue()));
+
+				if (
+					$question === '' &&
+					$optionA === '' &&
+					$optionB === '' &&
+					$optionC === '' &&
+					$optionD === '' &&
+					$correct === ''
+				) {
+					continue;
+				}
+
+				$totalRows++;
+				$rowErrors = [];
+
+				if ($question === '') {
+					$rowErrors[] = 'Question required';
+				}
+
+				if ($optionA === '' || $optionB === '' || $optionC === '' || $optionD === '') {
+					$rowErrors[] = 'All 4 options required';
+				}
+
+				if (!in_array($correct, ['A', 'B', 'C', 'D'])) {
+					$rowErrors[] = 'Correct option must be A,B,C or D';
+				}
+
+				$questionKey = strtolower(preg_replace('/\s+/', ' ', $question));
+				if ($questionKey !== '') {
+					if (isset($fileDuplicates[$questionKey])) {
+						$rowErrors[] = 'Duplicate question in uploaded file';
+					} else {
+						$fileDuplicates[$questionKey] = true;
+					}
+				}
+
+				// Duplicate in database for same lesson
+				if ($question !== '') {
+					$exists = $this->db
+						->where('lesson_id', $lesson_id)
+						->where('question', $question)
+						->count_all_results('tbl_lesson_mcq');
+
+					if ($exists > 0) {
+						$rowErrors[] = 'Question already exists in this lesson';
+					}
+				}
+
+				if (!empty($rowErrors)) {
+					$invalidRows++;
+				} else {
+					$validRows++;
+				}
+
+				$preview[] = [
+					'row'            => $rowIndex,
+					'lesson_id'      => $lesson_id,
+					'question'       => $question,
+					'option_a'       => $optionA,
+					'option_b'       => $optionB,
+					'option_c'       => $optionC,
+					'option_d'       => $optionD,
+					'correct_option' => $correct,
+					'errors'         => $rowErrors
+				];
+			}
+
+			echo json_encode([
+				'status'  => true,
+				'data'    => $preview,
+				'summary' => [
+					'total'   => $totalRows,
+					'valid'   => $validRows,
+					'invalid' => $invalidRows
+				]
+			]);
+			exit;
+		} catch (Exception $e) {
+			echo json_encode([
+				'status' => false,
+				'msg'    => $e->getMessage()
+			]);
+			exit;
+		}
+	}
+
+	public function downloadErrorExcel()
+	{
+		$rows = json_decode($this->input->post('rows'), true);
+
+		if (empty($rows) || !is_array($rows)) {
+			echo 'No error rows found';
+			exit;
+		}
+
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+		$sheet->setTitle('MCQ Errors');
+
+		$headers = [
+			'row_no',
+			'question',
+			'option_a',
+			'option_b',
+			'option_c',
+			'option_d',
+			'correct_option',
+			'errors'
+		];
+
+		$sheet->fromArray($headers, null, 'A1');
+		$sheet->getStyle('A1:H1')->getFont()->setBold(true);
+
+		$excelRows = [];
+		foreach ($rows as $row) {
+			$excelRows[] = [
+				$row['row'] ?? '',
+				$row['question'] ?? '',
+				$row['option_a'] ?? '',
+				$row['option_b'] ?? '',
+				$row['option_c'] ?? '',
+				$row['option_d'] ?? '',
+				$row['correct_option'] ?? '',
+				implode(', ', $row['errors'] ?? [])
+			];
+		}
+
+		$sheet->fromArray($excelRows, null, 'A2');
+		$sheet->getStyle('A:H')->getAlignment()->setWrapText(true);
+
+		foreach (range('A', 'H') as $col) {
+			$sheet->getColumnDimension($col)->setAutoSize(true);
+		}
+
+		$filename = 'mcq_error_rows_' . date('Ymd_His') . '.xlsx';
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment; filename="' . $filename . '"');
+		header('Cache-Control: max-age=0');
+
+		$writer = new Xlsx($spreadsheet);
+		$writer->save('php://output');
+		exit;
+	}
 
 
 	public function uploadMcqXlsx($lesson_id)
@@ -405,6 +687,30 @@ class Lesson extends CI_Controller
 		$data['selected_course_id'] = $this->input->get('course_id');
 		// echo"<pre>";print_r($data['section']);die;
 		$this->load->view(ADMIN . LESSON . 'add_lesson', $data);
+	}
+
+	public function check_lesson_title()
+	{
+		$title      = trim($this->input->post('title'));
+		$course_id  = $this->input->post('course_id');
+		$section_id = $this->input->post('section_id');
+		$id         = $this->input->post('id');
+
+		$this->db->where('title', $title);
+		$this->db->where('course_id', $course_id);
+		$this->db->where('section_id', $section_id);
+
+		if ($id) {
+			$this->db->where('id !=', $id);
+		}
+
+		$query = $this->db->get('tbl_lesson');
+
+		if ($query->num_rows() > 0) {
+			echo "exists";
+		} else {
+			echo "available";
+		}
 	}
 
 

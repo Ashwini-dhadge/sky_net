@@ -418,6 +418,28 @@ class Section extends CI_Controller
 		redirect(ADMIN . 'Section');
 	}
 
+	public function check_section_title()
+	{
+		$title = trim($this->input->post('title'));
+		$course_id = $this->input->post('course_id');
+		$id = $this->input->post('id');
+
+		$this->db->where('title', $title);
+		$this->db->where('course_id', $course_id);
+
+		if ($id) {
+			$this->db->where('id !=', $id);
+		}
+
+		$query = $this->db->get('tbl_section');
+
+		if ($query->num_rows() > 0) {
+			echo "exists";
+		} else {
+			echo "available";
+		}
+	}
+
 
 	public function addSection()
 	{

@@ -4,14 +4,15 @@
   <div class="content-page">
     <div class="content">
       <div class="container-fluid">
+
         <div class="row">
           <div class="col-lg-12">
             <div class="card mt-4">
               <div class="card-body">
                 <h4 class="card-title"><?= $title ?></h4>
+
                 <div class="row">
                   <div class="col-md-4">
-                    <!-- <label>Filter Course</label> -->
                     <select id="filter_course" class="form-control select2">
                       <option value="">All Courses</option>
                       <?php foreach ($course as $c) { ?>
@@ -19,108 +20,32 @@
                       <?php } ?>
                     </select>
                   </div>
+
                   <div class="col-md-4">
-                    <!-- <label>Filter Section</label> -->
                     <select id="filter_section" class="form-control select2">
                       <option value="">All Sections</option>
                     </select>
                   </div>
+
                   <div class="col-md-4 text-right">
-                    <button class="btn btn-info"
-                      onclick="openMcqLessonModal('upload')">
+                    <button class="btn btn-info" onclick="openMcqLessonModal()">
                       <i class="fa fa-upload"></i> Upload MCQ
                     </button>
-                    <a href="<?= base_url(ADMIN . 'Lesson/AddLesson'); ?>"
-                      class="btn btn-primary waves-effect waves-light">
+
+                    <a href="<?= base_url(ADMIN . 'Lesson/AddLesson'); ?>" class="btn btn-primary waves-effect waves-light">
                       Add Lesson
                     </a>
                   </div>
                 </div>
+
                 <?php $this->load->view(ADMIN . LESSON . 'table_lesson'); ?>
               </div>
             </div>
           </div>
         </div>
-        <div class="modal fade" id="videoModal" tabindex="-1">
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-              <div class="modal-header ">
-                <h5 class="modal-title">Add Video</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                  &times;
-                </button>
-              </div>
-              <div class="modal-body">
-                <form id="lessonForm" enctype="multipart/form-data">
-                  <input type="hidden" name="course_id" id="course_id">
-                  <input type="hidden" name="section_id" id="section_id">
-                  <input type="hidden" name="lesson_id" id="lesson_id">
-                  <div class="row" style="display:none;">
-                    <div class="col-md-12">
-                      <div class="form-group mb-3">
-                        <select class="form-control select2" id="section">
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div id="video-repeater">
-                    <div data-repeater-list="videos">
-                      <div data-repeater-item class="video-card mb-3 p-3 template"
-                        style="display:none; border-bottom: 1px dashed #c0c0c0;">
-
-                        <div class="d-flex justify-content-between mb-2">
-                          <h6 class="video-card-title mb-0">Video Details</h6>
-                          <button data-repeater-delete type="button"
-                            class="btn btn-sm btn-outline-danger">✕</button>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 text-center">
-                            <div class="thumb-box border p-2">
-                              <img class="video-thumb-preview w-100"
-                                style="height:150px; object-fit:contain; display:none;">
-                            </div>
-                            <input type="file" accept="image/*" name="video_thumbnail"
-                              class="video-thumb-input form-control mt-2">
-                          </div>
-                          <div class="col-md-9">
-                            <div class="form-group">
-                              <label>Video Title</label>
-                              <input type="text" name="video_title" class="form-control">
-                            </div>
-                            <div class="form-row">
-                              <div class="form-group col-md-7">
-                                <label>Vimeo Code</label>
-                                <input type="text" name="vimo_code" class="form-control">
-                              </div>
-                              <div class="form-group col-md-5">
-                                <label>Type</label>
-                                <select name="video_type" class="form-control">
-                                  <option value="thoratical">Theoretical</option>
-                                  <option value="practical">Practical</option>
-                                  <option value="both">Both</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <button data-repeater-create type="button" class="btn btn-success mt-3">+ Add Video</button>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
-                    <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
 
         <div class="modal fade" id="mcqLessonModal" tabindex="-1">
-          <div class="modal-dialog modal-xl">
+          <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
 
               <div class="modal-header bg-light">
@@ -133,9 +58,7 @@
 
               <div class="modal-body">
                 <div class="row">
-
-                  <div class="col-md-6">
-
+                  <div class="col-md-5">
                     <div class="form-group">
                       <label>Select Course</label>
                       <select id="mcq_course_id" class="form-control select2" style="width:100%;">
@@ -159,53 +82,82 @@
                         <option value="">-- Select Lesson --</option>
                       </select>
                     </div>
-
                   </div>
 
-                  <div class="col-md-6 border-left">
-
-                    <div class="mb-3">
-                      <label class="font-weight-bold">Sample Template</label>
-                      <p class="text-muted small mb-2">
-                        Download Excel template for selected lesson
-                      </p>
-                      <button class="btn btn-primary btn-sm"
-                        id="downloadTemplateBtn"
-                        disabled>
+                  <div class="col-md-7 border-left">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <label class="font-weight-bold d-block mb-1">Sample Template</label>
+                        <small class="text-muted">Download Excel template for selected lesson</small>
+                      </div>
+                      <button class="btn btn-primary btn-sm" id="downloadTemplateBtn" disabled>
                         <i class="fa fa-file-excel"></i> Download Template
                       </button>
                     </div>
 
                     <hr>
 
-                    <form method="post"
-                      enctype="multipart/form-data"
-                      id="uploadMcqForm">
-
+                    <form method="post" enctype="multipart/form-data" id="uploadMcqForm">
                       <input type="hidden" name="lesson_id" id="upload_lesson_id">
 
                       <div class="form-group">
                         <label class="font-weight-bold">Upload MCQ Excel</label>
-                        <input type="file"
-                          name="mcq_file"
-                          class="form-control"
-                          accept=".xlsx"
-                          required>
+                        <input type="file" name="mcq_file" class="form-control" accept=".xlsx" required>
                       </div>
 
-                      <button class="btn btn-success mt-2">
-                        <i class="fa fa-upload"></i> Upload MCQs
+                      <div class="progress mt-3" id="uploadProgressWrapper" style="display:none;height:22px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadProgressBar" role="progressbar" style="width:0%">0%</div>
+                      </div>
+
+                      <button type="submit" class="btn btn-success mt-3" id="previewBtn">
+                        <i class="fa fa-upload"></i> Upload & Preview
                       </button>
-
                     </form>
+                  </div>
+                  <div class="col-md-12">
+                    <hr>
 
+                    <div id="importSummary" style="display:none;"></div>
+
+                    <div id="mcqPreviewSection" style="display:none;">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Preview MCQs</h5>
+                        <button type="button" class="btn btn-danger btn-sm" id="downloadErrorExcelBtn" style="display:none;">
+                          <i class="fa fa-download"></i> Download Error Excel
+                        </button>
+                      </div>
+
+                      <div class="table-responsive" style="max-height:450px; overflow:auto;">
+                        <table class="table table-bordered table-hover table-sm">
+                          <thead class="thead-light">
+                            <tr>
+                              <th style="min-width:60px;">#</th>
+                              <th style="min-width:280px;">Question</th>
+                              <th style="min-width:150px;">A</th>
+                              <th style="min-width:150px;">B</th>
+                              <th style="min-width:150px;">C</th>
+                              <th style="min-width:150px;">D</th>
+                              <th style="min-width:120px;">Correct</th>
+                              <th style="min-width:220px;">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mcqPreviewTable"></tbody>
+                        </table>
+                      </div>
+
+                      <div class="text-right mt-3">
+                        <button type="button" class="btn btn-secondary" id="cancelPreviewBtn">Cancel</button>
+                        <button type="button" class="btn btn-success" id="revalidateBtn">Revalidate</button>
+                        <button type="button" class="btn btn-primary" id="confirmUploadBtn">Confirm Upload</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div class="modal-footer bg-light">
                 <small class="text-muted mr-auto">
-                  Supported format: .xlsx | Columns A–F
+                  Supported format: .xlsx | Columns A–F | Supports large imports
                 </small>
                 <button class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
@@ -213,53 +165,156 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </div>
 
 <?php init_footer(); ?>
-<script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
+
 <script>
-  $(document).on('change', '.video-thumb-input', function() {
-    const input = this;
-    const preview = $(this).closest('.col-md-3').find('.video-thumb-preview');
+  let mcqPreviewData = [];
 
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        preview.attr('src', e.target.result).show();
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  });
+  function openMcqLessonModal() {
+    $('#mcqLessonModal').modal('show');
+  }
 
+  function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    return $('<div>').text(text).html();
+  }
 
-  $('#video-repeater').repeater({
-    initEmpty: <?= empty($lesson_videos) ? 'true' : 'false' ?>,
+  function renderSummary(summary) {
+    const html = `
+			<div class="alert alert-success mb-3">
+				<strong>Total Rows:</strong> ${summary.total} &nbsp; | &nbsp;
+				<strong>Valid:</strong> ${summary.valid} &nbsp; | &nbsp;
+				<strong>Invalid:</strong> ${summary.invalid}
+			</div>
+		`;
+    $('#importSummary').html(html).show();
+  }
 
-    show: function() {
-      $(this).find('.video-thumb-preview')
-        .attr('src', '')
-        .hide();
+  function validateRows(rows) {
+    let hasError = false;
+    let html = '';
+    let total = rows.length;
+    let valid = 0;
+    let invalid = 0;
+    let duplicateCheck = {};
 
-      $(this).find('.video-thumb-input').val('');
+    rows.forEach(function(row, index) {
+      row.question = $.trim(row.question || '');
+      row.option_a = $.trim(row.option_a || '');
+      row.option_b = $.trim(row.option_b || '');
+      row.option_c = $.trim(row.option_c || '');
+      row.option_d = $.trim(row.option_d || '');
+      row.correct_option = $.trim((row.correct_option || '').toUpperCase());
 
-      $(this).find('input[name="id"]').remove();
-      $(this).find('input[name="old_thumbnail"]').remove();
+      let errors = [];
 
-      $(this).slideDown();
-    },
-
-    hide: function(deleteElement) {
-      if (confirm('Are you sure you want to remove this video?')) {
-        $(this).slideUp(deleteElement);
+      if (row.question === '') errors.push('Question required');
+      if (row.option_a === '' || row.option_b === '' || row.option_c === '' || row.option_d === '') {
+        errors.push('All 4 options required');
       }
-    }
-  });
-</script>
+      if (['A', 'B', 'C', 'D'].indexOf(row.correct_option) === -1) {
+        errors.push('Correct option must be A,B,C or D');
+      }
 
-<script>
+      let qKey = row.question.toLowerCase().replace(/\s+/g, ' ').trim();
+      if (qKey !== '') {
+        if (duplicateCheck[qKey]) {
+          errors.push('Duplicate question in preview');
+        } else {
+          duplicateCheck[qKey] = true;
+        }
+      }
+
+      row.errors = errors;
+
+      if (errors.length > 0) {
+        hasError = true;
+        invalid++;
+      } else {
+        valid++;
+      }
+
+      let badge = errors.length ? 'danger' : 'success';
+      let status = errors.length ? errors.join(', ') : 'Valid';
+
+      html += `
+				<tr class="${errors.length ? 'table-danger' : ''}" data-index="${index}">
+					<td>${row.row}</td>
+					<td><textarea class="form-control edit-question" rows="3">${escapeHtml(row.question)}</textarea></td>
+					<td><input type="text" class="form-control edit-a" value="${escapeHtml(row.option_a)}"></td>
+					<td><input type="text" class="form-control edit-b" value="${escapeHtml(row.option_b)}"></td>
+					<td><input type="text" class="form-control edit-c" value="${escapeHtml(row.option_c)}"></td>
+					<td><input type="text" class="form-control edit-d" value="${escapeHtml(row.option_d)}"></td>
+					<td>
+						<select class="form-control edit-correct">
+							<option value="">Select</option>
+							<option value="A" ${row.correct_option === 'A' ? 'selected' : ''}>A</option>
+							<option value="B" ${row.correct_option === 'B' ? 'selected' : ''}>B</option>
+							<option value="C" ${row.correct_option === 'C' ? 'selected' : ''}>C</option>
+							<option value="D" ${row.correct_option === 'D' ? 'selected' : ''}>D</option>
+						</select>
+					</td>
+					<td><span class="badge badge-${badge}">${status}</span></td>
+				</tr>
+			`;
+    });
+
+    $('#mcqPreviewTable').html(html);
+    $('#mcqPreviewSection').show();
+    renderSummary({
+      total: total,
+      valid: valid,
+      invalid: invalid
+    });
+
+    if (invalid > 0) {
+      $('#downloadErrorExcelBtn').show();
+      $('#confirmUploadBtn')
+        .prop('disabled', true)
+        .removeClass('btn-primary btn-success')
+        .addClass('btn-secondary')
+        .text('Fix Errors Before Upload');
+    } else {
+      $('#downloadErrorExcelBtn').hide();
+      $('#confirmUploadBtn')
+        .prop('disabled', false)
+        .removeClass('btn-secondary')
+        .addClass('btn-primary')
+        .text('Confirm Upload');
+    }
+
+    mcqPreviewData = rows;
+  }
+
+  function collectEditedRows() {
+    let rows = [];
+
+    $('#mcqPreviewTable tr').each(function() {
+      let index = $(this).data('index');
+      let original = mcqPreviewData[index];
+
+      rows.push({
+        row: original.row,
+        lesson_id: original.lesson_id,
+        question: $(this).find('.edit-question').val(),
+        option_a: $(this).find('.edit-a').val(),
+        option_b: $(this).find('.edit-b').val(),
+        option_c: $(this).find('.edit-c').val(),
+        option_d: $(this).find('.edit-d').val(),
+        correct_option: $(this).find('.edit-correct').val(),
+        errors: []
+      });
+    });
+
+    return rows;
+  }
+
   $('#mcq_course_id').on('change', function() {
     const courseId = $(this).val();
 
@@ -279,7 +334,7 @@
       function(res) {
         let html = '<option value="">-- Select Section --</option>';
         if (res.status) {
-          res.data.forEach(s => {
+          res.data.forEach(function(s) {
             html += `<option value="${s.id}">${s.title}</option>`;
           });
         }
@@ -307,7 +362,7 @@
       function(res) {
         let html = '<option value="">-- Select Lesson --</option>';
         if (res.status) {
-          res.data.forEach(l => {
+          res.data.forEach(function(l) {
             html += `<option value="${l.id}">${l.title}</option>`;
           });
         }
@@ -326,24 +381,192 @@
     }
 
     $('#downloadTemplateBtn').prop('disabled', false);
-
     $('#upload_lesson_id').val(lessonId);
-    $('#uploadMcqForm').attr(
-      'action',
-      "<?= base_url(ADMIN . 'Lesson/uploadMcqXlsx/'); ?>" + lessonId
-    );
   });
 
   $('#downloadTemplateBtn').on('click', function() {
     const lessonId = $('#mcq_lesson_id').val();
     if (!lessonId) return;
 
-    window.location.href =
-      "<?= base_url(ADMIN . 'Lesson/downloadMcqXlsxTemplate/'); ?>" + lessonId;
+    window.location.href = "<?= base_url(ADMIN . 'Lesson/downloadMcqXlsxTemplate/'); ?>" + lessonId;
   });
 
-  function openMcqLessonModal() {
-    $('#mcqLessonModal').modal('show');
-  }
+  $('#uploadMcqForm').on('submit', function(e) {
+    e.preventDefault();
+
+    let lessonId = $('#upload_lesson_id').val();
+
+    if (!lessonId) {
+      alert('Please select lesson');
+      return;
+    }
+
+    let formData = new FormData(this);
+    formData.append('lesson_id', lessonId);
+
+    $('#uploadProgressWrapper').show();
+    $('#uploadProgressBar')
+      .removeClass('bg-success bg-danger')
+      .addClass('progress-bar-animated progress-bar-striped')
+      .css('width', '0%')
+      .text('0%');
+
+    $('#mcqPreviewSection').hide();
+    $('#importSummary').hide();
+
+    $.ajax({
+      url: "<?= base_url(ADMIN . 'Lesson/previewMcqXlsx'); ?>",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      xhr: function() {
+        let xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function(evt) {
+          if (evt.lengthComputable) {
+            let percent = Math.round((evt.loaded / evt.total) * 100);
+            $('#uploadProgressBar')
+              .css('width', percent + '%')
+              .text(percent + '%');
+          }
+        }, false);
+        return xhr;
+      },
+      success: function(res) {
+        let data = typeof res === 'object' ? res : JSON.parse(res);
+
+        if (!data.status) {
+          $('#uploadProgressBar')
+            .removeClass('progress-bar-animated')
+            .addClass('bg-danger')
+            .text(data.msg || 'Upload failed');
+          alert(data.msg || 'Upload failed');
+          return;
+        }
+
+        $('#uploadProgressBar')
+          .removeClass('progress-bar-animated')
+          .addClass('bg-success')
+          .css('width', '100%')
+          .text('Upload Complete');
+
+        mcqPreviewData = data.data || [];
+        renderSummary(data.summary || {
+          total: 0,
+          valid: 0,
+          invalid: 0
+        });
+        validateRows(mcqPreviewData);
+      },
+      error: function() {
+        $('#uploadProgressBar')
+          .removeClass('progress-bar-animated')
+          .addClass('bg-danger')
+          .text('Request failed');
+        alert('Something went wrong while previewing the Excel file.');
+      }
+    });
+  });
+
+  $('#revalidateBtn').on('click', function() {
+    let editedRows = collectEditedRows();
+    validateRows(editedRows);
+  });
+
+  $('#cancelPreviewBtn').on('click', function() {
+    $('#mcqPreviewSection').hide();
+    $('#mcqPreviewTable').html('');
+    $('#importSummary').hide();
+    mcqPreviewData = [];
+    $('#downloadErrorExcelBtn').hide();
+  });
+
+  $('#downloadErrorExcelBtn').on('click', function() {
+    let editedRows = collectEditedRows();
+    let errorRows = [];
+
+    editedRows.forEach(function(row) {
+      let errors = [];
+      if ($.trim(row.question) === '') errors.push('Question required');
+      if ($.trim(row.option_a) === '' || $.trim(row.option_b) === '' || $.trim(row.option_c) === '' || $.trim(row.option_d) === '') {
+        errors.push('All 4 options required');
+      }
+      if (['A', 'B', 'C', 'D'].indexOf($.trim((row.correct_option || '').toUpperCase())) === -1) {
+        errors.push('Correct option must be A,B,C or D');
+      }
+      row.errors = errors;
+      if (errors.length > 0) {
+        errorRows.push(row);
+      }
+    });
+
+    if (errorRows.length === 0) {
+      alert('No error rows found');
+      return;
+    }
+
+    let form = $('<form>', {
+      method: 'POST',
+      action: "<?= base_url(ADMIN . 'Lesson/downloadErrorExcel'); ?>"
+    });
+
+    form.append($('<input>', {
+      type: 'hidden',
+      name: 'rows',
+      value: JSON.stringify(errorRows)
+    }));
+
+    $('body').append(form);
+    form.submit();
+    form.remove();
+  });
+
+  $('#confirmUploadBtn').on('click', function() {
+    let rows = collectEditedRows();
+
+    let hasError = false;
+    rows.forEach(function(row) {
+      if (
+        $.trim(row.question) === '' ||
+        $.trim(row.option_a) === '' ||
+        $.trim(row.option_b) === '' ||
+        $.trim(row.option_c) === '' ||
+        $.trim(row.option_d) === '' || ['A', 'B', 'C', 'D'].indexOf($.trim((row.correct_option || '').toUpperCase())) === -1
+      ) {
+        hasError = true;
+      }
+    });
+
+    if (hasError) {
+      alert('Please fix validation errors before upload.');
+      validateRows(rows);
+      return;
+    }
+
+    $('#confirmUploadBtn').prop('disabled', true).text('Uploading...');
+
+    $.ajax({
+      url: "<?= base_url(ADMIN . 'Lesson/saveMcqBulk'); ?>",
+      type: "POST",
+      dataType: "json",
+      data: {
+        rows: JSON.stringify(rows)
+      },
+      success: function(res) {
+        if (res.status) {
+          alert(res.msg + ' Inserted: ' + res.inserted);
+          location.reload();
+        } else {
+          alert(res.msg || 'Upload failed');
+          $('#confirmUploadBtn').prop('disabled', false).text('Confirm Upload');
+        }
+      },
+      error: function() {
+        alert('Something went wrong while saving MCQs.');
+        $('#confirmUploadBtn').prop('disabled', false).text('Confirm Upload');
+      }
+    });
+  });
 </script>
+
 <script src="<?= base_url(); ?>assets/js/custom-js/lesson.js"></script>

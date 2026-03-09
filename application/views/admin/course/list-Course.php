@@ -14,8 +14,12 @@
             <div class="card  mb-4 mt-4">
               <div class="card-body">
                 <a href="<?= base_url(ADMIN . 'Course/Course'); ?>" class="btn btn-primary waves-effect waves-light float-right">Add Course</a>
-
                 <h4 class="card-title"><?= $title ?></h4>
+                <select id="course_type_filter" class="form-control" style="width:20%;">
+                  <option value="">All Courses</option>
+                  <option value="1">Online Courses</option>
+                  <option value="0">Offline Courses</option>
+                </select>
                 <?php $this->load->view(ADMIN . COURSE . 'table-course'); ?>
               </div>
             </div>

@@ -29,6 +29,7 @@
                                         <input class="form-control" type="text"
                                             value="<?= (isset($course)) ? $course['title'] : ''; ?>" name="title"
                                             id="title" required>
+                                        <small id="name_msg"></small>
                                     </div>
 
                                     <div class="form-group">
@@ -114,7 +115,11 @@
 
                                     <div class="form-group">
                                         <label>Course Image</label>
-                                        <input type="file" class="form-control" name="image">
+                                        <span><small>(Allowed formats: jpg, jpeg, png)</small></span>
+
+                                        <input type="file" class="form-control" name="image" id="course_image"
+                                            accept=".jpg,.jpeg,.png">
+
                                         <?= (isset($course)) ? '<img src="' . base_url(COURSE_IMAGES . $course['image']) . '" width="80">' : ''; ?>
                                     </div>
                                 </div>
@@ -126,33 +131,34 @@
                                             name="notes"><?= (isset($course)) ? $course['notes'] : ''; ?></textarea>
                                     </div>
                                 </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex gap-2">
-                                        <div class="mr-5">
-                                            <div class="form-group">
-                                                <label>Assessment</label><br>
-                                                <input type="radio" value="1" name="assessment"
-                                                    <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>>
-                                                YES
-                                                <input type="radio" value="0" name="assessment"
-                                                    <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>>
-                                                NO
+                                <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2) { ?>
+                                    <div class="col-12 col-md-6">
+                                        <div class="d-flex gap-2">
+                                            <div class="mr-5">
+                                                <div class="form-group">
+                                                    <label>Assessment</label><br>
+                                                    <input type="radio" value="1" name="assessment"
+                                                        <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>>
+                                                    YES
+                                                    <input type="radio" value="0" name="assessment"
+                                                        <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>>
+                                                    NO
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <div class="form-group">
-                                                <label>Status</label><br>
-                                                <input type="radio" value="1" name="status"
-                                                    <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>>
-                                                Active
-                                                <input type="radio" value="0" name="status"
-                                                    <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
-                                                In-Active
+                                            <div>
+                                                <div class="form-group">
+                                                    <label>Status</label><br>
+                                                    <input type="radio" value="1" name="status"
+                                                        <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>>
+                                                    Active
+                                                    <input type="radio" value="0" name="status"
+                                                        <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
+                                                    In-Active
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php } ?>
                             </div>
                             <hr>
 
@@ -162,16 +168,22 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label>Original Price</label>
-                                    <input type="number" step="0.01" name="strike_thr_price" id="strike_thr_price"
-                                        class="form-control" value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
+                                    <input type="number" step="0.01" min="0" required
+                                        name="strike_thr_price" id="strike_thr_price"
+                                        class="form-control"
+                                        value="<?= $course_duration['strike_thr_price'] ?? ''; ?>">
                                 </div>
+
                                 <div class="form-group col-md-3">
                                     <label>Offer Type</label>
                                     <select name="offer_type" id="offer_type" class="form-control" required>
+                                        <option value="">Select Offer Type</option>
+
                                         <option value="1"
                                             <?= (isset($course_duration) && $course_duration['offer_type'] == 1) ? 'selected' : ''; ?>>
                                             Flat
                                         </option>
+
                                         <option value="2"
                                             <?= (isset($course_duration) && $course_duration['offer_type'] == 2) ? 'selected' : ''; ?>>
                                             Percentage
@@ -181,14 +193,19 @@
 
                                 <div class="form-group col-md-3">
                                     <label>Offer Amount</label>
-                                    <input type="number" step="0.01" name="offer_amount" id="offer_amount"
-                                        class="form-control" value="<?= $course_duration['offer_amount'] ?? ''; ?>">
+                                    <input type="number" step="0.01" min="0" required
+                                        name="offer_amount" id="offer_amount"
+                                        class="form-control"
+                                        value="<?= $course_duration['offer_amount'] ?? ''; ?>">
                                 </div>
 
                                 <div class="form-group col-md-3">
                                     <label>Final Price</label>
-                                    <input type="number" step="0.01" name="price" id="price" class="form-control"
-                                        readonly value="<?= $course_duration['price'] ?? ''; ?>">
+                                    <input type="number" step="0.01"
+                                        name="price" id="price"
+                                        class="form-control"
+                                        readonly
+                                        value="<?= $course_duration['price'] ?? ''; ?>">
                                 </div>
                             </div>
 
@@ -284,8 +301,8 @@
 
                             <hr>
 
-                            <button type="submit" class="btn btn-primary float-right mb-4">
-                                Submit
+                            <button type="submit" id="submit_btn" class="btn btn-primary float-right mb-4" disabled>
+                                Save Course
                             </button>
 
                         </form>
@@ -303,6 +320,77 @@
 <script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
+    let nameValid = false;
+
+    function checkSubmit() {
+
+        if (nameValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
+
+    }
+
+    $("#title").keyup(function() {
+
+        let title = $(this).val().trim();
+        let id = $("#course_id").val();
+
+        let nameRegex = /^[A-Za-z ]+$/;
+
+        if (title.length < 3) {
+
+            $("#name_msg").html("Title must be at least 3 characters").css("color", "red");
+            nameValid = false;
+            checkSubmit();
+            return;
+
+        }
+
+        if (!nameRegex.test(title)) {
+
+            $("#name_msg").html("Only letters allowed").css("color", "red");
+            nameValid = false;
+            checkSubmit();
+            return;
+
+        }
+
+        $.ajax({
+            url: "<?= base_url('admin/Course/check_course_title') ?>",
+            type: "POST",
+            data: {
+                title: title,
+                id: id
+            },
+            success: function(res) {
+                if (res === "exists") {
+                    $("#name_msg").html("Course name already exists").css("color", "red");
+                    nameValid = false;
+                } else {
+                    $("#name_msg").html("Course name available").css("color", "green");
+                    nameValid = true;
+                }
+
+                checkSubmit();
+
+            }
+        });
+
+    });
+
+
+    $('#course_image').on('change', function() {
+        var file = this.files[0];
+        if (!file) return;
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if ($.inArray(file.type, allowedTypes) === -1) {
+            alert('Only JPG, JPEG and PNG files are allowed.');
+            $(this).val('');
+        }
+    });
+
     $("#skill").select2({
         tags: true,
         tokenSeparators: [','],
@@ -310,6 +398,7 @@
         width: '100%'
     });
 </script>
+
 <script>
     $(document).ready(function() {
 
@@ -360,14 +449,12 @@
             let offerAmount = parseFloat($('#offer_amount').val());
             let originalPrice = parseFloat($('#strike_thr_price').val());
 
-            // Default safety
             if (isNaN(originalPrice)) originalPrice = 0;
             if (isNaN(offerAmount)) offerAmount = 0;
 
             let finalPrice = originalPrice;
 
             if (offerType === '1') {
-                // ===== FLAT =====
                 if (offerAmount > originalPrice) {
                     offerAmount = originalPrice;
                     $('#offer_amount').val(offerAmount);
@@ -375,7 +462,6 @@
                 finalPrice = originalPrice - offerAmount;
 
             } else if (offerType === '2') {
-                // ===== PERCENTAGE =====
                 if (offerAmount > 100) {
                     offerAmount = 100;
                     $('#offer_amount').val(offerAmount);
@@ -398,6 +484,19 @@
         $('#offer_amount, #strike_thr_price').on('keyup change', function() {
             calculateFinalPrice();
         });
+
+    });
+
+    $('form').on('submit', function(e) {
+
+        let original = $('#strike_thr_price').val();
+        let offer = $('#offer_amount').val();
+        let type = $('#offer_type').val();
+
+        if (original === '' || offer === '' || type === '') {
+            alert('Please fill all price fields');
+            e.preventDefault();
+        }
 
     });
 </script>
