@@ -319,12 +319,12 @@ class Orders extends CI_Controller
         $offer_amount    = $this->input->post('offer_amount') ? $this->input->post('offer_amount') : 0.00;
         $offer_id     = $this->input->post('offer_id') ? $this->input->post('offer_id') : 0;
         $wallet_amount    = $this->input->post('wallet_amount') ? $this->input->post('wallet_amount') : 0.00;
-        $keyId = "rzp_test_xxxxx";
-        $keySecret = "xxxxxxxx";
+        // $keyId = "rzp_test_xxxxx";
+        // $keySecret = "xxxxxxxx";
 
         // if ($login_user_id != "" && $type != ""  && ($total_amount != "" || ($total_amount == "" && ($wallet_amount != 0.00 || $offer_amount != 0.00)))) {
         if ($login_user_id != ""   && $total_amount != "" && $courses_id != "") {
-            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('courses_id' => $courses_id), 'duration_id', '', 'row_array');
+            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('courses_id' => $courses_id), 'id,duration_id', '', 'row_array');
             // print_r($coursesDuratoion);
             // die;
             $userDetails = $this->CommonModel->getData('tbl_users', array('id' => $login_user_id, 'status' => 1));
@@ -339,20 +339,22 @@ class Orders extends CI_Controller
                     } */
                 //  // $cartDetails = $this->CommonModel->getData('tbl_cart', array('user_id' => $user_id));
                 //  if($cartDetails){
-                // $api = new Api($keyId, $keySecret);
+                $api = new Api(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET);
                 // print_r($api);
                 // die;
                 $amount_paise = $total_amount * 100; // Razorpay works in paise
                 $orderNo = ORDER_NUMBER_PREFIX . "" . $login_user_id . "" . strtotime(date('Y-m-d H:i:s'));
                 try {
 
-                    // $order = $api->order->create([
-                    //     'receipt' => $orderNo,
-                    //     'amount' => $amount_paise,
-                    //     'currency' => 'INR',
-                    //     'payment_capture' => 1
-                    // ]);
-
+                    $order = $api->order->create([
+                        'receipt' => $orderNo,
+                        'amount' => $amount_paise,
+                        'currency' => 'INR',
+                        'payment_capture' => 1
+                    ]);
+                    // echo "<pre>";
+                    // print_r($order);
+                    // die;
 
 
                     $insOrder = array(
@@ -386,8 +388,8 @@ class Orders extends CI_Controller
                         $order_payment_detail = [
                             'user_id' => $login_user_id,
                             'order_id' => $orderID,
-                            'razorpay_order_id' => 1,
-                            // 'razorpay_order_id' => $order['id'],
+                            // 'razorpay_order_id' => 1,
+                            'razorpay_order_id' => $order['id'],
                             'amount' =>  $amount,
                         ];
                         $this->CommonModel->iudAction('tbl_order_payment_details', $order_payment_detail, 'insert');
@@ -407,7 +409,7 @@ class Orders extends CI_Controller
                             'user_id' => $login_user_id,
                             'courses_id' => $courses_id,
                             // 'lesson_id' => $lesson_id,
-                            'courses_duration_id' => $coursesDuratoion['duration_id'],
+                            'courses_duration_id' => $coursesDuratoion['id'],
                             // 'type' => $type,
                             'rate' => $rate,
                             'order_id' => $orderID
@@ -451,26 +453,26 @@ class Orders extends CI_Controller
                         //course subscribtion
                         // $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $courses_duration_id), 'duration_id', '', 'row_array');
 
-                        $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
+                        // $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
                         // print_r($duratoion_no_of_days);
                         // die;
-                        $order_date = date('Y-m-d');
-                        $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
-                        $order_subscrb = array(
-                            'order_id' => $orderID,
-                            'order_no' => $orderNo,
-                            'user_id' => $login_user_id,
-                            // 'type' => $type,
-                            // 'courses_duration_id' => $courses_duration_id,
-                            'courses_duration_id' => $coursesDuratoion['duration_id'],
-                            'course_id' => $courses_id,
-                            'start_date' => date('Y-m-d'),
-                            'end_date' => $endDate,
-                            'active' => 1,
-                            'no_of_days' => $duratoion_no_of_days['no_of_days'],
-                            'created_on' => date('Y-m-d H:i:s'),
-                        );
-                        $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
+                        // $order_date = date('Y-m-d');
+                        // $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
+                        // $order_subscrb = array(
+                        //     'order_id' => $orderID,
+                        //     'order_no' => $orderNo,
+                        //     'user_id' => $login_user_id,
+                        //     // 'type' => $type,
+                        //     // 'courses_duration_id' => $courses_duration_id,
+                        //     'courses_duration_id' => $coursesDuratoion['duration_id'],
+                        //     'course_id' => $courses_id,
+                        //     'start_date' => date('Y-m-d'),
+                        //     'end_date' => $endDate,
+                        //     'active' => 1,
+                        //     'no_of_days' => $duratoion_no_of_days['no_of_days'],
+                        //     'created_on' => date('Y-m-d H:i:s'),
+                        // );
+                        // $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
 
                         // } else {
                         //     //package subscrbption
@@ -518,11 +520,11 @@ class Orders extends CI_Controller
                             "message" => "Order created successfully",
                             "data" => [
                                 "order_id" => $orderID,
-                                // "razorpay_order_id" => $order['id'],
-                                "razorpay_order_id" =>  1,
+                                "razorpay_order_id" => $order['id'],
+                                // "razorpay_order_id" =>  1,
                                 "amount" => $amount_paise,
                                 "currency" => "INR",
-                                "key_id" => $keyId
+                                // "key_id" => RAZORPAY_KEY_ID
                             ]
                         ];
                     } else {
@@ -569,32 +571,61 @@ class Orders extends CI_Controller
         $razorpay_payment_id = $post['razorpay_payment_id'] ? $post['razorpay_payment_id'] : '';
         $razorpay_signature = $post['razorpay_signature'] ? $post['razorpay_signature'] : '';
         $payment_status = $post['payment_status'] ? $post['payment_status'] : '';
-        if (empty($order_id) || empty($razorpay_order_id) || empty($razorpay_payment_id) || empty($razorpay_signature) || empty($payment_status)) {
+        if (empty($order_id) || empty($razorpay_order_id) || empty($payment_status)) {
+            // if (empty($order_id) || empty($razorpay_order_id) || empty($razorpay_payment_id) || empty($razorpay_signature) || empty($payment_status)) {
             echo json_encode([
                 "status" => false,
                 "message" => "Invalid input"
             ]);
             die;
         }
-        $update_order = [
-            'order_status' => "COMPLETED",
-            'payment_status' => $payment_status,
-        ];
-        $this->CommonModel->iudAction('tbl_orders', $update_order, 'update', array('id' => $order_id));
-        $update_payment_order = [
-            'razorpay_payment_id' => $razorpay_payment_id,
-            'razorpay_signature' => $razorpay_signature,
-            'status' => $payment_status,
-            'transaction_date' => date('Y-m-d H:i:s'),
-            'payment_response' => json_encode($post)
-        ];
-        $this->CommonModel->iudAction('tbl_order_payment_details', $update_payment_order, 'update', array('order_id' => $order_id, 'user_id' => $login_user_id, 'razorpay_order_id' => $razorpay_order_id));
+        $allowed_status = ['CAPTURED', 'FAILED'];
+
+        if (!in_array($payment_status, $allowed_status)) {
+            echo json_encode([
+                "status" => false,
+                "message" => "Invalid payment status"
+            ]);
+            die;
+        }
+
+        $get_current_order_status = $this->CommonModel->getData('tbl_orders', array('id' => $order_id, 'user_id' => $login_user_id), 'order_status,payment_status', '', 'row_array');
+        if (empty($get_current_order_status)) {
+            echo json_encode([
+                "status" => false,
+                "message" => "Invalid order"
+            ]);
+            die;
+        }
+        if ($get_current_order_status['payment_status'] == 'CAPTURED' && $get_current_order_status['order_status'] == 'COMPLETED') {
+            echo json_encode([
+                "status" => true,
+                "message" => "Payment already processed"
+            ]);
+            die;
+        }
+        if ($get_current_order_status['payment_status'] == 'FAILED' && $get_current_order_status['order_status'] == 'CANCELLED') {
+            echo json_encode([
+                "status" => false,
+                "message" => "Previous payment failed. Please create new order."
+            ]);
+            die;
+        }
+
         if ($payment_status == 'CAPTURED') {
+            $update_order = [
+                'order_status' => "COMPLETED",
+                'payment_status' => $payment_status,
+            ];
+            $this->CommonModel->iudAction('tbl_orders', $update_order, 'update', array('id' => $order_id));
             $get_order_details = $this->CommonModel->getData('tbl_orders', array('user_id' => $login_user_id, 'id' => $order_id), 'order_no', '', 'row_array');
+            // echo "<pre>";
+            // print_r($get_order_details);
+            // die;
             $userDetails = $this->CommonModel->getData('tbl_users', array('id' => $login_user_id, 'status' => 1));
             $name = $userDetails[0]['first_name'];
             $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $course_id));
-            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('id' => $course_id), 'duration_id', '', 'row_array');
+            $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('courses_id' => $course_id), 'id,duration_id', '', 'row_array');
             $cname = strlen($course_name[0]['title']);
             if ($cname > 30) {
                 $course_name1 = substr($course_name[0]['title'], 0, 30) . "..";
@@ -614,7 +645,7 @@ class Orders extends CI_Controller
                 'user_id' => $login_user_id,
                 // 'type' => $type,
                 // 'courses_duration_id' => $courses_duration_id,
-                'courses_duration_id' => $coursesDuratoion['duration_id'],
+                'courses_duration_id' => $coursesDuratoion['id'],
                 'course_id' => $course_id,
                 'start_date' => date('Y-m-d'),
                 'end_date' => $endDate,
@@ -623,7 +654,15 @@ class Orders extends CI_Controller
                 'created_on' => date('Y-m-d H:i:s'),
             );
             $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
-        } else {
+            $update_payment_order = [
+                'razorpay_payment_id' => $razorpay_payment_id,
+                'razorpay_signature' => $razorpay_signature,
+                'status' => $payment_status,
+                'transaction_date' => date('Y-m-d H:i:s'),
+                'payment_response' => json_encode($post)
+            ];
+            $this->CommonModel->iudAction('tbl_order_payment_details', $update_payment_order, 'update', array('order_id' => $order_id, 'user_id' => $login_user_id, 'razorpay_order_id' => $razorpay_order_id));
+        } else if ($payment_status == 'FAILED') {
             $this->CommonModel->iudAction('tbl_orders', array('order_status' => "CANCELLED", 'payment_status' => "FAILED"), 'update', array('id' => $order_id, 'user_id' => $login_user_id));
             $this->CommonModel->iudAction('tbl_order_payment_details', array('status' => 'FAILED'), 'update', array('order_id' => $order_id, 'user_id' => $login_user_id, 'razorpay_order_id' => $razorpay_order_id));
             // echo json_encode([

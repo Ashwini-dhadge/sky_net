@@ -50,7 +50,7 @@ class Courses extends CI_Controller
 
         if ($user_id) {
             $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
-            if (empty($this->user_type)) {
+            if (!isset($this->user_type)) {
                 $response['result'] = false;
                 $response['message'] = "User Type Not Found";
                 echo json_encode($response);
@@ -72,7 +72,7 @@ class Courses extends CI_Controller
                 $where['category_id'] = $categoryId;
             }
             $where['c.status'] = ACTIVE;
-            if (isset($this->user_type) && !empty($this->user_type)) {
+            if (isset($this->user_type)) {
                 $where['c.course_type'] = $this->user_type;
             }
             // echo "<pre>";
@@ -96,9 +96,10 @@ class Courses extends CI_Controller
                     $where2['cd.courses_id'] = $course['id'];
                     $ratingData = $this->getCourseRating($course['id']);
                     $courseList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+
                     foreach ($courseList[$key]['duration'] as $key2 => $value2) {
                         $packege_subscribe = calcuateDate($user_id, $course['id'], 0, 0, $value2['duration_id']);
-                        // print_r($packege_subscribe);
+                        // print_r($value2['duration_id']);
                         // die;
                         if ($packege_subscribe) {
 
@@ -502,7 +503,7 @@ class Courses extends CI_Controller
             $total_pages = ($limit > 0) ? ceil($total_records / $limit) : 1;
             // echo $this->db->last_query();
             // die;
-            $response['course_list'] = $courseList;
+            // $response['course_list'] = $courseList;
             // print_r($courseList);
             // die;
             $sub = array();
@@ -535,6 +536,7 @@ class Courses extends CI_Controller
                     $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
                     if ($totalVideos == $watchedVideos) {
                         unset($courseList[$key]);
+                        continue;
                     }
                     if ($totalVideos > 0) {
                         $watchPercentage = ($watchedVideos / $totalVideos) * 100;

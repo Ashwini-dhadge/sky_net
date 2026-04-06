@@ -141,3 +141,7 @@ define('ORDER_CANCELLED', '2');
 
 define('DISPLAY_NO_OF_QUESTION', '3');
 define('VIDEO_QUESTION_CORRECT_PER_MARK', '2');
+
+# Razorpay Devlopment Key
+define('RAZORPAY_KEY_ID', 'rzp_test_SYFfY2lzTuKFHI');
+define('RAZORPAY_KEY_SECRET', 'Nu5TmKXn869w1gZ5NppDuFzg');
