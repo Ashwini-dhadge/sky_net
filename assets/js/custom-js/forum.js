@@ -155,8 +155,8 @@ $(document).ready(function () {
                                                 class="btn btn-light btn-sm">
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            <button class="btn btn-danger btn-sm deletebtn deleteQuestion">
-                                                <i class="fa fa-trash " data-id="${id}"></i>
+                                            <button class="btn btn-danger btn-sm deletebtn deleteQuestion" data-id="${id}">
+                                                <i class="fa fa-trash"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -363,17 +363,27 @@ $(document).ready(function () {
     $(document).on('click', '.deleteQuestion', function () {
 
         let id = $(this).data('id');
-        if (!confirm('Delete this question and all answers?'))
-            return;
 
-        $.post(
-            base_url + _admin + 'Forum/deleteQuestion',
-            { id: id },
-            function (res) {
-                location.reload();
-            },
-            'json'
-        );
+        if (!confirm('Delete this question and all answers?')) return;
+
+        $.ajax({
+            url: base_url + _admin + 'Forum/deleteQuestion',
+            type: "POST",
+            data: { id: id },
+            dataType: "json",
+            success: function (res) {
+
+                if (res.status) {
+                    alert('Deleted successfully');
+                    window.location.reload();
+                    // loadPage(currentPage);
+                } else {
+                    alert('Delete failed');
+                }
+
+            }
+        });
+
     });
 
 

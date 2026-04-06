@@ -137,7 +137,7 @@
                                 <span class="badge  status-badge" style="border:1px solid #919191; background-color: #ededed">Not Assigned</span>
                             <?php endif; ?>
 
-                            <?php if ($isSubscribed): ?>
+                            <!-- <?php if ($isSubscribed): ?>
                                 <?php
                                 switch ($sub['payment_type']) {
                                     case 1:
@@ -154,7 +154,7 @@
                                         break;
                                 }
                                 ?>
-                            <?php endif; ?>
+                            <?php endif; ?> -->
                         </div>
                     </div>
 

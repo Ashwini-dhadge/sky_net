@@ -9,6 +9,7 @@ class Category extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model(ADMIN.'CategoryModel');
+		loginId();
 	}
 
 /*********************************************************************/

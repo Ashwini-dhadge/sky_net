@@ -404,7 +404,10 @@ class Forum extends CI_Controller
             ['forum_id' => $id]
         );
 
-        echo json_encode(['status' => true]);
+        echo json_encode([
+            'status' => true,
+            'msg' => 'Deleted successfully'
+        ]);
     }
 
     public function detail_view($id)

@@ -85,7 +85,7 @@ class UserModel extends CI_Model
             $this->db->where($where);
         }
         $this->db->where('u.is_deleted', 0);
-        $this->db->where('o.payment_status', 1);
+        $this->db->where('o.order_status', 'COMPLETED');
         $this->db->where('s.active', 1);
         //$this->db->where('od.type', 1);
 
@@ -96,8 +96,7 @@ class UserModel extends CI_Model
         $this->db->join('tbl_courses as c', 'c.id =od.courses_id');
         $this->db->join('tbl_courses_duration as cd', 'cd.id =od.courses_duration_id', 'left');
         $this->db->join('tbl_duration_master as dm', 'dm.id =cd.duration_id', 'left');
-        $this->db->join('tbl_order_courses_subscription as s', 's.order_id =o.id');
-
+        $this->db->join('tbl_order_courses_subscription as s', 's.order_id = o.id AND s.course_id = od.courses_id');
 
 
         if ($limit) {

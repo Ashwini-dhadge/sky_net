@@ -85,8 +85,43 @@
         background-color: #CA151C !important;
         border-color: #CA151C !important;
     }
+
+    #page-loader {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader-spinner {
+        width: 45px;
+        height: 45px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #CA151C;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <body data-sidebar="dark">
+
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+    </div>
+
     <!-- Begin page -->
     <div id="layout-wrapper">

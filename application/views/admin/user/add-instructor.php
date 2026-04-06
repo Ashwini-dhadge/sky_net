@@ -38,38 +38,42 @@
                                             value="<?= (isset($role)) ? $role : '' ?>">
                                         <div class="form-group col-md-12">
                                             <label>Full Name</label>
-                                            <div>
-                                                <input type="text" class="form-control" required
-                                                    placeholder="Enter First Name" name="first_name"
-                                                    value="<?= (isset($first_name)) ? $first_name : ''; ?>">
-                                            </div>
-                                        </div>
+                                            <input type="text"
+                                                class="form-control"
+                                                required
+                                                id="full_name"
+                                                placeholder="Enter Full Name"
+                                                name="first_name"
+                                                value="<?= (isset($first_name)) ? $first_name : ''; ?>">
 
-                                        <!-- <div class="form-group col-md-6">
-                                            <label>Last Name</label>
-                                            <div class="text">
-                                                <input type="text" class="form-control" required
-                                                    placeholder="Enter Last Name" name="last_name"
-                                                    value="<?= (isset($last_name)) ? $last_name : ''; ?>">
-                                            </div>
-                                        </div> -->
+                                            <small id="name_msg"></small>
+                                        </div>
+                                        <input type="hidden" id="user_id" name="user_id" value="<?= isset($id) ? $id : 0 ?>">
                                         <div class="form-group col-md-6">
                                             <label>Email</label>
-                                            <div>
-                                                <input type="text" class="form-control" required
-                                                    placeholder="Enter Email" name="email"
-                                                    value="<?= (isset($email)) ? $email : ''; ?>">
-                                            </div>
+                                            <input type="text"
+                                                class="form-control"
+                                                required
+                                                placeholder="Enter Email"
+                                                name="email"
+                                                id="checkemail"
+                                                value="<?= isset($email) ? $email : '' ?>">
+
+                                            <small id="email_msg"></small>
                                         </div>
 
                                         <div class="form-group col-md-6">
                                             <label>Mobile No</label>
-                                            <input type="text" class="form-control" id="mobile_no" name="mobile_no"
-                                                placeholder="Enter Mobile No" required data-parsley-trigger="keyup"
-                                                data-parsley-length="[10,12]" data-parsley-type="digits"
-                                                data-parsley-unique-mobile
-                                                data-parsley-unique-mobile-id="<?= isset($id) ? $id : 0; ?>"
-                                                value="<?= isset($mobile_no) ? $mobile_no : ''; ?>">
+                                            <input type="text"
+                                                class="form-control"
+                                                required
+                                                maxlength="10"
+                                                placeholder="Enter Mobile No"
+                                                name="mobile_no"
+                                                id="mobile_no"
+                                                value="<?= isset($mobile_no) ? $mobile_no : '' ?>">
+
+                                            <small id="mobile_msg"></small>
                                         </div>
 
                                         <div class="form-group col-md-6">
@@ -121,9 +125,10 @@
                                             </div>
                                         </div>
 
-
-                                        <div class="col-md-12 mb-4">
-                                            <input type="submit" class="btn btn-primary float-left" value="Submit">
+                                        <div class="form-group col-md-12">
+                                            <button type="submit" id="submit_btn" class="btn btn-primary">
+                                                Submit
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -140,3 +145,137 @@
 <!-- content -->
 <?php init_footer(); ?>
 <script src="<?= base_url(); ?>assets/js/custom-js/user.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let nameValid = false;
+    let emailValid = false;
+    let mobileValid = false;
+
+    $("#submit_btn").prop("disabled", true);
+
+    function checkSubmit() {
+        if (nameValid && emailValid && mobileValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
+    }
+
+
+    $("#full_name").keyup(function() {
+
+        let name = $(this).val().trim();
+        let nameRegex = /^[A-Za-z ]+$/;
+
+        if (name.length < 3) {
+            $("#name_msg").html("Name must be at least 3 characters").css("color", "red");
+            nameValid = false;
+        } else if (!nameRegex.test(name)) {
+            $("#name_msg").html("Only letters allowed").css("color", "red");
+            nameValid = false;
+        } else {
+            $("#name_msg").html("Valid name").css("color", "green");
+            nameValid = true;
+        }
+
+        checkSubmit();
+    });
+
+
+    $("#checkemail").keyup(function() {
+
+        let email = $(this).val().trim();
+        let user_id = $("#id").val();
+
+        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            $("#email_msg").html("Invalid email format").css("color", "red");
+            emailValid = false;
+            checkSubmit();
+            return;
+        }
+
+        $.ajax({
+            url: "<?= base_url('admin/Student/check_email') ?>",
+            type: "POST",
+            data: {
+                email: email,
+                user_id: user_id
+            },
+            success: function(res) {
+
+                if (res == "exists") {
+                    $("#email_msg").html("Email already exists").css("color", "red");
+                    emailValid = false;
+                } else {
+                    $("#email_msg").html("Email available").css("color", "green");
+                    emailValid = true;
+                }
+
+                checkSubmit();
+            }
+        });
+
+    });
+
+    $("#mobile_no").keyup(function() {
+
+        let mobile = $(this).val().trim();
+        let user_id = $("#id").val();
+
+        let mobileRegex = /^[6-9]\d{9}$/;
+
+        if (!mobileRegex.test(mobile)) {
+            $("#mobile_msg").html("Enter valid 10 digit mobile").css("color", "red");
+            mobileValid = false;
+            checkSubmit();
+            return;
+        }
+
+        $.ajax({
+            url: "<?= base_url('admin/Student/check_mobile') ?>",
+            type: "POST",
+            data: {
+                mobile: mobile,
+                user_id: user_id
+            },
+            success: function(res) {
+
+                if (res == "exists") {
+                    $("#mobile_msg").html("Mobile already exists").css("color", "red");
+                    mobileValid = false;
+                } else {
+                    $("#mobile_msg").html("Mobile available").css("color", "green");
+                    mobileValid = true;
+                }
+
+                checkSubmit();
+            }
+        });
+
+    });
+
+
+    $(document).ready(function() {
+
+        let user_id = $("#id").val();
+
+        if (user_id > 0) {
+            nameValid = true;
+            emailValid = true;
+            mobileValid = true;
+            checkSubmit();
+        }
+
+    });
+
+    $("#mobile_no").on("keypress", function(e) {
+        if (e.which < 48 || e.which > 57) {
+            return false;
+        }
+    });
+</script>

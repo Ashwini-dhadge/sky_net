@@ -21,10 +21,11 @@
                         <div class="card border-0 shadow-sm" style="border-radius:18px;">
                             <div class="card-body p-4">
                                 <input type="hidden" name="action" id="action" value="2">
-                                <?php $img = ($user['image']) ? $user['image'] : 'no-image.png'; ?>
+                                <?php $img = (!empty($user['image'])) ? $user['image'] : 'no-image.png'; ?>
+
                                 <div class="d-flex align-items-center mb-4">
                                     <div class="mr-3">
-                                        <img src="<?= base_url() . USER_IMAGES . $img ?>"
+                                        <img src="<?= base_url(USER_PROFILE . $user['image']) ?>"
                                             style="width:85px;height:85px;object-fit:cover;border-radius:15px;">
                                     </div>
                                     <div>
@@ -88,6 +89,14 @@
                                             <i class="fas fa-question mr-1"></i> My QNA
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                            data-toggle="tab"
+                                            href="#certification"
+                                            style="border-radius:25px;padding:8px 18px;">
+                                            <i class="fas fa-award mr-1"></i> My Certification
+                                        </a>
+                                    </li>
                                 </ul>
 
                                 <div class="tab-content">
@@ -137,17 +146,18 @@
                                             </form>
                                         </div>
                                     </div>
-
                                     <div class="tab-pane fade" id="profile1">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h6 class="font-weight-bold mb-0">Assigned Courses</h6>
-                                            <a href="javascript:void(0);"
-                                                title="Assign Course"
-                                                class="btn btn-primary btn-sm openAssignModal"
-                                                data-id="<?= $user['id'] ?>"
-                                                style="border-radius:20px;padding:6px 16px;">
-                                                <i class="fas fa-plus mr-1"></i> Assign Course
-                                            </a>
+                                            <?php if ($user['user_type'] == 0) { ?>
+                                                <a href="javascript:void(0);"
+                                                    title="Assign Course"
+                                                    class="btn btn-primary btn-sm openAssignModal"
+                                                    data-id="<?= $user['id'] ?>"
+                                                    style="border-radius:20px;padding:6px 16px;">
+                                                    <i class="fas fa-plus mr-1"></i> Assign Course
+                                                </a>
+                                            <?php } ?>
                                         </div>
                                         <div class="modal fade" id="assignCourseModal" tabindex="-1">
                                             <div class="modal-dialog modal-xl">
@@ -330,6 +340,11 @@
                                                     <p class="text-muted">No Q&A found for this user.</p>
                                                 </div>
                                             <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="certification">
+                                        <div class="bg-white p-3 rounded shadow-sm">
+                                            <?php $this->load->view(ADMIN . USER . 'table-certificates'); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -541,5 +556,6 @@
 <!-- content -->
 <?php init_footer(); ?>
 <script src="<?= base_url(); ?>assets/js/custom-js/user.js"></script>
+<script src="<?= base_url(); ?>assets/js/custom-js/certificate.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/student.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/question.js"></script>

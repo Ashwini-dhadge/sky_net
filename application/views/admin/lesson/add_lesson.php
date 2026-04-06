@@ -69,7 +69,7 @@
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>Select Course</label>
-                                                    <select class="form-control select2" name="course_id" required>
+                                                    <select class="form-control select2" name="course_id" id="course_id" required>
                                                         <option value="">Select Course</option>
                                                         <?php foreach ($course as $c) { ?>
                                                             <option value="<?= $c['id'] ?>"
@@ -87,7 +87,7 @@
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Select Section</label>
-                                                    <select class="form-control select2" name="section_id" required>
+                                                    <select class="form-control select2" name="section_id" id="section_id" required>
                                                         <option value="">Select Section</option>
                                                         <?php foreach ($section as $s) { ?>
                                                             <option value="<?= $s['id'] ?>"
@@ -101,9 +101,11 @@
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Add Title</label>
-                                                    <input class="form-control" type="text" name="tags" id="tags"
+                                                    <input class="form-control" type="text" name="tags" id="title"
                                                         value="<?= isset($lesson) ? $lesson['title'] : ''; ?>"
                                                         placeholder="Enter title">
+
+                                                    <small id="lesson_msg"></small>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Sequence</label>
@@ -330,6 +332,74 @@
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
+<script>
+    let lessonValid = false;
+
+    function checkSubmit() {
+
+        if (lessonValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
+
+    }
+
+    $("#title").keyup(function() {
+
+        let title = $(this).val().trim();
+        let course_id = $("#course_id").val();
+        let section_id = $("#section_id").val();
+        let id = $("#lesson_id").val();
+
+        if (title.length < 3) {
+
+            $("#lesson_msg").html("Lesson must be at least 3 characters").css("color", "red");
+            lessonValid = false;
+            checkSubmit();
+            return;
+
+        }
+
+        if (!course_id || !section_id) {
+
+            $("#lesson_msg").html("Select course and section first").css("color", "red");
+            lessonValid = false;
+            checkSubmit();
+            return;
+
+        }
+
+        $.ajax({
+            url: "<?= base_url('admin/Lesson/check_lesson_title') ?>",
+            type: "POST",
+            data: {
+                title: title,
+                course_id: course_id,
+                section_id: section_id,
+                id: id
+            },
+            success: function(res) {
+
+                if (res === "exists") {
+
+                    $("#lesson_msg").html("Lesson already exists in this section").css("color", "red");
+                    lessonValid = false;
+
+                } else {
+
+                    $("#lesson_msg").html("Lesson title available").css("color", "green");
+                    lessonValid = true;
+
+                }
+
+                checkSubmit();
+
+            }
+        });
+
+    });
+</script>
 <script>
     const time = document.getElementById('time');
 

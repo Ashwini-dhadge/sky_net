@@ -10,12 +10,12 @@ class Course extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model(ADMIN . 'CourseModel');
+		loginId();
 	}
 
 
 	public function index()
 	{
-		loginId();
 		$data['title'] = 'Course Master';
 		$data['active'] = 'Course Master';
 		$this->load->view(ADMIN . COURSE . 'list-Course', $data);
@@ -32,10 +32,17 @@ class Course extends CI_Controller
 		$searchVal = $data['search']['value'];
 		$sortColIndex = $data['order'][0]['column'];
 		$sortBy = $data['order'][0]['dir'];
+		$course_type = $this->input->post('course_type');
 
-		$count = count($this->CourseModel->getCourseData($searchVal, 0, 0, 0, 0));
+		$where = [];
+
+		if ($course_type !== '') {
+			$where['c.course_type'] = $course_type;
+		}
+
+		$count = count($this->CourseModel->getCourseData($searchVal, 0, 0, 0, 0,0, $where));
 		if ($count) {
-			$CourseData = $this->CourseModel->getCourseData($searchVal, $sortColIndex, $sortBy, $limit, $offset);
+			$CourseData = $this->CourseModel->getCourseData($searchVal, $sortColIndex, $sortBy, $limit, $offset,0, $where);
 
 			foreach ($CourseData as $key => $Course) {
 
@@ -414,7 +421,7 @@ class Course extends CI_Controller
 					->from('tbl_courses_duration')
 					->where('courses_id', $id)
 					->where('deleted_at', NULL)
-					->order_by('id', 'DESC')          // or created_at DESC
+					->order_by('id', 'DESC')        
 					->limit(1)
 					->get()
 					->row_array();
@@ -446,13 +453,13 @@ class Course extends CI_Controller
 				? implode(',', array_map('trim', $post['skill']))
 				: null,
 
-			'language'      => $post['language'],
-			'certificate'   => $post['certificate'],
-			'assessment'    => $post['assessment'],
+			'language'      => $post['language'] ?? 1,
+			'certificate'   => $post['certificate'] ?? 0,
+			'assessment'    => $post['assessment'] ?? 0,
 			'benefits'      => $post['benefits'] ?? null,
 			'notes'         => $post['notes'],
-			'status'        => $post['status'],
-			'is_free'       => $post['is_free'],
+			'status'        => $post['status'] ?? 1,
+			'is_free'       => $post['is_free'] ?? 0,
 		];
 
 		if (!empty($_FILES['image']['name'])) {
@@ -613,6 +620,22 @@ class Course extends CI_Controller
 		}
 
 		redirect(base_url(ADMIN . 'Course'));
+	}
+
+	public function check_course_title()
+	{
+		$title = $this->input->post('title');
+		$id = $this->input->post('id');
+		$this->db->where('title', $title);
+		if ($id) {
+			$this->db->where('id !=', $id);
+		}
+		$query = $this->db->get('tbl_courses');
+		if ($query->num_rows() > 0) {
+			echo "exists";
+		} else {
+			echo "available";
+		}
 	}
 
 	public function updateResources($course_id)

@@ -62,9 +62,10 @@ if (!empty($section)) {
                                             <label for="example-text-input" class="col-form-label">Section Title</label>
                                             <div class="">
                                                 <input class="form-control" type="text"
-                                                    value="<?= isset($section['title']) ? $section['title'] : ''; ?>
-"
+                                                    value="<?= isset($section['title']) ? $section['title'] : ''; ?>"
                                                     name="title" id="title" required>
+
+                                                <small id="section_msg"></small>
                                             </div>
                                         </div>
 
@@ -72,7 +73,7 @@ if (!empty($section)) {
                                             <label>Description</label>
                                             <div>
                                                 <textarea class="form-control" name="description" id="benefits">
-    <?= isset($section['description']) ? $section['description'] : ''; ?>
+                                                    <?= isset($section['description']) ? $section['description'] : ''; ?>
                                                 </textarea>
 
                                             </div>
@@ -81,8 +82,9 @@ if (!empty($section)) {
                                     <hr>
                                     <div class="form-group col-md-12"><br>
                                         <div class="form-group form-group mb-0 text-right">
-                                            <button type="submit"
-                                                class="btn btn-primary waves-effect waves-light mr-1">Submit</button>
+                                            <button type="submit" id="submit_btn" class="btn btn-primary" disabled>
+                                                Save
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -106,6 +108,70 @@ if (!empty($section)) {
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">
+</script>
+<script>
+    let sectionValid = false;
+
+    function checkSubmit() {
+
+        if (sectionValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
+
+    }
+
+    $("#title").keyup(function() {
+
+        let title = $(this).val().trim();
+        let course_id = $("#course_id").val();
+        let id = $("#section_id").val();
+
+        if (title.length < 3) {
+            $("#section_msg").html("Section must be at least 3 characters").css("color", "red");
+            sectionValid = false;
+            // checkSubmit();
+            return;
+        }
+
+        if (!course_id) {
+
+            $("#section_msg").html("Please select course first").css("color", "red");
+            sectionValid = false;
+            checkSubmit();
+            return;
+
+        }
+
+        $.ajax({
+            url: "<?= base_url('admin/Section/check_section_title') ?>",
+            type: "POST",
+            data: {
+                title: title,
+                course_id: course_id,
+                id: id
+            },
+            success: function(res) {
+
+                if (res === "exists") {
+
+                    $("#section_msg").html("Section already exists in this course").css("color", "red");
+                    sectionValid = false;
+
+                } else {
+
+                    $("#section_msg").html("Section available").css("color", "green");
+                    sectionValid = true;
+
+                }
+
+                checkSubmit();
+
+            }
+        });
+
+    });
 </script>
 <script type="text/javascript">
     $('#exam_duration').datetimepicker({

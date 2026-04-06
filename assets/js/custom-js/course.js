@@ -21,7 +21,9 @@ function listCourse(data = '') {
       url: base_url + _admin + 'Course/Course_list',
       type: 'POST',
       dataSrc: "data",
-      data: data
+      data: function (d) {
+        d.course_type = $('#course_type_filter').val();
+      },
     },
     columnDefs: [{ responsivePriority: 1, targets: 3 }],
 
@@ -40,6 +42,10 @@ function listCourse(data = '') {
   });
 
 }
+$(document).on('change', '#course_type_filter', function () {
+  $('#Course_datatable').DataTable().ajax.reload();
+});
+
 
 $(document).ready(function () {
 
