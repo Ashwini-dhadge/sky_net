@@ -321,10 +321,10 @@
 
             <div class="small-note">
 
-                • Select internal course if certificate is for LMS course
-                • Use external option for outside programs
-                • Score or grade is optional
-                • Upload certificate if already generated
+                • Select internal course if certificate is for LMS course <br>
+                • Use external option for outside programs<br>
+                • Score or grade is optional<br>
+                • Upload certificate if already generated<br>
 
             </div>
 

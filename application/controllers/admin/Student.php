@@ -284,7 +284,7 @@ class Student extends CI_Controller
                 'date' => date('Y-m-d'),
 
                 'order_status' => 'COMPLETED',
-
+                'payment_status' => 'CAPTURED',
                 'payment_type' => 3,
                 'amount' => 0,
                 'gst_amount' => 0,

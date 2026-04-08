@@ -103,7 +103,7 @@
                                                     <label>Add Title</label>
                                                     <input class="form-control" type="text" name="tags" id="title"
                                                         value="<?= isset($lesson) ? $lesson['title'] : ''; ?>"
-                                                        placeholder="Enter title">
+                                                        placeholder="Enter title" required>
 
                                                     <small id="lesson_msg"></small>
                                                 </div>
