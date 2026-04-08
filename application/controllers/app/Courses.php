@@ -670,35 +670,131 @@ class Courses extends CI_Controller
                     $watch_count = 0;
                     $where1['l.section_id'] = $value1['section_id'];
                     $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
-                    foreach ($courseSectionLesson as $key2 => $lessonList) {
-                        if ($key2 == 0) {
-                            $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
-                        } else {
-                            $view_previous = array();
-                            $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $courseSectionLesson[$key2 - 1]['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
-                            // $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $lessonList['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
-                            // echo $this->db->last_query();
-                            // die;
-                            // $courseSectionLesson[$key2]['is_lock_lesson_query'] = $this->db->last_query();
-                            //if(count(is_countable($view_previous)?$view_previous:[])){
-                            if (!empty($view_previous)) {
+                    // foreach ($courseSectionLesson as $key2 => $lessonList) {
+                    //     if ($key2 == 0) {
+                    //         $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                    //     } else {
+                    //         $view_previous = array();
+                    //         $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $courseSectionLesson[$key2 - 1]['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
 
-                                if (is_null($view_previous['solved_mcq']) && is_null($view_previous['result'])) {
-                                    //  $lessonList[$key2]['asas1']=1;
-                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
-                                } else {
-                                    //   $lessonList[$key2]['asas1']=2;
+                    //         if (!empty($view_previous)) {
+
+                    //             if (is_null($view_previous['solved_mcq']) && is_null($view_previous['result'])) {
+                    //                 //  $lessonList[$key2]['asas1']=1;
+                    //                 $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                    //             } else {
+                    //                 //   $lessonList[$key2]['asas1']=2;
+                    //                 $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                    //                 $watch_count++;
+                    //             }
+                    //         } else {
+                    //             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                    //         }
+                    //     }
+                    // }
+                    // foreach ($courseSectionLesson as $key2 => $lessonList) {
+
+                    //     // First section, first lesson: unlock by default
+                    //     if ($key1 == 0 && $key2 == 0) {
+                    //         $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                    //         $watch_count++;
+                    //         continue;
+                    //     }
+
+                    //     // For other lessons, check if previous lesson exists
+                    //     if ($key2 > 0) {
+                    //         $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
+
+                    //         $view_previous = $this->Common_model->getData(
+                    //             'tbl_lesson_user_video',
+                    //             [
+                    //                 'user_id' => $user_id,
+                    //                 'view_video' => 1,
+                    //                 'lesson_id' => $previousLessonId,
+                    //                 'status' => 1
+                    //             ],
+                    //             '',
+                    //             '',
+                    //             'row_array',
+                    //             'id',
+                    //             'desc'
+                    //         );
+
+                    //         if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
+                    //             // Previous lesson completed → unlock this lesson
+                    //             $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                    //             $watch_count++;
+                    //         } else {
+                    //             // Previous lesson not completed → keep locked
+                    //             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                    //         }
+                    //     } else {
+                    //         // Just a safety check, in case $key2 == 0 (already handled)
+                    //         $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                    //     }
+                    // }
+                    foreach ($courseSection as $key1 => $value1) {
+                        $watch_count = 0;
+                        $where1['l.section_id'] = $value1['section_id'];
+                        $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
+
+                        // Check if user is subscribed
+                        $isSubscribed = $courseDetailsList[$key]['duration'][0]['is_subscribe'] ?? 0;
+
+                        foreach ($courseSectionLesson as $key2 => $lessonList) {
+
+                            if ($isSubscribed) {
+                                // First section, first lesson: unlock by default if subscribed
+                                if ($key1 == 0 && $key2 == 0) {
                                     $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
                                     $watch_count++;
+                                    continue;
+                                }
+
+                                // Other lessons: unlock if previous lesson completed
+                                if ($key2 > 0) {
+                                    $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
+
+                                    $view_previous = $this->Common_model->getData(
+                                        'tbl_lesson_user_video',
+                                        [
+                                            'user_id' => $user_id,
+                                            'view_video' => 1,
+                                            'lesson_id' => $previousLessonId,
+                                            'status' => 1
+                                        ],
+                                        '',
+                                        '',
+                                        'row_array',
+                                        'id',
+                                        'desc'
+                                    );
+
+                                    if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
+                                        // Previous lesson completed → unlock this lesson
+                                        $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                                        $watch_count++;
+                                    } else {
+                                        // Previous lesson not completed → keep locked
+                                        $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                                    }
+                                } else {
+                                    // Safety: first lesson already handled, this just ensures lock for any unexpected case
+                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
                                 }
                             } else {
+                                // Not subscribed → all lessons locked
                                 $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
                             }
                         }
+
+                        $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
+                        $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+                        $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
                     }
-                    $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
-                    $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
-                    $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
+                    // $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
+                    // $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+                    // $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
                 }
             }
             if ($courseDetailsList) {

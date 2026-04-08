@@ -16,32 +16,32 @@ class Forum extends CI_Controller
     public function pending_list()
     {
         $data = $_POST;
-        // echo $this->session->userdata('role');die;
-        $columns = [];
-        $page  = $data['draw'];
+
+        $page = $data['draw'];
         $limit = $data['length'];
         $offset = $data['start'];
         $searchVal = $data['search']['value'];
         $sortColIndex = $data['order'][0]['column'];
         $sortBy = $data['order'][0]['dir'];
-        $status = $data['status'] ?? 0;
-
-        $ForumData = $this->ForumModel->getNonApprovedQuestions(
-            $status,
-            $searchVal,
-            $sortColIndex,
-            $sortBy,
-            $limit,
-            $offset
-        );
-
-
-        $count = count($ForumData);
-
-
+        $where = [];
+        $status = isset($data['status']) ? (int)$data['status'] : 0;
+        // $ForumData = $this->ForumModel->getNonApprovedQuestions(
+        //     $status,
+        //     $searchVal,
+        //     $sortColIndex,
+        //     $sortBy,
+        //     $limit,
+        //     $offset
+        // );
+        if (isset($data['status']) && $data['status'] !== '') {
+            $where['q.is_approved'] = $data['status'];
+        }
+        $count = count($this->ForumModel
+            ->getNonApprovedQuestions($searchVal, 0, 0, 0, 0, '', $where));
         if ($count) {
-
-            foreach ($ForumData as $key => $forum) {
+            $result = $this->ForumModel
+                ->getNonApprovedQuestions($searchVal, $sortColIndex, $sortBy, $limit, $offset, '', $where);
+            foreach ($result as $key => $forum) {
 
                 $row = [];
 
@@ -308,7 +308,7 @@ class Forum extends CI_Controller
 
     public function answers_json($id)
     {
-        $list = $this->ForumModel->getAnswersWithUser($id); 
+        $list = $this->ForumModel->getAnswersWithUser($id);
         echo json_encode([
             "data" => $list
         ]);

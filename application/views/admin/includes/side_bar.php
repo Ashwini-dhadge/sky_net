@@ -119,18 +119,40 @@
                         <span> Q & A Board</span>
                     </a>
                 </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="ti-notepad"></i>
+                        <span>Reports</span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="<?= base_url('admin/SaleReport') ?>">Course Wise Sale</a>
+                        </li>
+
+                        <li>
+                            <a href="<?= base_url('admin/UserCourseProgressReport') ?>">Course User Perfromance</a>
+                        </li>
+
+                        <li>
+                            <a href="<?= base_url('admin/LearnerProgressReport') ?>">Learner Progress Report</a>
+                        </li>
+                        <li>
+                            <a href="<?= base_url('admin/UserResultReport') ?>">User Result Report</a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
 </div>
 
 <?php if ($msg = $this->session->flashdata('success')): ?>
-    <div class="alert alert-success" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button><?= $msg ?>
-    </div>
+<div class="alert alert-success" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button><?= $msg ?>
+</div>
 <?php endif ?>
 <?php if ($msg = $this->session->flashdata('error')): ?>
-    <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"
-            aria-label="Close"><span aria-hidden="true">&times;</span></button><?= $msg ?></div>
+<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"
+        aria-label="Close"><span aria-hidden="true">&times;</span></button><?= $msg ?></div>
 <?php endif ?>

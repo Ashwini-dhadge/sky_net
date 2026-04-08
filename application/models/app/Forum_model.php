@@ -77,6 +77,7 @@ class Forum_model extends CI_Model
                 fa.created_at
             ')
             ->from('tbl_forum_answers fa')
+            ->where('fa.deleted_by', null)
             ->join('tbl_users u', 'u.id = fa.user_id', 'left')
             ->where('fa.forum_id', $forum_id)
             ->order_by('fa.id', 'ASC')

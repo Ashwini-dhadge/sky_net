@@ -58,30 +58,73 @@ class ForumModel extends CI_Model
     }
 
 
+    // public function getNonApprovedQuestions(
+    //     $status = 0,
+    //     $searchVal = '',
+    //     $sortColIndex = 0,
+    //     $sortBy = 'desc',
+    //     $limit = 0,
+    //     $offset = 0
+    // ) {
+    //     $this->db->select('q.*, u.first_name as asked_by');
+    //     $this->db->from('tbl_forum_questions q');
+    //     $this->db->join('tbl_users u', 'u.id = q.user_id', 'left');
+
+    //     $this->db->where('q.is_approved', $status);
+    //     // $this->db->where('q.deleted_at IS NULL', null, false);
+
+    //     if ($limit) {
+    //         $this->db->limit($limit, $offset);
+    //     }
+
+    //     return $this->db->get()->result_array();
+    // }
+
+    protected $PendingQuestionColumn = [
+        'q.id',
+        '',
+        '',
+
+    ];
+
     public function getNonApprovedQuestions(
-        $status = 0,
         $searchVal = '',
-        $sortColIndex = 0,
-        $sortBy = 'desc',
-        $limit = 0,
-        $offset = 0
+        $sortColIndex = '0',
+        $sortBy = 'DESC',
+        $limit = '0',
+        $offset = '0',
+        $id = '',
+        $where = ''
     ) {
+
+
         $this->db->select('q.*, u.first_name as asked_by');
         $this->db->from('tbl_forum_questions q');
         $this->db->join('tbl_users u', 'u.id = q.user_id', 'left');
 
-        $this->db->where('q.is_approved', $status);
-        // $this->db->where('q.deleted_at IS NULL', null, false);
 
-        if ($limit) {
+        if (!empty($where)) {
+            $this->db->where($where);
+        }
+
+        $this->db->where('q.deleted_by', NULL);
+        if ($searchVal) {
+            $this->db->where("(
+                q.title LIKE '%$searchVal%' OR
+                u.first_name LIKE '%$searchVal%'
+            )");
+        }
+
+        if ($limit || $offset) {
             $this->db->limit($limit, $offset);
         }
 
+
+        $orderColumn = $this->PendingQuestionColumn[$sortColIndex];
+        $this->db->order_by($orderColumn, $sortBy);
+
         return $this->db->get()->result_array();
     }
-
-
-
     public function getAnswersByQuestion($id)
     {
         return $this->db
@@ -197,5 +240,4 @@ class ForumModel extends CI_Model
 
         return $this->db->get()->result_array();
     }
-  
 }

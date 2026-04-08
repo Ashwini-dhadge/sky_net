@@ -10,11 +10,16 @@ $("#on_date").on("change", function () {
 });
 
 function filter_order() {
+	var course_id = $("#course_id").val();
+	var user_id = $("#user_id").val();
+	var on_date = $("#on_date").val();
 	var on_date = $("#on_date").val();
 	var from_date = $("#from_date").val();
 	var to_date = $("#to_date").val();
 
 	var data = {
+		course_id: course_id,
+		user_id: user_id,
 		on_date: on_date,
 		from_date: from_date,
 		to_date: to_date,
@@ -45,7 +50,10 @@ function listOrders(data = "") {
 		pageLength: 25,
 		order: [[3, "desc"]],
 		ajax: {
-			url: base_url + _admin + "SaleReport/listSaleOrders",
+			url:
+				base_url +
+				_admin +
+				"UserCourseProgressReport/listUserCourseProgressReport",
 			type: "POST",
 			dataSrc: "data",
 			data: data,
@@ -58,14 +66,10 @@ function listOrders(data = "") {
 		columns: [
 			{ orderable: false, width: "50px", title: "Sr._No." },
 			// { width: "120px", title: "Type" },
-			{ width: "120px", title: "Courses" },
-			{ width: "10px", title: "Total Sale Count" },
-			{
-				orderable: false,
-				width: "100px",
-				title: "Total Amt.",
-				className: "text-right",
-			},
+			{ width: "120px", title: "Student" },
+			{ width: "10px", title: "Course" },
+			{ width: "10px", title: "Category" },
+			{ width: "10px", title: "Progress" },
 		],
 		drawCallback: function (settings) {
 			// Here the response
@@ -76,4 +80,55 @@ function listOrders(data = "") {
 }
 $(document).ready(function () {
 	filter_order();
+});
+
+$("#course_id").select2({
+	placeholder: "Search Course...",
+	allowClear: true,
+	width: "100%",
+	ajax: {
+		url: base_url + "admin/UserCourseProgressReport/list_course",
+		type: "get",
+		dataType: "json",
+		delay: 250,
+
+		data: function (params) {
+			return {
+				searchTerm: params.term, // user typing text
+			};
+		},
+
+		processResults: function (response) {
+			return {
+				results: response,
+			};
+		},
+
+		cache: true,
+	},
+});
+$("#user_id").select2({
+	placeholder: "Search User",
+	allowClear: true,
+	width: "100%",
+	ajax: {
+		url: base_url + "admin/UserCourseProgressReport/list_user",
+		type: "get",
+		dataType: "json",
+		delay: 250,
+
+		data: function (params) {
+			return {
+				searchTerm: params.term,
+			};
+		},
+
+		processResults: function (response) {
+			return {
+				results: response,
+			};
+		},
+
+		cache: true,
+	},
 });

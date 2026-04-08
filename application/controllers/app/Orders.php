@@ -411,7 +411,7 @@ class Orders extends CI_Controller
                             // 'lesson_id' => $lesson_id,
                             'courses_duration_id' => $coursesDuratoion['id'],
                             // 'type' => $type,
-                            'rate' => $rate,
+                            'rate' => $total_amount,
                             'order_id' => $orderID
 
                         );
