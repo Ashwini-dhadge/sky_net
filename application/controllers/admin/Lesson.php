@@ -713,6 +713,23 @@ class Lesson extends CI_Controller
 		}
 	}
 
+	public function check_final_lesson()
+	{
+		$course_id = $this->input->post('course_id');
+		$lesson_id = $this->input->post('lesson_id');
+
+		$this->db->where('course_id', $course_id);
+		$this->db->where('is_final_lesson', '1');
+		$this->db->where('deleted_by IS NULL', null, false);
+
+		if (!empty($lesson_id)) {
+			$this->db->where('id !=', $lesson_id);
+		}
+
+		$exists = $this->db->get('tbl_lesson')->num_rows();
+
+		echo ($exists > 0) ? "exists" : "available";
+	}
 
 	public function storelesson()
 	{
@@ -724,6 +741,7 @@ class Lesson extends CI_Controller
 		$sequence   = $this->input->post('sequence');
 		$no_of_question   = $this->input->post('no_of_question');
 		$exam_duration   = $this->input->post('exam_duration');
+		$is_final_lesson   = $this->input->post('is_final_lesson');
 		// echo"<pre>";print_r($exam_duration);
 		// echo"<pre>";print_r($no_of_question);die;
 		$tags = $this->input->post('tags_input');
@@ -738,6 +756,7 @@ class Lesson extends CI_Controller
 			"exam_duration" => $exam_duration,
 			"no_of_question" => $no_of_question,
 			"sequence"    => $sequence,
+			"is_final_lesson"    => $is_final_lesson,
 			"updated_at"  => date("Y-m-d H:i:s"),
 			"updated_by"  => 1
 		];
@@ -893,6 +912,7 @@ class Lesson extends CI_Controller
 		redirect(ADMIN . "Lesson");
 	}
 
+	
 
 
 	public function edit($id)
