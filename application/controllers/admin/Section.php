@@ -124,7 +124,7 @@ class Section extends CI_Controller
 
 				array_push($row, $offset + ($key + 1));
 				array_push($row, $lesson['course_name']);
-				$title = '<a href="' . base_url() . 'admin/Section/view/' . $lesson['id'] . '">' . $lesson['title'] . '</a>';
+				$title = $lesson['title'];
 				array_push($row, $title);
 				$description = substr($lesson['description'], 0, 200);
 				array_push($row, $description . (strlen($lesson['description']) > 200 ? '...' : ''));

@@ -237,9 +237,7 @@ class Student extends CI_Controller
         }
 
         foreach ($all_map as $course_id => $sub) {
-
             if (!in_array($course_id, $selected_courses) && $sub['active'] == 1) {
-
                 $this->CommonModel->iudAction(
                     'tbl_order_courses_subscription',
                     [
@@ -256,6 +254,14 @@ class Student extends CI_Controller
 
         foreach ($selected_courses as $course_id) {
 
+            $duration_row = $this->db
+                ->select('id')
+                ->where('courses_id', $course_id)
+                ->get('tbl_courses_duration')
+                ->row();
+
+            $course_duration_id = $duration_row ? $duration_row->id : 0;
+
             if (isset($all_map[$course_id])) {
                 if ($all_map[$course_id]['active'] == 0) {
 
@@ -264,6 +270,7 @@ class Student extends CI_Controller
                         [
                             'active' => 1,
                             'deleted_on' => null,
+                            'courses_duration_id' => $course_duration_id,
                             'start_date' => date('Y-m-d'),
                             'end_date' => date('Y-m-d', strtotime('+30 days'))
                         ],
@@ -282,7 +289,6 @@ class Student extends CI_Controller
                 'order_no' => $order_no,
                 'user_id' => $user_id,
                 'date' => date('Y-m-d'),
-
                 'order_status' => 'COMPLETED',
                 'payment_status' => 'CAPTURED',
                 'payment_type' => 3,
@@ -297,7 +303,7 @@ class Student extends CI_Controller
             $orderDetailsData = [
                 'order_id' => $order_id,
                 'courses_id' => $course_id,
-                'courses_duration_id' => 5,
+                'courses_duration_id' => $course_duration_id,
                 'lesson_id' => 0,
                 'qty' => 1,
                 'rate' => 0,
@@ -324,7 +330,7 @@ class Student extends CI_Controller
                 'order_no' => $order_no,
                 'user_id' => $user_id,
                 'type' => 1,
-                'courses_duration_id' => 5,
+                'courses_duration_id' => $course_duration_id,
                 'course_id' => $course_id,
                 'start_date' => date('Y-m-d'),
                 'end_date' => date('Y-m-d', strtotime('+' . $no_of_days . ' days')),
@@ -335,14 +341,15 @@ class Student extends CI_Controller
             ];
 
             $this->CommonModel->iudAction('tbl_order_courses_subscription', $subData, 'insert');
-
-            $this->session->set_flashdata('success', 'Courses assigned successfully');
         }
+
+        $this->session->set_flashdata('success', 'Courses assigned successfully');
 
         echo json_encode(['status' => true]);
         exit;
     }
 
+    
     public function add_student()
     {
         $data['title'] = 'Add Student';

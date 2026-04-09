@@ -184,7 +184,9 @@ class CourseModel extends CI_Model
         c.id as course_id,
         s.id as section_id,
         c.title as course_name,
-        s.title as section_name');
+        s.title as section_name,
+        cd.price
+        ');
         
 
         if ($course_id) {
@@ -206,6 +208,7 @@ class CourseModel extends CI_Model
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id');
         $this->db->join('tbl_section s', 's.id = l.section_id');
+        $this->db->join('tbl_courses_duration cd', 'cd.courses_id = l.course_id');
         $this->db->where('l.deleted_at IS NULL');
 
 

@@ -63,7 +63,7 @@
                                 <hr>
                                 <form class="repeater" action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>"
                                     method="post" enctype="multipart/form-data">
-                                    <input type="hidden" name="id" value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
+                                    <input type="hidden" name="id" id="lesson_id" value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
                                     <div class="row">
                                         <div class="col-lg-4 col-12" style="border-right:1px dashed gray;">
                                             <div class="row">
@@ -136,7 +136,7 @@
                                                     <label>MCQ Exam Duration (HH:MM:SS)</label>
                                                     <input type="text" id="time" placeholder="HH:MM:SS" maxlength="8" class="form-control" name="exam_duration" value="<?= isset($lesson) ? $lesson['exam_duration'] : ''; ?>">
                                                 </div>
-                                                <div class="form-group col-md-6">
+                                                <div class="form-group col-md-12">
                                                     <label>Is this Final Lesson?</label><br>
 
                                                     <div class="form-check form-check-inline">
@@ -145,7 +145,7 @@
                                                             name="is_final_lesson"
                                                             id="final_yes"
                                                             value="1"
-                                                            <?= isset($lesson[0]['is_final_lesson']) && $lesson[0]['is_final_lesson'] == 1 ? 'checked' : ''; ?>>
+                                                            <?= isset($lesson['is_final_lesson']) && $lesson['is_final_lesson'] == '1' ? 'checked' : ''; ?>>
                                                         <label class="form-check-label" for="final_yes">Yes</label>
                                                     </div>
 
@@ -155,11 +155,12 @@
                                                             name="is_final_lesson"
                                                             id="final_no"
                                                             value="0"
-                                                            <?= !isset($lesson[0]['is_final_lesson']) || $lesson[0]['is_final_lesson'] == 0 ? 'checked' : ''; ?>>
+                                                            <?= !isset($lesson['is_final_lesson']) || $lesson['is_final_lesson'] == '0' ? 'checked' : ''; ?>>
                                                         <label class="form-check-label" for="final_no">No</label>
                                                     </div>
-                                                </div>
+                                                    <small id="final_lesson_msg"></small>
 
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-8 col-12">
@@ -333,6 +334,13 @@
 
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
+    function checkSubmit() {
+        if (lessonValid && finalLessonValid) {
+            $("button[type='submit']").prop("disabled", false);
+        } else {
+            $("button[type='submit']").prop("disabled", true);
+        }
+    }
     let lessonValid = false;
 
     function checkSubmit() {
@@ -398,6 +406,44 @@
             }
         });
 
+    });
+
+
+
+
+    let finalLessonValid = true;
+
+    $(document).on('change', 'input[name="is_final_lesson"]', function() {
+
+        let isFinal = $(this).val();
+        let course_id = $("select[name='course_id']").val();
+        let lesson_id = $("#lesson_id").val();
+
+        if (isFinal === "1") {
+
+            $.ajax({
+                url: "<?= base_url('admin/Lesson/check_final_lesson') ?>",
+                type: "POST",
+                data: {
+                    course_id: course_id,
+                    lesson_id: lesson_id
+                },
+                success: function(res) {
+
+                    if (res.trim() === "exists") {
+
+                        $("#final_lesson_msg").html("Final lesson already exists for this course").css("color", "red");
+                        $("#final_no").prop("checked", true);
+
+                    } else {
+                        $("#final_lesson_msg").html("");
+                    }
+                }
+            });
+
+        } else {
+            $("#final_lesson_msg").html("");
+        }
     });
 </script>
 <script>

@@ -301,7 +301,7 @@
 
                             <hr>
 
-                            <button type="submit" id="submit_btn" class="btn btn-primary float-right mb-4" disabled>
+                            <button type="submit" id="submit_btn" class="btn btn-primary float-right mb-4" >
                                 Save Course
                             </button>
 

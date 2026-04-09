@@ -76,7 +76,7 @@
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">Benefits </th>
-                                                        <td><?= $lesson['benefits']; ?></td>
+                                                        <td><?= $lesson['description']; ?></td>
                                                     </tr>
 
 
@@ -85,10 +85,6 @@
                                                         <td><?= $lesson['price']; ?></td>
                                                     </tr>
 
-                                                    <tr>
-                                                        <th scope="row">Importance </th>
-                                                        <td><?= $lesson['importance']; ?></td>
-                                                    </tr>
 
                                                 </tbody>
                                             </table>
