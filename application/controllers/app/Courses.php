@@ -75,6 +75,10 @@ class Courses extends CI_Controller
             if (isset($this->user_type)) {
                 $where['c.course_type'] = $this->user_type;
             }
+            if (isset($this->user_type) && $this->user_type == 0) {
+
+                $where['o.user_id'] = $user_id;
+            }
             // echo "<pre>";
             // print_r($where);
             // die;
@@ -300,7 +304,8 @@ class Courses extends CI_Controller
 
         // if ($user_id) {
         $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
-        if (empty($this->user_type)) {
+        // if ($this->user_type !== "") {
+        if ($this->user_type == "") {
             $response['result'] = false;
             $response['message'] = "User Type Not Found";
             echo json_encode($response);

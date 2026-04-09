@@ -68,40 +68,49 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-body">
-                                                <form class="custom-validation"
-                                                    action="<?= base_url() . 'admin/SaleReport/downloadSaleReport' ?>"
-                                                    method="post">
-                                                    <div class="row">
-                                                        <div class="form-group col-md-3">
-                                                            <div>
-                                                                <label for="">Select Course</label>
-                                                                <select id="course_id" name="course_id"
-                                                                    class="form-control select2"
-                                                                    onchange="filter_order()">
 
-                                                                </select>
-                                                            </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-3">
+                                                        <div>
+                                                            <label for="">Select Course Type</label>
+                                                            <select id="course_type" name="course_type"
+                                                                class="form-control select2" onchange="filter_order()">
+                                                                <option value=""></option>
+                                                                <option value="0">Offile</option>
+                                                                <option value="1">Online</option>
+                                                            </select>
                                                         </div>
-                                                        <div class="form-group col-md-3">
-                                                            <div>
-                                                                <label for="">Select Student</label>
-                                                                <select id="user_id" name="user_id"
-                                                                    class="form-control select2"
-                                                                    onchange="filter_order()">
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <div>
+                                                            <label for="">Select Course</label>
+                                                            <select id="course_id" name="course_id"
+                                                                class="form-control select2" onchange="filter_order()">
 
-                                                                </select>
-                                                            </div>
+                                                            </select>
                                                         </div>
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <div>
+                                                            <label for="">Select Student</label>
+                                                            <select id="user_id" name="user_id"
+                                                                class="form-control select2" onchange="filter_order()">
 
-                                                        <div class="form-group col-md-3 ">
-                                                            <div>
-
-                                                            </div>
+                                                            </select>
                                                         </div>
-
                                                     </div>
 
-                                                </form>
+                                                    <div class="form-group col-md-3 ">
+                                                        <div class="mt-4">
+                                                            <button class="btn btn-info mt-1" onclick="resetFilter()">
+                                                                Rest
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -111,7 +120,7 @@
                                 <div class="col-12">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h4 class="mt-0 header-title">Course User Performance
+                                            <h4 class="mt-0 header-title">Final Exam Report
                                             </h4>
                                             <br>
                                             <table id="report_sales" class="table table-striped dt-responsive"
@@ -127,5 +136,5 @@
             </div>
         </div>
         <?php init_footer(); ?>
-        <script src="<?= base_url(); ?>assets/js/custom-js/user_course_progress_report.js?v=1.0.7"></script>
+        <script src="<?= base_url(); ?>assets/js/custom-js/final_exam_report.js?v=1.0.7"></script>
         <!-- Plugins js -->

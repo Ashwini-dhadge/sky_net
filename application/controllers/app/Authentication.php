@@ -358,6 +358,7 @@ class Authentication extends CI_Controller
         $device_details = $this->input->post('device_details') ? $this->input->post('device_details') : "";
         $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
 
+        // if ($userMobile != "" && $password != "") {
         if ($userMobile != "" && $password != "" && $imei_no != "") {
             $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile);
             // echo json_encode($isUserExist);

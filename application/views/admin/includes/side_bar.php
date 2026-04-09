@@ -139,6 +139,9 @@
                         <li>
                             <a href="<?= base_url('admin/UserResultReport') ?>">User Result Report</a>
                         </li>
+                        <li>
+                            <a href="<?= base_url('admin/FinalExamReport') ?>">Final Exam Report</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

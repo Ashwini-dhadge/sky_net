@@ -91,7 +91,9 @@ class Courses_model extends CI_Model
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
 
         $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
-        // $this->db->join('tbl_order_courses_subscription o', 'o.course_id =c.id');
+        if ($where['c.course_type'] == 0) {
+            $this->db->join('tbl_order_courses_subscription o', 'o.course_id =c.id');
+        }
         // $this->db->join('tbl_users u1','u1.id =c.id');
 
         if ($search) {
@@ -111,10 +113,11 @@ class Courses_model extends CI_Model
             $this->db->where_in('c.category_id', $where['category_id']);
             unset($where['category_id']);
         }
+
         $this->db->where($where);
-        if ($where1) {
-            $this->db->where($where1);
-        }
+        // if ($where1) {
+        //     $this->db->where($where1);
+        // }
         //$this->db->where('c.status',ACTIVE);
         $this->db->where('c.deleted_by', NULL);
 
