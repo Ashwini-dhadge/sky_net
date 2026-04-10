@@ -75,47 +75,47 @@ if (!function_exists('myUpload')) {
 /**
  * Send mobile notification
  */
-if (!function_exists('sendMobileNotification')) {
+// if (!function_exists('sendMobileNotification')) {
 
-    function sendMobileNotification($tokenIds, $message = '', $title = '', $image = '')
-    {
+//     function sendMobileNotification($tokenIds, $message = '', $title = '', $image = '')
+//     {
 
-        /*$fields = array(
-            'registration_ids' => $tokenIds,
-            'data' => array('message' => $message)
-        );*/
-        $fields = array(
-            'registration_ids' => $tokenIds,
-            'priority' => 10,
-            'notification' => array('title' => $title, 'body' =>  $message, 'image' => $image),
-            'data' => array('title' => $title, 'body' =>  $message, 'image' => $image),
-        );
+//         /*$fields = array(
+//             'registration_ids' => $tokenIds,
+//             'data' => array('message' => $message)
+//         );*/
+//         $fields = array(
+//             'registration_ids' => $tokenIds,
+//             'priority' => 10,
+//             'notification' => array('title' => $title, 'body' =>  $message, 'image' => $image),
+//             'data' => array('title' => $title, 'body' =>  $message, 'image' => $image),
+//         );
 
-        // $newF = json_encode($fields);
+//         // $newF = json_encode($fields);
 
-        // 'apns' => array('headers' => array('apns-expiration' => '10')),
-        // 'android' => array("ttl" => "100s"),
-        // 'webpush' => array('headers' => array('TTL' => '10'))
+//         // 'apns' => array('headers' => array('apns-expiration' => '10')),
+//         // 'android' => array("ttl" => "100s"),
+//         // 'webpush' => array('headers' => array('TTL' => '10'))
 
-        $headers = array(
-            'Authorization:key = ' . MOBILE_NOTIFICATION_KEY,
-            'Content-Type: application/json'
-        );
+//         $headers = array(
+//             'Authorization:key = ' . MOBILE_NOTIFICATION_KEY,
+//             'Content-Type: application/json'
+//         );
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, MOBILE_NOTIFICATION_URL);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($newF));
-        $result = curl_exec($ch);
-        //  print_r($result);die;
-        return $result;
-    }
-}
+//         $ch = curl_init();
+//         curl_setopt($ch, CURLOPT_URL, MOBILE_NOTIFICATION_URL);
+//         curl_setopt($ch, CURLOPT_POST, true);
+//         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+//         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+//         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+//         // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($newF));
+//         $result = curl_exec($ch);
+//         //  print_r($result);die;
+//         return $result;
+//     }
+// }
 /**
  * Send email
  */
@@ -304,7 +304,8 @@ if (!function_exists('create6NumRandom')) {
 
     function create6NumRandom()
     {
-        return mt_rand(100000, 999999);
+        // return mt_rand(100000, 999999);
+        return mt_rand(1000, 9999);
     }
 }
 

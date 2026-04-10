@@ -561,9 +561,12 @@ class Orders extends CI_Controller
     {
         $post = json_decode($this->input->raw_input_stream, true);
         authenticateUser();
-
+        // echo "<pre>";
+        // print_r($post);
+        // die;
 
         $login_user_id = $this->regId;
+
 
         $order_id = $post['order_id'] ? $post['order_id'] : '';
         $course_id = $post['course_id'] ? $post['course_id'] : '';
@@ -625,6 +628,10 @@ class Orders extends CI_Controller
             $userDetails = $this->CommonModel->getData('tbl_users', array('id' => $login_user_id, 'status' => 1));
             $name = $userDetails[0]['first_name'];
             $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $course_id));
+            // echo "<pre>";
+            // print_r($course_name);
+            // die;
+
             $coursesDuratoion = $this->CommonModel->getData('tbl_courses_duration', array('courses_id' => $course_id), 'id,duration_id', '', 'row_array');
             $cname = strlen($course_name[0]['title']);
             if ($cname > 30) {
@@ -632,9 +639,11 @@ class Orders extends CI_Controller
             } else {
                 $course_name1 = $course_name[0]['title'];
             }
-            $verificationMessage = " Dear " . $name . ", Your Course " . $course_name1 . " have been Purchased Successfully. Thanks Team Lalit Dangre";
-            // sendMobileMessage($verificationMessage, $userDetails[0]['mobile_no'], '1507163947849507459');
-            // update course subscription
+            $title = "Course Purchased";
+
+            $message = "Dear $name, Your course \"$course_name1\" has been purchased successfully. Thanks, Team Skynet.";
+
+            sendMobileNotification($userDetails[0]['notification_token'], $message, $title);
             $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' => $coursesDuratoion['duration_id']), 'no_of_days', '', 'row_array');
 
             $order_date = date('Y-m-d');
@@ -653,6 +662,9 @@ class Orders extends CI_Controller
                 'no_of_days' => $duratoion_no_of_days['no_of_days'],
                 'created_on' => date('Y-m-d H:i:s'),
             );
+            // echo "<pre>";
+            // print_r($order_subscrb);
+            // die;
             $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
             $update_payment_order = [
                 'razorpay_payment_id' => $razorpay_payment_id,

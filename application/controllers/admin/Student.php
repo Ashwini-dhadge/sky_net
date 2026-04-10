@@ -217,7 +217,11 @@ class Student extends CI_Controller
     {
         $user_id = $this->input->post('user_id');
         $selected_courses = $this->input->post('course_ids');
-
+        // ===== GET USER DETAILS FOR NOTIFICATION =====
+        $userDetails = $this->CommonModel->getData('tbl_users', ['id' => $user_id], '*', '', 'row_array');
+        $name = $userDetails['first_name'] . ' ' . $userDetails['last_name'];
+        $deviceToken = $userDetails['notification_token'];
+        $assignedCourses = [];
         if (!$user_id) {
             echo json_encode(['status' => false]);
             exit;
@@ -341,15 +345,38 @@ class Student extends CI_Controller
             ];
 
             $this->CommonModel->iudAction('tbl_order_courses_subscription', $subData, 'insert');
+            $course = $this->CommonModel->getData(
+                'tbl_courses',
+                ['id' => $course_id],
+                'title',
+                '',
+                'row_array'
+            );
+            $assignedCourses[] = $course['title'];
         }
-
+        // echo "<pre>";
+        // print_r($assignedCourses);
+        // die;
         $this->session->set_flashdata('success', 'Courses assigned successfully');
+        // ===== SEND ONE PUSH NOTIFICATION =====
+        if (!empty($assignedCourses) && !empty($deviceToken)) {
 
+            $courseList = implode(', ', $assignedCourses);
+
+            if (strlen($courseList) > 60) {
+                $courseList = substr($courseList, 0, 60) . '...';
+            }
+
+            $title = "New Courses Assigned";
+            $message = "Dear $name, New course(s) $courseList have been assigned to your account. Start learning now! Thanks, Team Skynet.";
+
+            sendMobileNotification($deviceToken, $message, $title);
+        }
         echo json_encode(['status' => true]);
         exit;
     }
 
-    
+
     public function add_student()
     {
         $data['title'] = 'Add Student';

@@ -78,8 +78,8 @@ class Authentication extends CI_Controller
             if (empty($checkExist)) {
 
 
-                // $otpNumber = create6NumRandom();
-                $otpNumber = 1234;
+                $otpNumber = create6NumRandom();
+                // $otpNumber = 1234;
 
                 $selfReferral = "LMS" . $userMobile;
                 $registerDetailArray = array(
@@ -115,7 +115,9 @@ class Authentication extends CI_Controller
                     // $name=$userFirstName." ".$userLastName;
                     //    $verificationMessage = "Dear ".$name.", Welcome to Skynet app. Your Username:".$userMobile." and Password:".$password." Thanks. Team Lalit Dangre";
                     //    sendMobileMessage($verificationMessage, $userMobile,'1507163947710162091');
-
+                    $title   = "OTP Verification";
+                    $message = "Your OTP is $otpNumber";
+                    sendMobileNotification($userNotificationToken, $message, $title);
                 } else {
                     $response['result'] = false;
                     $response['reason'] = SOMETHING_WRONG;
@@ -150,15 +152,17 @@ class Authentication extends CI_Controller
                     echo json_encode($response);
                     die();
                 }
-                $otpNumber = '1234'; //create6NumRandom();
+                // $otpNumber = '1234'; //create6NumRandom();
                 $otpNumber = create6NumRandom();
-                $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
-                // sendMobileMessage($verificationMessage, $userMobile, '1507163947670092160');
+
+
 
 
                 $updateArray = array('otp' => $otpNumber, 'is_otp_verified' => 0);
                 $this->Common_model->iudAction('tbl_users', $updateArray, 'update', array('id' => $checkExist['id']));
-
+                $title   = "OTP Verification";
+                $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                sendMobileNotification($checkExist['notification_token'], $message, $title);
                 $response['result'] = true;
                 $response['is_register'] = true;
                 $response['message'] = "We have sent you an OTP verification code. Please check";
@@ -186,7 +190,7 @@ class Authentication extends CI_Controller
         $response = $userDetail = array();
 
         // if ($userMobile && is_numeric($userMobile) && $otpNumber && $notification_token) {
-        if ($userMobile && is_numeric($userMobile) && $otpNumber && is_numeric($otpNumber)) {
+        if ($userMobile && is_numeric($userMobile) && $otpNumber && is_numeric($otpNumber) && $imei_no) {
             $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
             // echo json_encode($userDetail);
             // die;
@@ -219,8 +223,17 @@ class Authentication extends CI_Controller
                 $userData = $this->Common_model->getUserData(array('u.id' => $userDetail['id']));
 
                 //send sms
-                $name = $userData[0]['first_name'] . " " . $userData[0]['last_name'];
-                $verificationMessage = "Dear " . $name . ", Welcome to Lalit Dangre app. Your Username:" . $userData[0]['mobile_no'] . " and Password:" . $userData[0]['password'] . " Thanks. Team Lalit Dangre";
+                $name = $userData[0]['first_name'];
+
+                $title = "Welcome to Skynet";
+
+                $message = "Dear $name, Welcome to Skynet App. Your mobile number "
+                    . $userData[0]['mobile_no'] .
+                    " has been verified successfully. Thanks, Team Skynet.";
+
+                sendMobileNotification($userDetail['notification_token'], $message, $title);
+
+
                 // sendMobileMessage($verificationMessage, $userMobile, '1507163947710162091');
 
                 // if ($userData[0]['referral_code']) {
@@ -340,6 +353,9 @@ class Authentication extends CI_Controller
     //Hemant 14-Apr for launching of app and separate access to test app for Google Play store
     public function userLogin()
     {
+        // $token = "dNap3XHXQsiM7popqBFLqN:APA91bGyRmoNUcHl7G_fHAuNKcJIqeACbMZB4z7ova1vEajIhHMnnSUCLkZO2qBFBQwh1TUkye3FmEOWdOOd0DEy8UsBSgslc7mmF944TVDU39EKD6orXOQ";
+        // sendMobileNotification($token, "hi", "hi");
+        // die;
         $response = array();
         $login_input = $this->input->post('login_input') ? trim($this->input->post('login_input')) : "";
         $userEmail = "";
@@ -359,7 +375,7 @@ class Authentication extends CI_Controller
         $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
 
         // if ($userMobile != "" && $password != "") {
-        if ($userMobile != "" && $password != "" && $imei_no != "") {
+        if ($userMobile != "" && $password != "" && $imei_no != "" && $notification_token !== "") {
             $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile);
             // echo json_encode($isUserExist);
             // die;
@@ -411,6 +427,11 @@ class Authentication extends CI_Controller
                         $response['mobile_verified'] = true;
                         $response['message'] = "Login Success";
                     } else {
+                        $otpNumber = create6NumRandom();
+                        $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
+                        $title   = "OTP Verification";
+                        $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                        sendMobileNotification($isUserExist['notification_token'], $message, $title);
                         $response['result'] = true;
                         $response['mobile_verified'] = false;
                         $response['message'] = "Verify Mobile No With OTP";
@@ -438,22 +459,33 @@ class Authentication extends CI_Controller
             if ($isUserExist) {
 
                 if ($isUserExist['password'] == $password) {
-                    // if($isUserExist['is_otp_verified'] == 1){
+                    $otpNumber = create6NumRandom();
+                    $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
+                    $title   = "OTP Verification";
+                    $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                    sendMobileNotification($isUserExist['notification_token'], $message, $title);
+                    $response['result'] = true;
+                    $response['mobile_verified'] = false;
+                    $response['message'] = "Verify Mobile No With OTP";
+                }
+                // if($isUserExist['is_otp_verified'] == 1){
 
-                    if ($isUserExist['status'] != 1) {
-                        $response['message'] = "User Not active";
-                        $response['result'] = false;
-                        echo json_encode($response);
-                        die;
-                    }
-                    if ($isUserExist['imei_no'] != $imei_no) {
-                        //print_r($isUserExist['imei_no']);
-                        //  print_r($imei_no);
-                        $response['reason'] = "imei number did not match with Login";
-                        $response['result'] = false;
-                        echo json_encode($response);
-                        die;
-                    }
+                if ($isUserExist['status'] != 1) {
+                    $response['message'] = "User Not active";
+                    $response['result'] = false;
+                    echo json_encode($response);
+                    die;
+                }
+                if ($isUserExist['imei_no'] != $imei_no) {
+                    // print_r($isUserExist['imei_no']);
+                    // die;
+                    //  print_r($imei_no);
+                    $response['reason'] = "imei number did not match with Login";
+                    $response['result'] = false;
+                    echo json_encode($response);
+                    die;
+                }
+                if ($isUserExist['is_otp_verified'] == 1) {
                     $data = array(
                         'reg_type' => $isUserExist['role'],
                         'user_type' => $isUserExist['user_type'],

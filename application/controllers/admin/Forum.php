@@ -214,6 +214,8 @@ class Forum extends CI_Controller
             'update',
             ['id' => $this->input->post('id')]
         );
+        $form_detail = $this->CommonModel->getData('tbl_forum_questions', ['id' => $this->input->post('id')], 'title,user_id', '', 'row_array', '', '');
+        $user_detail = $this->CommonModel->getData('tbl_users', ['id' => $form_detail['user_id'], 'status' => 1, 'is_otp_verified' => 1], 'first_name,notification_token', '', 'row_array', '', '');
         $this->ForumModel->logAction([
             'forum_id'    => $this->input->post('id'),
             'is_approved' => 1,
@@ -222,6 +224,19 @@ class Forum extends CI_Controller
             'created_at'  => date('Y-m-d H:i:s')
         ]);
 
+
+        if (!empty($user_detail['notification_token'])) {
+
+            $title = "Forum Question Approved 🎉";
+
+            $message = "Hi " . $user_detail['first_name'] . ", your question '" . $form_detail['title'] . "' has been approved and is now live. Thanks, Team Skynet";
+
+            sendMobileNotification(
+                $user_detail['notification_token'],
+                $message,
+                $title
+            );
+        }
 
 
         $this->session->set_flashdata('success', 'Question Approved!');
@@ -253,7 +268,39 @@ class Forum extends CI_Controller
             'created_by'  => loginId(),
             'created_at'  => date('Y-m-d H:i:s')
         ]);
+        $form_detail = $this->CommonModel->getData(
+            'tbl_forum_questions',
+            ['id' => $id],
+            'title,user_id',
+            '',
+            'row_array'
+        );
+        $user_detail = $this->CommonModel->getData(
+            'tbl_users',
+            [
+                'id' => $form_detail['user_id'],
+                'status' => 1,
+                'is_otp_verified' => 1
+            ],
+            'first_name,notification_token',
+            '',
+            'row_array'
+        );
+        if (!empty($user_detail['notification_token'])) {
 
+            $title = "Forum Question Rejected";
+
+            $message = "Hi " . $user_detail['first_name'] .
+                ", your question '" . $form_detail['title'] .
+                "' was not approved. Reason: " . $reason .
+                ". Please update and submit again.";
+
+            sendMobileNotification(
+                $user_detail['notification_token'],
+                $message,
+                $title
+            );
+        }
 
         $this->session->set_flashdata('error', 'Question Rejected!');
     }

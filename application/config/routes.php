@@ -89,6 +89,8 @@ $route['app_courses_details'] = 'app/Courses/getCoursesDetails';
 $route['lesson_details'] = 'app/Courses/getLessonsDetails';
 $route['question_answer_list'] = 'app/Courses/getQuestionAnswerList';
 $route['create_qna'] = 'app/Courses/createQnA';
+$route['update_qna'] = 'app/Courses/updateQnA';
+$route['delete_qna'] = 'app/Courses/deleteQna';
 $route['app_video_mark_watched'] = 'app/MCQVideo/update_view_video';
 $route['test_question_list'] = 'app/Courses/getMcqQuestionDetails';
 $route['submit_test'] = 'app/MCQVideo/getResultMCQ';
@@ -101,6 +103,7 @@ $route['create_course_review'] = 'app/Courses/addCourseReview';
 $route['update_course_review'] = 'app/Courses/updateCourseReview';
 $route['delete_course_review'] = 'app/Courses/deleteCourseReview';
 $route['course_review_list'] = 'app/Courses/courseReviewList';
+$route['course_certificate_download'] = 'app/Courses/courseCertificateDownload';
 $route['testing'] = 'app/Test/testapi';
 
 // Discussion Forum

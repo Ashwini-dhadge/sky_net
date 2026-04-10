@@ -103,7 +103,7 @@
                                                     <div class="form-group col-md-3 ">
                                                         <div class="mt-4">
                                                             <button class="btn btn-info mt-1" onclick="resetFilter()">
-                                                                Rest
+                                                                Reset
                                                             </button>
                                                         </div>
                                                     </div>

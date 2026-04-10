@@ -13,7 +13,9 @@
 	"require": {
 		"php": ">=5.3.7",
 		"zircote/swagger-php": "*",
-		"razorpay/razorpay": "2.9"
+		"razorpay/razorpay": "2.9",
+		"kreait/firebase-php": "*",
+		"google/auth": "*"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

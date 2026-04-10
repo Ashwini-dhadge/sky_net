@@ -624,12 +624,19 @@ class Courses_model extends CI_Model
         if ($lesson_id) {  // this is for when lesson detail api use
             $this->db->where('tl.id', $lesson_id);
         }
+        $this->db->where('tl.deleted_by', NULL);
         return $this->db->get()->result_array();
     }
-    public function getLessonVideoData($lesson_id)
+    public function getLessonVideoData($lesson_id, $user_id)
     {
-        $this->db->select('tlv.id AS lesson_video_id,tlv.video_title,tlv.vimo_code,tlv.video_thumbnail,tlv.video_type');
+        $this->db->select('tlv.id AS lesson_video_id,tlv.video_title,tlv.vimo_code,tlv.video_thumbnail,tlv.video_type,
+        CASE
+            WHEN luv.lesson_video_id IS NULL THEN 0
+            ELSE 1
+        END AS is_video_watched
+        ', FALSE);
         $this->db->from('tbl_lesson_video tlv');
+        $this->db->join('tbl_lesson_user_video_view luv', 'luv.lesson_video_id = tlv.id and luv.user_id=' . $user_id, 'left');
         $this->db->where('tlv.lesson_id', $lesson_id);
         return $this->db->get()->result_array();
     }
@@ -738,15 +745,99 @@ class Courses_model extends CI_Model
     //     }
     //     return ['questions' => $questions];
     // }
+    // public function getQuestionAnswersData($course_id, $login_user, $limit, $offset)
+    // {
+    //     // ---------- Total Count ----------
+    //     $this->db->from('tbl_course_qna tcq');
+    //     $this->db->where('tcq.course_id', $course_id);
+
+    //     // $this->db->group_start();
+    //     // $this->db->where('tcq.user_id', $login_user);
+    //     // $this->db->or_where('tcq.answer IS NOT NULL', null, false);
+    //     // $this->db->group_end();
+
+    //     $total = $this->db->count_all_results();
+
+
+    //     // ---------- Data ----------
+    //     $this->db->select('
+    //         tcq.id AS question_id,
+    //         tcq.question,
+    //         tcq.answer,
+    //         tcq.created_at,
+    //         tcq.ans_created_at,
+
+    //         student.id AS student_id,
+    //         student.first_name AS student_name,
+    //         student.image AS student_image,
+
+    //         instructor.id AS instructor_id,
+    //         instructor.first_name AS instructor_name,
+    //         instructor.image AS instructor_image
+    //     ');
+
+    //     $this->db->from('tbl_course_qna tcq');
+
+    //     $this->db->join('tbl_users student', 'student.id = tcq.user_id', 'left');
+    //     $this->db->join('tbl_users instructor', 'instructor.id = tcq.main_instructor_id', 'left');
+
+    //     $this->db->where('tcq.course_id', $course_id);
+
+    //     // $this->db->group_start();
+    //     // $this->db->where('tcq.user_id', $login_user);
+    //     // $this->db->or_where('tcq.answer IS NOT NULL', null, false);
+    //     // $this->db->group_end();
+
+    //     $this->db->order_by('tcq.created_at', 'DESC');
+    //     $this->db->limit($limit, $offset);
+
+    //     $rows = $this->db->get()->result_array();
+
+    //     $questions = [];
+
+    //     foreach ($rows as $row) {
+
+    //         $isSelfQuestion = ($login_user == $row['student_id']);
+    //         $hasAnswer = !empty($row['answer']);
+
+    //         $questions[] = [
+    //             'id' => $row['question_id'],
+    //             'question' => $row['question'],
+    //             'created_at' => $row['created_at'],
+    //             'is_self_question' => $isSelfQuestion,
+    //             'asked_by' => [
+    //                 'id' => $row['student_id'],
+    //                 'name' => $row['student_name'],
+    //                 'image' => $row['student_image']
+    //             ],
+    //             'answer' => $hasAnswer ? [
+    //                 'id' => $row['instructor_id'],
+    //                 'ans' => $row['answer'],
+    //                 'created_at' => $row['ans_created_at'],
+    //                 'answered_by' => [
+    //                     'id' => $row['instructor_id'],
+    //                     'name' => $row['instructor_name'],
+    //                     'image' => $row['instructor_image']
+    //                 ]
+    //             ] : null
+    //         ];
+    //     }
+
+    //     return [
+    //         'total' => $total,
+    //         'questions' => $questions
+    //     ];
+    // }
     public function getQuestionAnswersData($course_id, $login_user, $limit, $offset)
     {
         // ---------- Total Count ----------
         $this->db->from('tbl_course_qna tcq');
         $this->db->where('tcq.course_id', $course_id);
-
+        $this->db->where('tcq.deleted_by', NULL);
+        // show answered OR my questions
         $this->db->group_start();
-        $this->db->where('tcq.user_id', $login_user);
-        $this->db->or_where('tcq.answer IS NOT NULL', null, false);
+        $this->db->where('tcq.answer IS NOT NULL', null, false);
+        $this->db->or_where('tcq.user_id', $login_user);
         $this->db->group_end();
 
         $total = $this->db->count_all_results();
@@ -754,36 +845,36 @@ class Courses_model extends CI_Model
 
         // ---------- Data ----------
         $this->db->select('
-            tcq.id AS question_id,
-            tcq.question,
-            tcq.answer,
-            tcq.created_at,
-            tcq.ans_created_at,
-    
-            student.id AS student_id,
-            student.first_name AS student_name,
-            student.image AS student_image,
-    
-            instructor.id AS instructor_id,
-            instructor.first_name AS instructor_name,
-            instructor.image AS instructor_image
-        ');
+        tcq.id AS question_id,
+        tcq.question,
+        tcq.answer,
+        tcq.created_at,
+        tcq.ans_created_at,
+
+        student.id AS student_id,
+        student.first_name AS student_name,
+        student.image AS student_image,
+
+        instructor.id AS instructor_id,
+        instructor.first_name AS instructor_name,
+        instructor.image AS instructor_image
+    ');
 
         $this->db->from('tbl_course_qna tcq');
-
         $this->db->join('tbl_users student', 'student.id = tcq.user_id', 'left');
         $this->db->join('tbl_users instructor', 'instructor.id = tcq.main_instructor_id', 'left');
 
         $this->db->where('tcq.course_id', $course_id);
 
+        // show answered OR my questions
         $this->db->group_start();
-        $this->db->where('tcq.user_id', $login_user);
-        $this->db->or_where('tcq.answer IS NOT NULL', null, false);
+        $this->db->where('tcq.answer IS NOT NULL', null, false);
+        $this->db->or_where('tcq.user_id', $login_user);
         $this->db->group_end();
 
         $this->db->order_by('tcq.created_at', 'DESC');
         $this->db->limit($limit, $offset);
-
+        $this->db->where('tcq.deleted_by', NULL);
         $rows = $this->db->get()->result_array();
 
         $questions = [];
@@ -791,13 +882,18 @@ class Courses_model extends CI_Model
         foreach ($rows as $row) {
 
             $isSelfQuestion = ($login_user == $row['student_id']);
-            $hasAnswer = !empty($row['answer']);
-
+            $hasAnswer = !is_null($row['answer']); // correct NULL check
+            if ($isSelfQuestion == true && empty($hasAnswer)) {
+                $is_delete_question = true;
+            } else {
+                $is_delete_question = false;
+            }
             $questions[] = [
                 'id' => $row['question_id'],
                 'question' => $row['question'],
                 'created_at' => $row['created_at'],
                 'is_self_question' => $isSelfQuestion,
+                'is_delete_question' => $is_delete_question,
                 'asked_by' => [
                     'id' => $row['student_id'],
                     'name' => $row['student_name'],

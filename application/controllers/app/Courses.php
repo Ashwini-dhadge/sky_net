@@ -150,7 +150,7 @@ class Courses extends CI_Controller
                     );
 
                     $no_of_watch_user_video = $this->CommonModel->getData(
-                        'tbl_lesson_user_video',
+                        'tbl_lesson_user_video_view',
                         array(
                             'courses_id' => $course['courses_id'],
                             'user_id' => $user_id,
@@ -400,7 +400,7 @@ class Courses extends CI_Controller
                 );
 
                 $no_of_watch_user_video = $this->CommonModel->getData(
-                    'tbl_lesson_user_video',
+                    'tbl_lesson_user_video_view',
                     array(
                         'courses_id' => $course['courses_id'],
                         'user_id' => $user_id,
@@ -579,6 +579,247 @@ class Courses extends CI_Controller
         echo json_encode($response);
     }
 
+    // public function getCoursesDetails()
+    // {
+    //     authenticateUser();
+    //     $response = array();
+
+    //     $courseId = trim($this->input->post('course_id')) ? trim($this->input->post('course_id')) : 0;
+    //     $user_id = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : 0;
+
+    //     if ($courseId && $user_id) {
+    //         $where = array();
+
+    //         if ($courseId) {
+    //             $where['c.id'] = $courseId;
+    //         }
+    //         if (isset($this->user_type) && !empty($this->user_type)) {
+    //             $where['c.course_type'] = $this->user_type;
+    //         }
+    //         $where['c.status'] = ACTIVE;
+    //         $count = count($this->Courses_model->getCoursesData($where, '', 0, 0));
+    //         $courseDetailsList = $this->Courses_model->getCoursesData($where, '', 0, 0);
+    //         // echo "<pre>";
+    //         // print_r($courseDetailsList[0]['skill_name']);
+    //         // die;
+    //         // echo $this->db->last_query();
+    //         $skill_name = [];
+
+    //         if (isset($courseDetailsList[0]['skill_name']) && !empty($courseDetailsList[0]['skill_name'])) {
+    //             $skill_name = explode(',', $courseDetailsList[0]['skill_name']);
+    //         }
+    //         // $skill_details
+    //         $courseDetailsList[0]['skill_details'] = $skill_name;
+    //         $ratingData = $this->getCourseRating($courseId);
+
+    //         $courseDetailsList[0]['course_rating']  = $ratingData['course_rating'] ?? 0;
+    //         $courseDetailsList[0]['no_of_review'] = $ratingData['no_of_review'] ?? 0;
+    //         // echo "<pre>";
+    //         // print_r($skill_ids);
+    //         // print_r($skill_details);
+    //         // // print_r($courseDetailsList);
+    //         // die;
+
+    //         //print_r($courseDetailsList);die();
+    //         foreach ($courseDetailsList as $key => $value) {
+    //             $where2['cd.courses_id'] = $courseId;
+    //             $courseDetailsList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+    //             // print_r($courseDetailsList[$key]['duration']);
+    //             // die;
+    //             foreach ($courseDetailsList[$key]['duration'] as $key2 => $value2) {
+    //                 $packege_subscribe = calcuateDate($user_id, $value['courses_id'], 0, 0, $value2['duration_id']);
+    //                 // print_r($packege_subscribe);
+    //                 // die;
+    //                 if ($packege_subscribe) {
+
+    //                     if ($packege_subscribe['is_expired']) {
+
+    //                         $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
+    //                         // $courseList[$key]['duration'][$key2]['package_plan'] = [];
+    //                     } else {
+    //                         $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 1;
+    //                         // $sub[0] = $packege_subscribe;
+    //                         // $courseList[$key]['duration'][$key2]['package_plan'] = $sub;
+    //                     }
+    //                 } else {
+    //                     // $getPackage_id = $this->CommonModel->getData('tbl_courses_packages', array('courses_id' => $value2['courses_id'], 'courses_duration_id' => $value2['duration_id']), 'package_id');
+
+    //                     // if ($getPackage_id) {
+    //                     //     foreach ($getPackage_id as $key1 => $value1) {
+    //                     //         $packege_subscribe1 = calcuateDate($user_id, $value['courses_id'], 0, $value1['package_id'], 0);
+    //                     //         //    print_r($packege_subscribe1);die;
+    //                     //         if ($packege_subscribe1) {
+    //                     //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
+    //                     //             if (isset($packege_subscribe1['courses'][0])) {
+    //                     //                 $courseList[$key]['duration'][$key2]['package_plan'] = $packege_subscribe1['courses'][0];
+    //                     //             } else {
+    //                     //                 $courseList[$key]['duration'][$key2]['package_plan'] = [];
+    //                     //             }
+    //                     //         } else {
+    //                     //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
+    //                     //             $courseList[$key]['duration'][$key2]['package_plan'] = [];
+    //                     //         }
+    //                     //     }
+    //                     // } else {
+    //                     $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
+    //                     // $courseDetailsList[$key]['duration'][$key2]['package_plan'] = [];
+    //                     // }
+    //                 }
+    //             }
+    //             $courseSection = $this->Courses_model->getSectionData($courseId);
+
+    //             $courseDetailsList[$key]['sections'] = $courseSection;
+    //             $courseResourse = $this->Courses_model->getCourseResourse($courseId);
+    //             $courseDetailsList[$key]['resources'] = $courseResourse;
+    //             foreach ($courseSection as $key1 => $value1) {
+    //                 $watch_count = 0;
+    //                 $where1['l.section_id'] = $value1['section_id'];
+    //                 $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
+    //                 // foreach ($courseSectionLesson as $key2 => $lessonList) {
+    //                 //     if ($key2 == 0) {
+    //                 //         $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                 //     } else {
+    //                 //         $view_previous = array();
+    //                 //         $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $courseSectionLesson[$key2 - 1]['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
+
+    //                 //         if (!empty($view_previous)) {
+
+    //                 //             if (is_null($view_previous['solved_mcq']) && is_null($view_previous['result'])) {
+    //                 //                 //  $lessonList[$key2]['asas1']=1;
+    //                 //                 $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                 //             } else {
+    //                 //                 //   $lessonList[$key2]['asas1']=2;
+    //                 //                 $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                 //                 $watch_count++;
+    //                 //             }
+    //                 //         } else {
+    //                 //             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                 //         }
+    //                 //     }
+    //                 // }
+    //                 // foreach ($courseSectionLesson as $key2 => $lessonList) {
+
+    //                 //     // First section, first lesson: unlock by default
+    //                 //     if ($key1 == 0 && $key2 == 0) {
+    //                 //         $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                 //         $watch_count++;
+    //                 //         continue;
+    //                 //     }
+
+    //                 //     // For other lessons, check if previous lesson exists
+    //                 //     if ($key2 > 0) {
+    //                 //         $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
+
+    //                 //         $view_previous = $this->Common_model->getData(
+    //                 //             'tbl_lesson_user_video',
+    //                 //             [
+    //                 //                 'user_id' => $user_id,
+    //                 //                 'view_video' => 1,
+    //                 //                 'lesson_id' => $previousLessonId,
+    //                 //                 'status' => 1
+    //                 //             ],
+    //                 //             '',
+    //                 //             '',
+    //                 //             'row_array',
+    //                 //             'id',
+    //                 //             'desc'
+    //                 //         );
+
+    //                 //         if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
+    //                 //             // Previous lesson completed → unlock this lesson
+    //                 //             $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                 //             $watch_count++;
+    //                 //         } else {
+    //                 //             // Previous lesson not completed → keep locked
+    //                 //             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                 //         }
+    //                 //     } else {
+    //                 //         // Just a safety check, in case $key2 == 0 (already handled)
+    //                 //         $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                 //     }
+    //                 // }
+    //                 foreach ($courseSection as $key1 => $value1) {
+    //                     $watch_count = 0;
+    //                     $where1['l.section_id'] = $value1['section_id'];
+    //                     $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
+
+    //                     // Check if user is subscribed
+    //                     $isSubscribed = $courseDetailsList[$key]['duration'][0]['is_subscribe'] ?? 0;
+
+    //                     foreach ($courseSectionLesson as $key2 => $lessonList) {
+
+    //                         if ($isSubscribed) {
+    //                             // First section, first lesson: unlock by default if subscribed
+    //                             if ($key1 == 0 && $key2 == 0) {
+    //                                 $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                                 // $watch_count++;
+    //                                 continue;
+    //                             }
+
+    //                             // Other lessons: unlock if previous lesson completed
+    //                             if ($key2 > 0) {
+    //                                 $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
+
+    //                                 $view_previous = $this->Common_model->getData(
+    //                                     'tbl_lesson_user_video',
+    //                                     [
+    //                                         'user_id' => $user_id,
+    //                                         'view_video' => 1,
+    //                                         'lesson_id' => $previousLessonId,
+    //                                         'status' => 1
+    //                                     ],
+    //                                     '',
+    //                                     '',
+    //                                     'row_array',
+    //                                     'id',
+    //                                     'desc'
+    //                                 );
+
+    //                                 if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
+    //                                     // Previous lesson completed → unlock this lesson
+    //                                     $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+    //                                     $watch_count++;
+    //                                 } else {
+    //                                     // Previous lesson not completed → keep locked
+    //                                     $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                                 }
+    //                             } else {
+    //                                 // Safety: first lesson already handled, this just ensures lock for any unexpected case
+    //                                 $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                             }
+    //                         } else {
+    //                             // Not subscribed → all lessons locked
+    //                             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+    //                         }
+    //                     }
+
+    //                     $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
+    //                     $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+    //                     $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
+    //                 }
+    //                 // $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
+    //                 // $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+    //                 // $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
+    //             }
+    //         }
+    //         if ($courseDetailsList) {
+    //             $response['result'] = true;
+    //             $response['message'] = "Course details found";
+    //             $response['course_details_list'] = $courseDetailsList;
+    //             $response['course_path'] = base_url() . COURSE_IMAGES;
+    //             $response['resourse_path'] = base_url() . COURSE_RESOURCES;
+    //         } else {
+    //             $response['result'] = false;
+    //             $response['message'] = "No Course details found";
+    //         }
+    //     } else {
+    //         $response['result'] = false;
+    //         $response['message'] = 'Invalid Input';
+    //     }
+    //     echo json_encode($response);
+    // }
+
+
     public function getCoursesDetails()
     {
         authenticateUser();
@@ -635,35 +876,12 @@ class Courses extends CI_Controller
                         if ($packege_subscribe['is_expired']) {
 
                             $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
-                            // $courseList[$key]['duration'][$key2]['package_plan'] = [];
                         } else {
-                            $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 1;
-                            // $sub[0] = $packege_subscribe;
-                            // $courseList[$key]['duration'][$key2]['package_plan'] = $sub;
+                            $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 1;;
                         }
                     } else {
-                        // $getPackage_id = $this->CommonModel->getData('tbl_courses_packages', array('courses_id' => $value2['courses_id'], 'courses_duration_id' => $value2['duration_id']), 'package_id');
 
-                        // if ($getPackage_id) {
-                        //     foreach ($getPackage_id as $key1 => $value1) {
-                        //         $packege_subscribe1 = calcuateDate($user_id, $value['courses_id'], 0, $value1['package_id'], 0);
-                        //         //    print_r($packege_subscribe1);die;
-                        //         if ($packege_subscribe1) {
-                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 1;
-                        //             if (isset($packege_subscribe1['courses'][0])) {
-                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = $packege_subscribe1['courses'][0];
-                        //             } else {
-                        //                 $courseList[$key]['duration'][$key2]['package_plan'] = [];
-                        //             }
-                        //         } else {
-                        //             $courseList[$key]['duration'][$key2]['is_subscribe'] = 0;
-                        //             $courseList[$key]['duration'][$key2]['package_plan'] = [];
-                        //         }
-                        //     }
-                        // } else {
                         $courseDetailsList[$key]['duration'][$key2]['is_subscribe'] = 0;
-                        // $courseDetailsList[$key]['duration'][$key2]['package_plan'] = [];
-                        // }
                     }
                 }
                 $courseSection = $this->Courses_model->getSectionData($courseId);
@@ -671,6 +889,7 @@ class Courses extends CI_Controller
                 $courseDetailsList[$key]['sections'] = $courseSection;
                 $courseResourse = $this->Courses_model->getCourseResourse($courseId);
                 $courseDetailsList[$key]['resources'] = $courseResourse;
+                $isPreviousLessonCompleted = true;
                 foreach ($courseSection as $key1 => $value1) {
                     $watch_count = 0;
                     $where1['l.section_id'] = $value1['section_id'];
@@ -681,7 +900,7 @@ class Courses extends CI_Controller
                     //     } else {
                     //         $view_previous = array();
                     //         $view_previous = $this->Common_model->getData('tbl_lesson_user_video', array('user_id' => $user_id, 'view_video' => 1, 'lesson_id' => $courseSectionLesson[$key2 - 1]['lesson_id'], 'status' => 1), '', '', 'row_array', 'id', 'desc');
-
+                    //         $courseSectionLesson[$key2]['query'] =  $this->db->last_query();
                     //         if (!empty($view_previous)) {
 
                     //             if (is_null($view_previous['solved_mcq']) && is_null($view_previous['result'])) {
@@ -697,25 +916,24 @@ class Courses extends CI_Controller
                     //         }
                     //     }
                     // }
+                    // $isSubscribed = $courseDetailsList[$key]['duration'][0]['is_subscribe'] ?? 0;
                     // foreach ($courseSectionLesson as $key2 => $lessonList) {
 
-                    //     // First section, first lesson: unlock by default
-                    //     if ($key1 == 0 && $key2 == 0) {
+                    //     // 🔒 Lock by default
+                    //     $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+
+                    //     // ✅ If previous lesson completed → unlock this lesson
+                    //     if ($isPreviousLessonCompleted) {
+
                     //         $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
-                    //         $watch_count++;
-                    //         continue;
-                    //     }
 
-                    //     // For other lessons, check if previous lesson exists
-                    //     if ($key2 > 0) {
-                    //         $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
-
-                    //         $view_previous = $this->Common_model->getData(
+                    //         // Check if THIS lesson is completed
+                    //         $view_current = $this->Common_model->getData(
                     //             'tbl_lesson_user_video',
                     //             [
                     //                 'user_id' => $user_id,
                     //                 'view_video' => 1,
-                    //                 'lesson_id' => $previousLessonId,
+                    //                 'lesson_id' => $lessonList['lesson_id'],
                     //                 'status' => 1
                     //             ],
                     //             '',
@@ -725,81 +943,65 @@ class Courses extends CI_Controller
                     //             'desc'
                     //         );
 
-                    //         if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
-                    //             // Previous lesson completed → unlock this lesson
-                    //             $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+                    //         if (!empty($view_current) && (!is_null($view_current['solved_mcq']) || !is_null($view_current['result']))) {
                     //             $watch_count++;
+
+                    //             // allow next lesson unlock
+                    //             $isPreviousLessonCompleted = true;
                     //         } else {
-                    //             // Previous lesson not completed → keep locked
-                    //             $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
+                    //             // stop unlock chain
+                    //             $isPreviousLessonCompleted = false;
                     //         }
                     //     } else {
-                    //         // Just a safety check, in case $key2 == 0 (already handled)
+                    //         // once locked → all next lessons remain locked
                     //         $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
                     //     }
                     // }
-                    foreach ($courseSection as $key1 => $value1) {
-                        $watch_count = 0;
-                        $where1['l.section_id'] = $value1['section_id'];
-                        $courseSectionLesson = $this->Courses_model->getLessonsData($courseId, $value1['section_id'], '');
+                    $isSubscribed = $courseDetailsList[$key]['duration'][0]['is_subscribe'] ?? 0;
 
-                        // Check if user is subscribed
-                        $isSubscribed = $courseDetailsList[$key]['duration'][0]['is_subscribe'] ?? 0;
+                    foreach ($courseSectionLesson as $key2 => $lessonList) {
 
-                        foreach ($courseSectionLesson as $key2 => $lessonList) {
+                        // 🔒 Default = locked
+                        $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
 
-                            if ($isSubscribed) {
-                                // First section, first lesson: unlock by default if subscribed
-                                if ($key1 == 0 && $key2 == 0) {
-                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
-                                    $watch_count++;
-                                    continue;
-                                }
-
-                                // Other lessons: unlock if previous lesson completed
-                                if ($key2 > 0) {
-                                    $previousLessonId = $courseSectionLesson[$key2 - 1]['lesson_id'];
-
-                                    $view_previous = $this->Common_model->getData(
-                                        'tbl_lesson_user_video',
-                                        [
-                                            'user_id' => $user_id,
-                                            'view_video' => 1,
-                                            'lesson_id' => $previousLessonId,
-                                            'status' => 1
-                                        ],
-                                        '',
-                                        '',
-                                        'row_array',
-                                        'id',
-                                        'desc'
-                                    );
-
-                                    if (!empty($view_previous) && (!is_null($view_previous['solved_mcq']) || !is_null($view_previous['result']))) {
-                                        // Previous lesson completed → unlock this lesson
-                                        $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
-                                        $watch_count++;
-                                    } else {
-                                        // Previous lesson not completed → keep locked
-                                        $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
-                                    }
-                                } else {
-                                    // Safety: first lesson already handled, this just ensures lock for any unexpected case
-                                    $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
-                                }
-                            } else {
-                                // Not subscribed → all lessons locked
-                                $courseSectionLesson[$key2]['is_lock_lesson'] = 1;
-                            }
+                        // ❌ If NOT subscribed → keep locked and skip unlock logic
+                        if (!$isSubscribed) {
+                            continue;
                         }
 
-                        $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
-                        $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
-                        $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
+                        // ✅ If subscribed → sequential unlock logic
+                        if ($isPreviousLessonCompleted) {
+
+                            // unlock this lesson
+                            $courseSectionLesson[$key2]['is_lock_lesson'] = 0;
+
+                            // check if THIS lesson completed
+                            $view_current = $this->Common_model->getData(
+                                'tbl_lesson_user_video',
+                                [
+                                    'user_id' => $user_id,
+                                    'view_video' => 1,
+                                    'lesson_id' => $lessonList['lesson_id'],
+                                    'status' => 1
+                                ],
+                                '',
+                                '',
+                                'row_array',
+                                'id',
+                                'desc'
+                            );
+
+                            if (!empty($view_current) && (!is_null($view_current['solved_mcq']) || !is_null($view_current['result']))) {
+                                $watch_count++;
+                                $isPreviousLessonCompleted = true;
+                            } else {
+                                $isPreviousLessonCompleted = false;
+                            }
+                        }
                     }
-                    // $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
-                    // $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
-                    // $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
+                    $courseDetailsList[$key]['sections'][$key1]['lessons'] = $courseSectionLesson;
+                    $courseDetailsList[$key]['sections'][$key1]['lesson_count'] = count($courseSectionLesson);
+                    $courseDetailsList[$key]['sections'][$key1]['lesson_watch_count'] = $watch_count;
                 }
             }
             if ($courseDetailsList) {
@@ -818,7 +1020,6 @@ class Courses extends CI_Controller
         }
         echo json_encode($response);
     }
-
     public function getLessonsDetails()
     {
         authenticateUser();
@@ -859,7 +1060,7 @@ class Courses extends CI_Controller
             }
             //print_r($courseDetailsList);die();
             foreach ($lessonDetails as $key => $value) {
-                $lessonVideo = $this->Courses_model->getLessonVideoData($lessonId);
+                $lessonVideo = $this->Courses_model->getLessonVideoData($lessonId, $user_id);
 
                 $lessonSubTitle = $this->Courses_model->getLessonSubTitleData($lessonId);
                 $lessonDetails[$key]['lesson_video'] = $lessonVideo;
@@ -1098,6 +1299,117 @@ class Courses extends CI_Controller
         echo json_encode($response);
         return;
     }
+    public function updateQnA()
+    {
+        authenticateUser();
+        $login_user_id = $this->regId;
+
+        $question_id = trim($this->input->post('question_id'));
+        $question  = trim($this->input->post('question'));
+        // echo "<pre>";
+        // print_r($this->input->post());
+        // die;
+        if (empty($question_id) || empty($question)) {
+            $response = [
+                'result' => false,
+                'message' => 'Invalid Input'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        // Check if question exists and belongs to the user
+        $existingQuestion = $this->CommonModel->getData('tbl_course_qna', ['id' => $question_id, 'user_id' => $login_user_id], 'id,answer', '', 'row_array');
+        if (empty($existingQuestion)) {
+            $response = [
+                'result' => false,
+                'message' => 'Question not found or access denied'
+            ];
+            echo json_encode($response);
+            return;
+        }
+
+        if (!empty($existingQuestion['answer'])) {
+            $response = [
+                'result' => false,
+                'message' => 'Cannot update question after it has been answered'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $updateData = [
+            'question' => $question,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $login_user_id,
+        ];
+        $update = $this->CommonModel->iudAction('tbl_course_qna', $updateData, 'update', ['id' => $question_id]);
+        if (!$update) {
+            $response = [
+                'result' => false,
+                'message' => 'Question Update Failed'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $response = [
+            'result' => true,
+            'message' => 'Question Updated Successfully',
+
+        ];
+        echo json_encode($response);
+        return;
+    }
+
+    public function deleteQna()
+    {
+        authenticateUser();
+        $login_user_id = $this->regId;
+
+        $question_id = trim($this->input->post('question_id'));
+
+        if (empty($question_id)) {
+            $response = [
+                'result' => false,
+                'message' => 'Invalid Input'
+            ];
+            echo json_encode($response);
+            return;
+        }
+
+        $existingQuestion = $this->CommonModel->getData('tbl_course_qna', ['id' => $question_id, 'user_id' => $login_user_id], 'id,answer', '', 'row_array');
+        if (empty($existingQuestion)) {
+            $response = [
+                'result' => false,
+                'message' => 'Question not found or access denied'
+            ];
+            echo json_encode($response);
+            return;
+        }
+
+        if (!empty($existingQuestion['answer'])) {
+            $response = [
+                'result' => false,
+                'message' => 'Cannot delete question after it has been answered'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $delete = $this->CommonModel->iudAction('tbl_course_qna', ['deleted_by' => $login_user_id, 'deleted_at' => date('Y-m-d H:i:s')], 'update', ['id' => $question_id]);
+        if (!$delete) {
+            $response = [
+                'result' => false,
+                'message' => 'Question Deletion Failed'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $response = [
+            'result' => true,
+            'message' => 'Question Deleted Successfully',
+
+        ];
+        echo json_encode($response);
+        return;
+    }
     public function courseResources()
     {
         authenticateUser();
@@ -1118,6 +1430,39 @@ class Courses extends CI_Controller
             'message' => 'Course Resources Fetched Successfully',
             'data' => $course_resoureses,
             'resource_path' => base_url() . COURSE_RESOURCES
+        ];
+        echo json_encode($response);
+        return;
+    }
+    public function courseCertificateDownload()
+    {
+        authenticateUser();
+        $login_user_id = $this->regId;
+        $course_id = trim($this->input->post('course_id'));
+        // print_r($login_user_id);
+        // die;
+        if (empty($course_id)) {
+            $response = [
+                'result' => false,
+                'message' => 'Course Id is required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $certificate = $this->CommonModel->getData('tbl_user_course_certificate', ['course_id' => $course_id, 'user_id' => $login_user_id], 'file_name', '', 'row_array');
+        if (empty($certificate)) {
+            $response = [
+                'result' => false,
+                'message' => 'Certificate not found'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        $response = [
+            'result' => true,
+            'message' => 'Certificate Fetched Successfully',
+            'data' => $certificate,
+            'certificate_path' => base_url() . COURSE_CERTIFICATES
         ];
         echo json_encode($response);
         return;
