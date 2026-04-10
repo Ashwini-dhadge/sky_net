@@ -172,7 +172,98 @@
 </div>
 
 <?php init_footer(); ?>
+<script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
+<script src="<?= base_url(); ?>assets/js/custom-js/lesson-list.js"></script>
+<script>
+  $(document).on('change', '.video-thumb-input', function() {
+    const input = this;
+    const preview = $(this).closest('.col-md-3').find('.video-thumb-preview');
 
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.attr('src', e.target.result).show();
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  });
+
+
+  $('#video-repeater').repeater({
+    initEmpty: <?= empty($lesson_videos) ? 'true' : 'false' ?>,
+
+    show: function() {
+      $(this).find('.video-thumb-preview')
+        .attr('src', '')
+        .hide();
+
+      $(this).find('.video-thumb-input').val('');
+
+      $(this).find('input[name="id"]').remove();
+      $(this).find('input[name="old_thumbnail"]').remove();
+
+      $(this).slideDown();
+    },
+
+    hide: function(deleteElement) {
+      if (confirm('Are you sure you want to remove this video?')) {
+        $(this).slideUp(deleteElement);
+      }
+    }
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+
+    $('.resource-repeater').repeater({
+      initEmpty: false,
+      show: function() {
+        $(this).slideDown();
+      },
+      hide: function(deleteElement) {
+        if (confirm('Remove this resource?')) {
+          $(this).slideUp(deleteElement);
+        }
+      }
+    });
+
+    function updatePreviewButton(input) {
+      const row = input.closest('[data-repeater-item]');
+      const btn = row.querySelector('.preview-btn');
+
+      if (input.files.length) {
+        btn.className = 'btn btn-info preview-btn';
+      }
+    }
+
+    function previewFile(btn) {
+      const file = btn.closest('[data-repeater-item]')
+        .querySelector('input[type=file]').files[0];
+
+      if (!file) return alert('Select file');
+
+      window.open(URL.createObjectURL(file));
+    }
+
+
+  });
+</script>
+<script>
+  function updatePreviewButton(input) {
+    const row = input.closest('[data-repeater-item]');
+    const btn = row.querySelector('.preview-btn');
+    if (!input.files.length) return;
+    btn.className = 'btn btn-info preview-btn';
+  }
+
+  function previewFile(btn) {
+    const file = btn.closest('[data-repeater-item]')
+      .querySelector('input[type=file]').files[0];
+    if (!file) return alert('Select file');
+    window.open(URL.createObjectURL(file));
+  }
+</script>
 <script>
   let mcqPreviewData = [];
 
