@@ -36,6 +36,7 @@ function listLesson() {
                     onclick="openLessonModel(${data.course_id},${data.section_id},${data.lesson_id})">
                     <i class="fa fa-book"></i>
                 </a>
+				
 
                 <a href="${base_url + _admin}Lesson/mcq/${data.lesson_id}"
                     class="btn btn-sm btn-outline-secondary text-primary mr-1">
@@ -126,7 +127,7 @@ function openLessonModel(course_id, section_id, lesson_id) {
 	$('#lesson_id').val(lesson_id);
 
 	$('[data-repeater-list="videos"]').empty();
-
+	console.log("clicked", course_id, section_id, lesson_id);
 	$('#videoModal').modal('show');
 
 	$.post(

@@ -746,7 +746,19 @@ class Lesson extends CI_Controller
 		// echo"<pre>";print_r($no_of_question);die;
 		$tags = $this->input->post('tags_input');
 		$tags_string = (!empty($tags)) ? implode(" ", $tags) : "";
+		$videos = $this->input->post('videos');
 
+		$validVideo = false;
+
+		foreach ($videos as $v) {
+			if (!empty($v['video_title']) && !empty($v['vimo_code'])) {
+				$validVideo = true;
+			}
+		}
+
+		if (!$validVideo) {
+			die('At least one video is required');
+		}
 		$lessonData = [
 			"course_id"   => $course_id,
 			"section_id"  => $section_id,
@@ -908,7 +920,7 @@ class Lesson extends CI_Controller
 
 		$this->db->trans_complete();
 
-		$this->session->set_flashdata("success", "Lesson saved successfully!");
+		$this->session->set_flashdata("success", "Lesson saved successfully!  ");
 		redirect(ADMIN . "Lesson");
 	}
 
@@ -927,7 +939,7 @@ class Lesson extends CI_Controller
 			->getData('tbl_lesson_sub_title', ['lesson_id' => $id], 'sub_title_name');
 
 		$data['lesson_videos'] = $this->CommonModel
-			->getData('tbl_lesson_video', ['lesson_id' => $id]);
+			->getData('tbl_lesson_video', ['lesson_id' => $id, 'deleted_by' => NULL]);
 
 		$data['course'] = $this->CommonModel
 			->getData('tbl_courses', ['status' => 1, 'deleted_by' => NULL]);

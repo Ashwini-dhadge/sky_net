@@ -61,7 +61,7 @@
                             <div class="card-body">
                                 <h4 class="mt-0 header-title m-b-20"><?= $title; ?></h4>
                                 <hr>
-                                <form class="repeater" action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>"
+                                <form id="lessonForm" class="repeater" action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>"
                                     method="post" enctype="multipart/form-data">
                                     <input type="hidden" name="id" id="lesson_id" value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
                                     <div class="row">
@@ -223,16 +223,16 @@
                                                                 <div class="form-group">
                                                                     <label>Video Title</label>
                                                                     <input type="text" name="video_title"
-                                                                        class="form-control"
-                                                                        value="<?= $vid['video_title']; ?>" required>
+                                                                        class="form-control" 
+                                                                        value="<?= $vid['video_title']; ?>">
                                                                 </div>
 
                                                                 <div class="form-row">
                                                                     <div class="form-group col-md-7">
                                                                         <label>Vimeo Code</label>
                                                                         <input type="text" name="vimo_code"
-                                                                            class="form-control"
-                                                                            value="<?= $vid['vimo_code']; ?>" required>
+                                                                            class="form-control" 
+                                                                            value="<?= $vid['vimo_code']; ?>">
                                                                     </div>
 
                                                                     <div class="form-group col-md-5">
@@ -261,7 +261,7 @@
                                             endif; ?>
 
                                             <!-- Template Item (Hidden) -->
-                                            <div data-repeater-item class="video-card mb-3 p-3" style="display:none;">
+                                            <div data-repeater-item class="video-card mb-3 p-3">
 
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h6 class="video-card-title mb-0">Video Details</h6>
@@ -285,14 +285,14 @@
 
                                                         <div class="form-group">
                                                             <label>Video Title</label>
-                                                            <input type="text" name="video_title"
+                                                            <input type="text" name="video_title"  
                                                                 class="form-control">
                                                         </div>
 
                                                         <div class="form-row">
                                                             <div class="form-group col-md-7">
                                                                 <label>Vimeo Code</label>
-                                                                <input type="text" name="vimo_code"
+                                                                <input type="text" name="vimo_code" 
                                                                     class="form-control">
                                                             </div>
 
@@ -316,7 +316,7 @@
                                             class="btn btn-success mt-3">+ Add Another Video</button>
                                     </div>
                                     <div class="form-group col-md-12 text-right mt-3">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -333,6 +333,47 @@
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
+<script>
+    $('#lessonForm').on('submit', function(e) {
+
+        let validCount = 0;
+        let invalid = false;
+
+        $('#video-repeater [data-repeater-item]').each(function() {
+
+            let title = $(this).find('[name="video_title"]').val().trim();
+            let vimeo = $(this).find('[name="vimo_code"]').val().trim();
+
+            // ignore empty row
+            if (title === '' && vimeo === '') {
+                $(this).find('input').removeClass('is-invalid');
+                return true;
+            }
+
+            validCount++;
+
+            if (title === '' || vimeo === '') {
+                invalid = true;
+                $(this).find('[name="video_title"], [name="vimo_code"]').addClass('is-invalid');
+            } else {
+                $(this).find('[name="video_title"], [name="vimo_code"]').removeClass('is-invalid');
+            }
+        });
+
+        if (validCount === 0) {
+            alert('❌ Please add at least one video');
+            e.preventDefault();
+            return false;
+        }
+
+        if (invalid) {
+            alert('❌ Please fill all video fields properly');
+            e.preventDefault();
+            return false;
+        }
+
+    });
+</script>
 <script>
     function checkSubmit() {
         if (lessonValid && finalLessonValid) {
@@ -522,7 +563,7 @@
 
         // Repeater Init
         $('#video-repeater').repeater({
-            initEmpty: false,
+            initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
             show: function() {
                 const $item = $(this);
                 $item.slideDown();
@@ -536,6 +577,13 @@
             },
 
             hide: function(deleteElement) {
+
+                let total = $('#video-repeater [data-repeater-item]:visible').length;
+
+                if (total <= 1) {
+                    alert('At least one video is required');
+                    return;
+                }
 
                 if (confirm('Are you sure you want to remove this video?')) {
                     $(this).slideUp(deleteElement);
