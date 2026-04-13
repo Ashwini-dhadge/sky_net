@@ -664,22 +664,49 @@ function save_final_exam_certificate($lesson_id, $user_id)
 {
     $CI = &get_instance();
     $CI->load->library('m_pdf');
-
+    $lesson_details = $CI->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'course_id', '', 'row_array');
+    $course_details = $CI->CommonModel->getData('tbl_courses', array('id' => $lesson_details['course_id']), 'title', '', 'row_array');
+    $certificate_details = $CI->CommonModel->getData('tbl_course_certificate', array('course_id' => $lesson_details['course_id']), '*', '', 'row_array');
+    $user_details = $CI->CommonModel->getData('tbl_users', array('id' => $user_id), 'first_name,notification_token', '', 'row_array');
     $data = [];
-    $data['course_name']      = "Red Hat Certified";
-    $data['name']             = "Omkar";
-    $data['issue_date']       = "December 08, 2025";
-    $data['verify_url']       = "https://www.credly.com/badges/d898ed2a-8d6a-49de-8600-bce8d3fb41d8";
-    $data['certification_id'] = "190-236-588";
+    $data['course_name']      = $course_details['title'];
+    $data['name']             = $user_details['first_name'];
+    $data['issue_date']       = date('d M Y');
+    $data['issue_by']       = $certificate_details['issued_by'];
+    $data['verify_url']       = $certificate_details['verify_url'];
+    $data['barcode_logo'] = "assets/certificate_image/" . $certificate_details['barcode_logo'];
+    $data['certification_id'] = $certificate_details['certification_id'];
 
+    // print_r($data);
+    // die;
     // Load HTML view
     $html = $CI->load->view('app/final_certificate_bkp', $data, true);
-
+    // echo $html;
+    // die;
     // File name
-    $file_name = 'certificate_' . $lesson_id . '_' . time();
+    $file_name = 'certificate_' . $user_id . '_' . time();
+    $user_course_certificate_data = [
+        'user_id' => $user_id,
+        'course_id' => $lesson_details['course_id'],
+        'lesson_id' => $lesson_id,
+        'file_name' => $file_name . '.pdf',
+    ];
+    $existing_user_certificate = $CI->CommonModel->getData('tbl_user_course_certificate', array('user_id' => $user_id, 'course_id' => $lesson_details['course_id'], 'lesson_id' => $lesson_id), '*', '', 'row_array');
+    if (empty($existing_user_certificate)) {
+        $CI->db->insert('tbl_user_course_certificate', $user_course_certificate_data);
+    }
+
+    if (!empty($user_details['notification_token'])) {
+
+        $title = 'Certificate Generated';
+        $message = 'Your certificate for "' . $course_details['title'] . '" has been generated. You can download it from this app.';
+
+        sendMobileNotification($user_details['notification_token'], $title, $message);
+    }
 
     // Generate + save PDF
     $pdfFilePath = $CI->m_pdf->savePDF($html, $file_name);
-
+    // print_r($pdfFilePath);
+    // die;
     return $pdfFilePath;
 }

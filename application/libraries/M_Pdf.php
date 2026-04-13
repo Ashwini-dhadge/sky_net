@@ -10,7 +10,7 @@ class M_Pdf
         $CI = &get_instance();
 
         // 1. Create folder
-        $folder = FCPATH . 'uploads/certificates/';
+        $folder = FCPATH . 'uploads/user_certificates/';
 
         if (!is_dir($folder)) {
             mkdir($folder, 0777, true);
@@ -26,6 +26,8 @@ class M_Pdf
             'margin_bottom' => 10,
             'margin_left' => 10,
             'margin_right' => 10,
+            'setAutoTopMargin' => 'stretch',
+            'setAutoBottomMargin' => 'stretch',
         ]);
 
         // 4. Improve rendering quality
@@ -40,6 +42,6 @@ class M_Pdf
         $mpdf->Output($full_path, \Mpdf\Output\Destination::FILE);
 
         // 7. Return relative path (for DB)
-        return 'uploads/certificates/' . $filename . '.pdf';
+        return 'uploads/user_certificates/' . $filename . '.pdf';
     }
 }

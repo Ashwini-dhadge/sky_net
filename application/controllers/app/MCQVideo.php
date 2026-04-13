@@ -16,8 +16,7 @@ class MCQVideo extends CI_Controller
     public function getResultMCQ()
     {
         authenticateUser();
-        save_final_exam_certificate(1, 1);
-        die;
+
         // echo "<pre>";
         // print_r(json_encode($this->input->post()));
         // die;
@@ -33,11 +32,18 @@ class MCQVideo extends CI_Controller
         // print_r($_POST);
         // die;
         if ($solved_mcq != "" && $lesson_id) {
-
+            $already_submitted_test = $this->Common_model->getData('tbl_lesson_user_video', array('lesson_id' => $lesson_id, 'user_id' => $userId), 'solved_mcq,result', '', 'row_array', 'id', 'desc');
+            if (isset($already_submitted_test['solved_mcq']) && !empty($already_submitted_test['solved_mcq'])) {
+                $response['result'] = false;
+                $response['reason'] = 'You have already submitted the test for this lesson';
+                echo json_encode($response);
+                exit;
+            }
 
             // $getlesson = $this->Common_model->getData('tbl_lesson', array('id' => $lesson_id), 'courses_id,section_id,is_this_video_final', '', 'row_array');
-            $getlesson = $this->Common_model->getData('tbl_lesson', array('id' => $lesson_id), 'course_id,section_id', '', 'row_array');
-
+            $getlesson = $this->Common_model->getData('tbl_lesson', array('id' => $lesson_id), 'course_id,section_id,is_final_lesson', '', 'row_array');
+            // print_r($getlesson);
+            // die;
             if ($getlesson) {
                 //print_r($solved_mcq);
                 $mcq = json_decode($solved_mcq, true);
@@ -158,6 +164,13 @@ class MCQVideo extends CI_Controller
 
                     // echo($this->db->last_query());die();
 
+
+                    // Certficate Generation for final exam
+
+
+                    if (isset($getlesson['is_final_lesson']) && $getlesson['is_final_lesson'] == 1) {
+                        save_final_exam_certificate($lesson_id, $userId);
+                    }
                 } else {
                     $response['result'] = false;
                     $response['reason'] = 'Something went wrong, please try later';

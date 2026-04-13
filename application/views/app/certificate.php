@@ -3,195 +3,109 @@
 
 <head>
     <meta charset="utf-8">
-
+    <title>RHCSA Certificate</title>
     <style>
-    body {
-        background: #f2f2f2;
-        font-family: DejaVu Sans, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /* MAIN CERTIFICATE */
-    .certificate {
-        width: 297mm;
-        min-height: 200mm;
-        /* FIX: removed fixed height */
-        background: white;
-        margin: auto;
-        padding: 10mm 25mm;
-        position: relative;
-
-        /* FIX for Dompdf */
-        page-break-inside: avoid;
-        overflow: hidden;
-    }
-
-    .cert-top {
-        font-size: 28px;
-        font-weight: 700;
-    }
-
-    .cert-name {
-        font-size: 62px;
-        color: #e33b2f;
-        font-weight: 700;
-        margin-top: 25px;
-    }
-
-    .cert-desc {
-        font-size: 24px;
-        margin-top: 40px;
-    }
-
-    .cert-title {
-        font-size: 50px;
-        color: #e33b2f;
-        font-weight: 700;
-        margin-top: 30px;
-        line-height: 1.2;
-    }
-
-    /* FOOTER */
-    .cert-footer {
-        position: absolute;
-        bottom: 40mm;
-        left: 25mm;
-        display: flex;
-        align-items: center;
-        gap: 25px;
-    }
-
-    .qr-section {
-        border-right: 1px solid gray;
-        padding-right: 20px;
-    }
-
-    .qr-section img {
-        width: 100px;
-    }
-
-    .cert-details {
-        line-height: 28px;
-        font-size: smaller;
-    }
-
-    /* LOGO */
-    .cert-logo {
-        position: absolute;
-        bottom: 40mm;
-        right: 25mm;
-    }
-
-    .cert-logo img {
-        width: 260px;
-    }
-
-    /* BADGE */
-    .cert-badge {
-        padding: 10px;
-        background: #000;
-        position: absolute;
-        top: 60px;
-        right: 70px;
-        border-radius: 5px;
-    }
-
-    /* FOOTER TEXT */
-    .cert-bottom_text {
-        font-weight: 700;
-        position: absolute;
-        bottom: 100px;
-        left: 100px;
-        display: flex;
-        align-items: center;
-        gap: 25px;
-        font-size: 11px;
-    }
-
-    /* PRINT SETTINGS */
     @page {
-        size: A4 landscape;
+        size: 297mm 210mm;
+        margin: 10mm 10mm 35mm 10mm;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
         margin: 0;
+        padding: 0;
+        background: white;
     }
     </style>
-
 </head>
 
 <body>
 
-    <div class="certificate">
+    <!-- mPDF FOOTER -->
+    <htmlpagefooter name="myfooter">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td width="65%" valign="middle">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="border-right: 1px solid #888888; padding-right: 14px; vertical-align: middle;">
+                                <img src="<?= FCPATH ?>assets/certificate_image/dummy_qr.png"
+                                    style="width: 70px; height: 70px;">
+                            </td>
+                            <td style="padding-left: 14px; font-size: 11px; line-height: 22px; vertical-align: middle;">
+                                <div><?= htmlspecialchars($issue_date) ?></div>
+                                <div>Issued by: Red Hat</div>
+                                <div>Verify: <?= htmlspecialchars($verify_url) ?></div>
+                                <div>Certification ID: <?= htmlspecialchars($certification_id) ?></div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="35%" align="right" valign="middle">
+                    <img src="<?= FCPATH ?>assets/certificate_image/rh_black_logo.png" style="width: 180px;">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-size: 9px; font-weight: bold; padding-top: 6px;">
+                    Copyright (c) 2022 Red Hat, Inc. All rights reserved. Red Hat is a trademark of Red Hat, Inc.
+                </td>
+            </tr>
+        </table>
+    </htmlpagefooter>
 
-        <div class="cert-top">
-            Red Hat, Inc. hereby certifies that
-        </div>
+    <!-- ACTIVATE FOOTER -->
+    <sethtmlpagefooter name="myfooter" value="on" />
 
-        <div class="cert-name">
-            <?= $name ?>
-        </div>
+    <!-- TOP SECTION: left = main content, right = badge -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+            <!-- LEFT: main certificate text -->
+            <td width="68%" valign="top">
 
-        <div class="cert-desc">
-            has successfully completed all program requirements and is certified as a
-        </div>
-
-        <div class="cert-title">
-            Red Hat Certified System<br>
-            Administrator (RHCSA)
-        </div>
-
-        <!-- BADGE -->
-        <!-- <div class="cert-badge">
-
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="file://<?= FCPATH ?>assets/certificate_image/rh_white_logo.png"
-                    style="height:30px; margin-right:20px;">
-
-                <img src="file://<?= FCPATH ?>assets/certificate_image/certificate_icon.png" style="height:30px;">
-            </div>
-
-            <div style="margin-top:40px;">
-                <p style="color:white; font-size:17px; font-weight:700; margin:0;">
-                    <?= $course_name ?>
+                <p style="font-size: 22px; font-weight: bold; margin: 0; padding: 0;">
+                    Red Hat, Inc. hereby certifies that
                 </p>
-                <p style="color:white; font-size:17px; margin:0;">
-                    System Administrator
+
+                <p style="font-size: 68px; color: #e33b2f; font-weight: bold; margin: 10mm 0 0 0; line-height: 1.1;">
+                    <?= htmlspecialchars($name) ?>
                 </p>
-            </div>
 
-        </div> -->
+                <p style="font-size: 20px; margin: 8mm 0 0 0;">
+                    has successfully completed all program requirements and is certified as a
+                </p>
 
-        <!-- FOOTER -->
-        <!-- <div class="cert-footer">
+                <p style="font-size: 42px; color: #e33b2f; font-weight: bold; margin: 10mm 0 0 0; line-height: 1.2;">
+                    Red Hat Certified System<br>Administrator (RHCSA)
+                </p>
 
-            <div class="qr-section">
-                <img src="file://<?= FCPATH ?>assets/certificate_image/dummy_qr.png">
-            </div>
+            </td>
 
-            <div class="cert-details">
-                <div>December 08, 2025</div>
-                <div>Issued by: Red Hat</div>
-                <div>Verify: https://www.credly.com/badges/d898ed2a-8d6a-49de-8600-bce8d3fb41d8</div>
-                <div>Certification ID: 190-236-588</div>
-            </div>
-
-        </div> -->
-
-        <!-- REDHAT LOGO -->
-        <!-- <div class="cert-logo">
-            <img src="file://<?= FCPATH ?>assets/certificate_image/rh_black_logo.png">
-        </div>
-
-        <div class="cert-bottom_text">
-            <span>Copyright (c) 2022 Red Hat, Inc. All rights reserved.</span>
-        </div> -->
-
-    </div>
+            <!-- RIGHT: badge (black box) -->
+            <td width="32%" valign="top" align="right">
+                <table cellpadding="0" cellspacing="0" border="0"
+                    style="background: #000000; padding: 10px; width: 55mm;">
+                    <tr>
+                        <td>
+                            <img src="<?= FCPATH ?>assets/certificate_image/rh_white_logo.png" style="height: 25px;">
+                        </td>
+                        <td align="right">
+                            <img src="<?= FCPATH ?>assets/certificate_image/certificate_icon.png" style="height: 25px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 20px;">
+                            <p style="color: #ffffff; font-size: 15px; font-weight: bold; margin: 0; padding: 0;">
+                                <?= htmlspecialchars($course_name) ?>
+                            </p>
+                            <p style="color: #ffffff; font-size: 14px; margin: 0; padding: 4px 0 0 0;">
+                                System Administrator
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 
 </body>
 

@@ -133,7 +133,7 @@ define('CAT', 'category' . DS);
 define('CATEGORY_IMAGES', 'assets/uploads/category_thumbnails/');
 
 define('COURSE_RESOURCES', 'assets/uploads/course_resources/');
-define('COURSE_CERTIFICATES', 'assets/uploads/user_course_certificate/');
+define('COURSE_CERTIFICATES', 'uploads/user_certificates/');
 
 
 
