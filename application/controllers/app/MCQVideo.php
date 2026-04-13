@@ -16,6 +16,8 @@ class MCQVideo extends CI_Controller
     public function getResultMCQ()
     {
         authenticateUser();
+        save_final_exam_certificate(1, 1);
+        die;
         // echo "<pre>";
         // print_r(json_encode($this->input->post()));
         // die;

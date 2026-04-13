@@ -27,7 +27,7 @@ function loginId()
             $CI->session->sess_destroy();
             redirect(base_url('admin'));
         }
-       
+
         $CI->session->set_userdata('last_activity', time());
         return $CI->session->userdata('user_id');
     } else {
@@ -618,4 +618,68 @@ function encode_img_base64($img_path = false, $img_type = 'png')
     }
 
     return false;
+}
+
+// function save_final_exam_certificate($lesson_id, $user_id)
+// {
+//     $CI = &get_instance();
+//     $CI->load->library('pdf');
+//     // print_r($lesson_id);
+//     // print_r($user_id);
+//     // die;
+//     // $data['wall'] = $CI->Post_model->getPublicWall(['p.id' => $post_id], 0, 0);
+
+//     // $data['name'] = ucfirst($data['wall'][0]['post_sender_name']);
+//     $data = [];
+//     $data['course_name'] = "Rea Hat Course";
+//     $data['name'] = "Omkar";
+
+//     // Generate certificate HTML
+//     $html = $CI->load->view('app/final_certificate_bkp', $data, true);
+
+//     // ✅ Unique file name
+//     $file_name = 'certificate_' . $lesson_id . '_' . time();
+
+//     // ✅ Save PDF
+//     $pdfFilePath = $CI->pdf->savePDF($html, $file_name, true, 'A4', 'landscape');
+
+//     // ✅ File path for DB
+//     $file_path = 'uploads/certificates/' . $file_name . '.pdf';
+//     // print_r($pdfFilePath);
+//     // die;
+//     // ✅ Save in DB
+//     // $CI->db->insert('certificates', [
+//     //     'post_id' => $post_id,
+//     //     'user_name' => $data['name'],
+//     //     'course_name' => $data['course_name'],
+//     //     'file_name' => $file_name . '.pdf',
+//     //     'file_path' => $file_path,
+//     //     'created_at' => date('Y-m-d H:i:s')
+//     // ]);
+
+//     return 1;
+// }
+
+function save_final_exam_certificate($lesson_id, $user_id)
+{
+    $CI = &get_instance();
+    $CI->load->library('m_pdf');
+
+    $data = [];
+    $data['course_name'] = "Red Hat Course";
+    $data['name'] = "Omkar";
+
+    // Load HTML view
+    $html = $CI->load->view('app/final_certificate_bkp', $data, true);
+
+    // File name
+    $file_name = 'certificate_' . $lesson_id . '_' . time();
+
+    // Generate + save PDF
+    $pdfFilePath = $CI->m_pdf->savePDF($html, $file_name);
+
+    // DB path
+    $file_path = $pdfFilePath;
+
+    return $file_path;
 }
