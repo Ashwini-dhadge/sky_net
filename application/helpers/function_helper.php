@@ -666,8 +666,11 @@ function save_final_exam_certificate($lesson_id, $user_id)
     $CI->load->library('m_pdf');
 
     $data = [];
-    $data['course_name'] = "Red Hat Course";
-    $data['name'] = "Omkar";
+    $data['course_name']      = "Red Hat Certified";
+    $data['name']             = "Omkar";
+    $data['issue_date']       = "December 08, 2025";
+    $data['verify_url']       = "https://www.credly.com/badges/d898ed2a-8d6a-49de-8600-bce8d3fb41d8";
+    $data['certification_id'] = "190-236-588";
 
     // Load HTML view
     $html = $CI->load->view('app/final_certificate_bkp', $data, true);
@@ -678,8 +681,5 @@ function save_final_exam_certificate($lesson_id, $user_id)
     // Generate + save PDF
     $pdfFilePath = $CI->m_pdf->savePDF($html, $file_name);
 
-    // DB path
-    $file_path = $pdfFilePath;
-
-    return $file_path;
+    return $pdfFilePath;
 }
