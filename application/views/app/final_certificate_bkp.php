@@ -5,17 +5,17 @@
     <meta charset="utf-8">
     <title>RHCSA Certificate</title>
     <style>
-        @page {
-            size: 297mm 210mm;
-            margin: 10mm 10mm 10mm 10mm;
-        }
+    @page {
+        size: 297mm 210mm;
+        margin: 10mm 10mm 10mm 10mm;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: white;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
     </style>
 </head>
 
@@ -34,7 +34,8 @@
             </tr>
         </table>
         <div style="margin-top: 35px;">
-            <p style="color: #ffffff; font-size: 15px; font-weight: bold; margin: 0; padding: 0;"><?= htmlspecialchars($course_name) ?></p>
+            <p style="color: #ffffff; font-size: 15px; font-weight: bold; margin: 0; padding: 0;">
+                <?= htmlspecialchars($course_name) ?></p>
             <p style="color: #ffffff; font-size: 14px; margin: 0; padding: 4px 0 0 0;">System Administrator</p>
         </div>
     </div>
