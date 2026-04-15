@@ -291,7 +291,7 @@
                                         <div class="col-lg-6" style="border-right: 0.5 solid #ddd;">
                                             <div class="form-group mb-3">
                                                 <label>Question</label>
-                                                <textarea name="question" id="questionText" class="form-control" rows="2" placeholder="Enter Question" required></textarea>
+                                                <textarea name="title" id="questionText" class="form-control" rows="2" placeholder="Enter Question" required></textarea>
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label>Tags</label>
@@ -324,6 +324,7 @@
 </div>
 
 <?php init_footer(); ?>
+
 <script>
     $("#tags_input").select2({
         tags: true,
@@ -333,3 +334,68 @@
     });
 </script>
 <script src="<?= base_url(); ?>assets/js/custom-js/forum.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+        $("#submitQuestion").on("click", function() {
+
+            let isValid = true;
+
+            $(".error-msg").remove();
+            $(".is-invalid").removeClass("is-invalid");
+
+
+            let question = $("#questionText").val().trim();
+            let description = $("#description").val().trim();
+            let tags = $("#tags_input").val();
+
+
+            if (question === "") {
+                isValid = false;
+                $("#questionText").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Question is required</small>');
+            }
+
+            if (!tags || tags.length === 0) {
+                isValid = false;
+                $("#tags_input").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Select at least one tag</small>');
+            }
+
+            if (description === "") {
+                isValid = false;
+                $("#description").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Description is required</small>');
+            }
+
+
+            if (!isValid) {
+                $('html, body').animate({
+                    scrollTop: $(".error-msg:first").offset().top - 100
+                }, 500);
+                return;
+            }
+
+
+            let formData = new FormData($("#questionForm")[0]);
+
+            $.ajax({
+                url: base_url + _admin + 'Forum/addQuestion',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(res) {
+                    alert("Question Saved Successfully");
+                    $("#questionForm")[0].reset();
+                    $("#tags_input").val(null).trigger("change");
+
+                    window.location.reload();
+                }
+            });
+
+        });
+
+    });
+</script>

@@ -223,7 +223,7 @@
                                                                 <div class="form-group">
                                                                     <label>Video Title</label>
                                                                     <input type="text" name="video_title"
-                                                                        class="form-control" 
+                                                                        class="form-control"
                                                                         value="<?= $vid['video_title']; ?>">
                                                                 </div>
 
@@ -231,7 +231,7 @@
                                                                     <div class="form-group col-md-7">
                                                                         <label>Vimeo Code</label>
                                                                         <input type="text" name="vimo_code"
-                                                                            class="form-control" 
+                                                                            class="form-control"
                                                                             value="<?= $vid['vimo_code']; ?>">
                                                                     </div>
 
@@ -285,15 +285,13 @@
 
                                                         <div class="form-group">
                                                             <label>Video Title</label>
-                                                            <input type="text" name="video_title"  
-                                                                class="form-control">
+                                                            <input type="text" name="video_title" class="form-control">
                                                         </div>
 
                                                         <div class="form-row">
                                                             <div class="form-group col-md-7">
                                                                 <label>Vimeo Code</label>
-                                                                <input type="text" name="vimo_code" 
-                                                                    class="form-control">
+                                                                <input type="text" name="vimo_code" class="form-control">
                                                             </div>
 
                                                             <div class="form-group col-md-5">
@@ -316,7 +314,7 @@
                                             class="btn btn-success mt-3">+ Add Another Video</button>
                                     </div>
                                     <div class="form-group col-md-12 text-right mt-3">
-                                        <button type="submit" id="submitBtn" class="btn btn-primary" >Submit</button>
+                                        <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -331,50 +329,248 @@
 <?php init_footer(); ?>
 
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
-
-<script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
-    $('#lessonForm').on('submit', function(e) {
+    $(document).ready(function() {
 
-        let validCount = 0;
-        let invalid = false;
+        $(document).on('change', '.video-thumb-input', function() {
+            const input = this;
+            const preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
 
-        $('#video-repeater [data-repeater-item]').each(function() {
-
-            let title = $(this).find('[name="video_title"]').val().trim();
-            let vimeo = $(this).find('[name="vimo_code"]').val().trim();
-
-            // ignore empty row
-            if (title === '' && vimeo === '') {
-                $(this).find('input').removeClass('is-invalid');
-                return true;
-            }
-
-            validCount++;
-
-            if (title === '' || vimeo === '') {
-                invalid = true;
-                $(this).find('[name="video_title"], [name="vimo_code"]').addClass('is-invalid');
-            } else {
-                $(this).find('[name="video_title"], [name="vimo_code"]').removeClass('is-invalid');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         });
 
-        if (validCount === 0) {
-            alert('❌ Please add at least one video');
-            e.preventDefault();
-            return false;
-        }
 
-        if (invalid) {
-            alert('❌ Please fill all video fields properly');
-            e.preventDefault();
-            return false;
-        }
+        $('#video-repeater').repeater({
+            initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
+
+            show: function() {
+                const $item = $(this);
+
+                $item.slideDown();
+
+                $item.find('.video-thumb-preview').attr('src', '').hide();
+                $item.find('.video-thumb-input').val('');
+
+                $item.find('input[name="id"]').remove();
+                $item.find('input[name="old_thumbnail"]').remove();
+            },
+
+            hide: function(deleteElement) {
+
+                let total = $('#video-repeater [data-repeater-item]:visible').length;
+
+                if (total <= 1) {
+                    alert('At least one video is required');
+                    return;
+                }
+
+                if (confirm('Are you sure you want to remove this video?')) {
+                    $(this).slideUp(deleteElement);
+                }
+            }
+        });
+
+
+        $("#lessonForm").on("submit", function(e) {
+
+            let isValid = true;
+
+            $(".error-msg").remove();
+            $(".is-invalid").removeClass("is-invalid");
+
+
+            let course = $("#course_id").val();
+            let section = $("#section_id").val();
+            let title = $("#title").val().trim();
+
+            if (course === "") {
+                isValid = false;
+                $("#course_id").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Course required</small>');
+            }
+
+            if (section === "") {
+                isValid = false;
+                $("#section_id").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Section required</small>');
+            }
+
+            if (title === "") {
+                isValid = false;
+                $("#title").addClass("is-invalid")
+                    .after('<small class="error-msg text-danger">Title required</small>');
+            }
+
+
+
+            $('#video-repeater [data-repeater-item]').each(function() {
+
+                let videoTitleInput = $(this).find('input[name*="[video_title]"], input[name="video_title"]');
+                let vimoCodeInput = $(this).find('input[name*="[vimo_code]"], input[name="vimo_code"]');
+                let thumbInput = $(this).find('input[type="file"]');
+                let oldThumb = $(this).find('input[name*="[old_thumbnail]"], input[name="old_thumbnail"]').val();
+
+                let videoTitle = videoTitleInput.val() ? videoTitleInput.val().trim() : "";
+                let vimoCode = vimoCodeInput.val() ? vimoCodeInput.val().trim() : "";
+                let thumb = thumbInput[0] ? thumbInput[0].files.length : 0;
+
+                if (videoTitle === "") {
+                    isValid = false;
+                    videoTitleInput.addClass('is-invalid')
+                        .after('<small class="error-msg text-danger">Video title required</small>');
+                }
+
+                if (vimoCode === "") {
+                    isValid = false;
+                    vimoCodeInput.addClass('is-invalid')
+                        .after('<small class="error-msg text-danger">Vimeo code required</small>');
+                }
+
+                if (thumb === 0 && !oldThumb) {
+                    isValid = false;
+                    thumbInput.addClass('is-invalid')
+                        .after('<small class="error-msg text-danger">Thumbnail required</small>');
+                }
+
+            });
+
+
+            if (!isValid) {
+                e.preventDefault();
+
+                $('html, body').animate({
+                    scrollTop: $(".error-msg:first").offset().top - 100
+                }, 500);
+            }
+
+        });
 
     });
 </script>
+<script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
+    CKEDITOR.replace('benefits', {
+        height: '385px'
+    });
+
+    $("#tags_input").select2({
+        tags: true,
+        tokenSeparators: [','],
+        placeholder: "Type and press Enter to add tag",
+        width: '100%'
+    });
+
+    const time = document.getElementById('time');
+
+    time.addEventListener('input', function(e) {
+
+        let value = e.target.value.replace(/\D/g, '').substring(0, 6);
+
+        let hh = value.substring(0, 2);
+        let mm = value.substring(2, 4);
+        let ss = value.substring(4, 6);
+
+        if (hh.length === 2) {
+            let hourNum = parseInt(hh, 10);
+            if (hourNum > 23) hh = '23';
+        }
+
+        if (mm.length === 2) {
+            let minNum = parseInt(mm, 10);
+            if (minNum > 59) mm = '59';
+        }
+
+        if (ss.length === 2) {
+            let secNum = parseInt(ss, 10);
+            if (secNum > 59) ss = '59';
+        }
+
+        let formatted = '';
+
+        if (hh.length) {
+            formatted = hh;
+        }
+
+        if (mm.length) {
+            formatted += ':' + mm;
+        }
+
+        if (ss.length) {
+            formatted += ':' + ss;
+        }
+
+        e.target.value = formatted;
+    });
+
+    $(document).ready(function() {
+
+        const courseSelect = $('select[name="course_id"]');
+        const sectionSelect = $('select[name="section_id"]');
+
+        // Grab selected section from edit mode
+        let selectedSection = sectionSelect.val();
+
+        function loadSections(course_id, selected = null) {
+            sectionSelect.html('<option value="">Loading...</option>').trigger('change');
+
+            $.ajax({
+                url: base_url + _admin + 'Lesson/getSectionsByCourse',
+                type: 'POST',
+                data: {
+                    course_id: course_id
+                },
+                success: function(res) {
+
+                    let response = JSON.parse(res);
+
+                    if (!response.status) {
+                        sectionSelect.html('<option value="">Select Section</option>');
+                        return;
+                    }
+
+                    let options = '<option value="">Select Section</option>';
+
+                    response.data.forEach(function(sec) {
+
+                        let isSelected = (selected && selected == sec.id) ?
+                            'selected' :
+                            '';
+
+                        options += `<option value="${sec.id}" ${isSelected}>${sec.title}</option>`;
+                    });
+
+                    sectionSelect.html(options).trigger('change');
+                }
+            });
+        }
+
+        courseSelect.on('change', function() {
+            let course_id = $(this).val();
+
+            if (!course_id) {
+                sectionSelect.html('<option value="">Select Section</option>').trigger('change');
+                return;
+            }
+
+            loadSections(course_id);
+        });
+
+
+        let existingCourse = courseSelect.val();
+
+        if (existingCourse && selectedSection) {
+            loadSections(existingCourse, selectedSection);
+        }
+
+    });
+
+
     function checkSubmit() {
         if (lessonValid && finalLessonValid) {
             $("button[type='submit']").prop("disabled", false);
@@ -450,8 +646,6 @@
     });
 
 
-
-
     let finalLessonValid = true;
 
     $(document).on('change', 'input[name="is_final_lesson"]', function() {
@@ -485,175 +679,5 @@
         } else {
             $("#final_lesson_msg").html("");
         }
-    });
-</script>
-<script>
-    const time = document.getElementById('time');
-
-    time.addEventListener('input', function(e) {
-
-        let value = e.target.value.replace(/\D/g, '').substring(0, 6);
-
-        let hh = value.substring(0, 2);
-        let mm = value.substring(2, 4);
-        let ss = value.substring(4, 6);
-
-        if (hh.length === 2) {
-            let hourNum = parseInt(hh, 10);
-            if (hourNum > 23) hh = '23';
-        }
-
-        if (mm.length === 2) {
-            let minNum = parseInt(mm, 10);
-            if (minNum > 59) mm = '59';
-        }
-
-        if (ss.length === 2) {
-            let secNum = parseInt(ss, 10);
-            if (secNum > 59) ss = '59';
-        }
-
-        let formatted = '';
-
-        if (hh.length) {
-            formatted = hh;
-        }
-
-        if (mm.length) {
-            formatted += ':' + mm;
-        }
-
-        if (ss.length) {
-            formatted += ':' + ss;
-        }
-
-        e.target.value = formatted;
-    });
-</script>
-<script>
-    CKEDITOR.replace('benefits', {
-        height: '385px'
-    });
-</script>
-
-<script>
-    $("#tags_input").select2({
-        tags: true,
-        tokenSeparators: [','],
-        placeholder: "Type and press Enter to add tag",
-        width: '100%'
-    });
-
-    $(document).ready(function() {
-
-        $(document).on('change', '.video-thumb-input', function() {
-
-            const input = this;
-            const preview = $(this).closest('[data-repeater-item]')
-                .find('.video-thumb-preview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.attr('src', e.target.result).show();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        });
-
-
-        // Repeater Init
-        $('#video-repeater').repeater({
-            initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
-            show: function() {
-                const $item = $(this);
-                $item.slideDown();
-                $item.find('.video-thumb-preview')
-                    .attr('src', '')
-                    .hide();
-
-                $item.find('.video-thumb-input').val('');
-                $item.find('input[name="id"]').remove();
-                $item.find('input[name="old_thumbnail"]').remove();
-            },
-
-            hide: function(deleteElement) {
-
-                let total = $('#video-repeater [data-repeater-item]:visible').length;
-
-                if (total <= 1) {
-                    alert('At least one video is required');
-                    return;
-                }
-
-                if (confirm('Are you sure you want to remove this video?')) {
-                    $(this).slideUp(deleteElement);
-                }
-            }
-        });
-
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-
-        const courseSelect = $('select[name="course_id"]');
-        const sectionSelect = $('select[name="section_id"]');
-
-        // Grab selected section from edit mode
-        let selectedSection = sectionSelect.val();
-
-        function loadSections(course_id, selected = null) {
-            sectionSelect.html('<option value="">Loading...</option>').trigger('change');
-
-            $.ajax({
-                url: base_url + _admin + 'Lesson/getSectionsByCourse',
-                type: 'POST',
-                data: {
-                    course_id: course_id
-                },
-                success: function(res) {
-
-                    let response = JSON.parse(res);
-
-                    if (!response.status) {
-                        sectionSelect.html('<option value="">Select Section</option>');
-                        return;
-                    }
-
-                    let options = '<option value="">Select Section</option>';
-
-                    response.data.forEach(function(sec) {
-
-                        let isSelected = (selected && selected == sec.id) ?
-                            'selected' :
-                            '';
-
-                        options += `<option value="${sec.id}" ${isSelected}>${sec.title}</option>`;
-                    });
-
-                    sectionSelect.html(options).trigger('change');
-                }
-            });
-        }
-
-        courseSelect.on('change', function() {
-            let course_id = $(this).val();
-
-            if (!course_id) {
-                sectionSelect.html('<option value="">Select Section</option>').trigger('change');
-                return;
-            }
-
-            loadSections(course_id);
-        });
-
-
-        let existingCourse = courseSelect.val();
-
-        if (existingCourse && selectedSection) {
-            loadSections(existingCourse, selectedSection);
-        }
-
     });
 </script>

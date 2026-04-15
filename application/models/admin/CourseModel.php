@@ -99,9 +99,9 @@ class CourseModel extends CI_Model
             $this->db->limit($limit, $offset);
         }
 
-        
+
         $this->db->order_by('c.id', 'DESC');
-        
+
         $query = $this->db->get();
 
         return $query->result_array();
@@ -187,7 +187,7 @@ class CourseModel extends CI_Model
         s.title as section_name,
         cd.price
         ');
-        
+
 
         if ($course_id) {
             $this->db->where('l.course_id', $course_id);
@@ -206,6 +206,7 @@ class CourseModel extends CI_Model
         }
 
         $this->db->from('tbl_lesson l');
+        $this->db->group_by('l.id');
         $this->db->join('tbl_courses c', 'c.id = l.course_id');
         $this->db->join('tbl_section s', 's.id = l.section_id');
         $this->db->join('tbl_courses_duration cd', 'cd.courses_id = l.course_id');
@@ -445,7 +446,7 @@ class CourseModel extends CI_Model
         $this->db->where("ts.deleted_at IS NULL");
 
         if (!empty($course_id)) {
-            $this->db->where("ts.course_id", $course_id);   
+            $this->db->where("ts.course_id", $course_id);
         }
 
         if (!empty($searchVal)) {

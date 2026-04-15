@@ -122,11 +122,11 @@
                                                             Resources & Downloads
                                                         </a>
                                                     </li>
-                                                    <li class="nav-item">
+                                                    <!-- <li class="nav-item">
                                                         <a class="nav-link" data-toggle="tab" href="#reviewTab">
                                                             Reviews
                                                         </a>
-                                                    </li>
+                                                    </li> -->
                                                 </ul>
 
 
@@ -426,9 +426,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="tab-pane fade" id="reviewTab">
+                                                    <!-- <div class="tab-pane fade" id="reviewTab">
                                                         hii
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </div>

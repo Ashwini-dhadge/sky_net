@@ -304,7 +304,7 @@ $(document).ready(function () {
 
         $('#answerEditorModal .modal-title')
             .html(`<i class="fa fa-reply mr-2"></i> Replying to ${replyingToUser}`);
-             $('#answerEditorModal').modal('show');
+        $('#answerEditorModal').modal('show');
     });
 
 
@@ -345,20 +345,20 @@ $(document).ready(function () {
     });
 
 
-    $('#submitQuestion').click(function () {
+    // $('#submitQuestion').click(function () {
 
-        let tags = $('#tags_input').val();
-        $.post(base_url + _admin + 'Forum/addQuestion', {
-            title: $('#questionText').val(),
-            description: $('#description').val(),
-            tags: tags
-        },
-            function () {
-                $('#addQuestion').modal('hide');
-                location.reload();
-            });
+    //     let tags = $('#tags_input').val();
+    //     $.post(base_url + _admin + 'Forum/addQuestion', {
+    //         title: $('#questionText').val(),
+    //         description: $('#description').val(),
+    //         tags: tags
+    //     },
+    //         function () {
+    //             $('#addQuestion').modal('hide');
+    //             location.reload();
+    //         });
 
-    });
+    // });
 
     $(document).on('click', '.deleteQuestion', function () {
 
