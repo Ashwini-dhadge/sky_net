@@ -305,7 +305,8 @@ if (!function_exists('create6NumRandom')) {
     function create6NumRandom()
     {
         // return mt_rand(100000, 999999);
-        return mt_rand(1000, 9999);
+        // return mt_rand(1000, 9999);
+        return 1234;
     }
 }
 

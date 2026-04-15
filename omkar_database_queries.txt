@@ -14,3 +14,8 @@ ALTER TABLE `tbl_order_courses_review` CHANGE `deleted_on` `deleted_at` DATETIME
 19-02-2026
 ALTER TABLE `tbl_lesson` ADD `no_of_question` INT NULL AFTER `sub_title`;
 ALTER TABLE `tbl_lesson` ADD `exam_duration` TIME NULL AFTER `no_of_question`;
+
+
+
+14-04-2026
+ALTER TABLE `tbl_users` ADD `is_forgot` INT NULL AFTER `is_otp_verified`;

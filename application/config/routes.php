@@ -76,6 +76,7 @@ $route['update_profile_pic'] = 'app/Authentication/updateProfilePic';
 $route['get_profile'] = 'app/Authentication/getProfile';
 $route['forgot_password'] = 'app/Authentication/forgotPassword'; #done
 $route['app_changed_password'] = 'app/Authentication/changedPassword';
+$route['verify_mobile'] = 'app/Authentication/verifyMobile';
 
 //dashboard
 

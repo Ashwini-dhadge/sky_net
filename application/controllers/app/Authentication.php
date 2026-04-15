@@ -109,15 +109,16 @@ class Authentication extends CI_Controller
                     $registerId = $this->Common_model->iudAction('user_profile', $postArray, 'insert');
                     $response['result'] = true;
                     $response['message'] = 'Thank you for registering, Please verify your number';
+                    $response['is_forgot'] = true;
 
                     $verificationMessage = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
                     // sendMobileMessage($verificationMessage, $userMobile, '1507163947670092160');
                     // $name=$userFirstName." ".$userLastName;
                     //    $verificationMessage = "Dear ".$name.", Welcome to Skynet app. Your Username:".$userMobile." and Password:".$password." Thanks. Team Lalit Dangre";
                     //    sendMobileMessage($verificationMessage, $userMobile,'1507163947710162091');
-                    $title   = "OTP Verification";
-                    $message = "Your OTP is $otpNumber";
-                    sendMobileNotification($userNotificationToken, $message, $title);
+                    // $title   = "OTP Verification";
+                    // $message = "Your OTP is $otpNumber";
+                    // sendMobileNotification($userNotificationToken, $message, $title);
                 } else {
                     $response['result'] = false;
                     $response['reason'] = SOMETHING_WRONG;
@@ -160,11 +161,12 @@ class Authentication extends CI_Controller
 
                 $updateArray = array('otp' => $otpNumber, 'is_otp_verified' => 0);
                 $this->Common_model->iudAction('tbl_users', $updateArray, 'update', array('id' => $checkExist['id']));
-                $title   = "OTP Verification";
-                $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
-                sendMobileNotification($checkExist['notification_token'], $message, $title);
+                // $title   = "OTP Verification";
+                // $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                // sendMobileNotification($checkExist['notification_token'], $message, $title);
                 $response['result'] = true;
                 $response['is_register'] = true;
+                // $response['is_forgot'] = 0;
                 $response['message'] = "We have sent you an OTP verification code. Please check";
             } else {
                 $response['result'] = false;
@@ -187,10 +189,25 @@ class Authentication extends CI_Controller
         $otpNumber = trim($this->input->post('otp_number')) ? trim($this->input->post('otp_number')) : 0;
         $notification_token = trim($this->input->post('notification_token')) ? trim($this->input->post('notification_token')) : 0;
         $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
+
+        $is_forgot = trim($this->input->post('is_forgot'));
+        $password = trim($this->input->post('password'));
+        $new_password = trim($this->input->post('new_password'));
         $response = $userDetail = array();
 
         // if ($userMobile && is_numeric($userMobile) && $otpNumber && $notification_token) {
-        if ($userMobile && is_numeric($userMobile) && $otpNumber && is_numeric($otpNumber) && $imei_no) {
+        if ($userMobile && is_numeric($userMobile) && $otpNumber && is_numeric($otpNumber) && $imei_no && $notification_token) {
+            $updArr = array();
+            if ($is_forgot == 1) {
+                if (strlen($password) == 0 || strlen($new_password) == 0 || $password != $new_password) {
+                    $response['result'] = false;
+                    $response['message'] = "Password and confirm password should be same and not empty";
+                    echo json_encode($response);
+                    die;
+                } else {
+                    $updArr['password'] = $new_password;
+                }
+            }
             $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
             // echo json_encode($userDetail);
             // die;
@@ -209,8 +226,10 @@ class Authentication extends CI_Controller
 
                 updateApiToken($userDetail['api_token'], $userDetail['id']);
 
-                $updArr = array('is_otp_verified' => 1, 'status' => 1, 'api_token' => $userDetail['api_token']);
-
+                // $updArr = array('is_otp_verified' => 1, 'status' => 1, 'api_token' => $userDetail['api_token']);
+                $updArr['is_otp_verified'] = 1;
+                $updArr['status'] = 1;
+                $updArr['api_token'] = $userDetail['api_token'];
                 if ($imei_no) {
                     $updArr['imei_no'] = $imei_no;
                 }
@@ -221,120 +240,33 @@ class Authentication extends CI_Controller
                 $this->Common_model->iudAction('tbl_users', $updArr, 'update', array('id' => $userDetail['id']));
 
                 $userData = $this->Common_model->getUserData(array('u.id' => $userDetail['id']));
-
+                // echo "<pre>";
+                // print_r($userData);
+                // die;
                 //send sms
                 $name = $userData[0]['first_name'];
-
-                $title = "Welcome to Skynet";
-
-                $message = "Dear $name, Welcome to Skynet App. Your mobile number "
-                    . $userData[0]['mobile_no'] .
-                    " has been verified successfully. Thanks, Team Skynet.";
-
-                sendMobileNotification($userDetail['notification_token'], $message, $title);
-
-
-                // sendMobileMessage($verificationMessage, $userMobile, '1507163947710162091');
-
-                // if ($userData[0]['referral_code']) {
-                //     $trans = $this->Common_model->getData('tbl_users', array('self_code' => $userData[0]['referral_code']), '', '', 'row_array');
-                //     $walletData = array(
-                //         'user_id' => $trans['id'],
-                //         'action' => 1,
-                //         'amount' => ON_REGISTER_AMOUNT,
-                //         'trans_details' => "Reference Registration amount",
-                //         'wallet_type' => 1,
-                //         'created_by' => $trans['id'],
-                //         'updated_at' => date('Y-m-d h:i:s')
-                //     );
-                //     $this->Common_model->iudAction('wallet_transaction', $walletData, 'insert');
-                //     updateQuickWallentAMount($trans['id'], 1, ON_REGISTER_AMOUNT);
-                // }
+                if (isset($is_forgot) && $is_forgot == 1) {
+                    $title = "Welcome to Skynet";
+                    $message = "Dear $name, your password has been updated successfully. Thanks, Team Skynet.";
+                } else {
+                    $title = "Welcome to Skynet";
+                    $message = "Dear $name, Welcome to Skynet App. Your mobile number "
+                        . $userData[0]['mobile_no'] .
+                        " has been verified successfully. Thanks, Team Skynet.";
+                }
 
 
-                //add free courese to users
-                // $free_courses_code = $this->Common_model->getData('tbl_courses', array('status' => 1, 'is_free' => 1));
-                // if (count($free_courses_code)) {
-
-                //     foreach ($free_courses_code as $key => $course) {
-                //         $durations = $this->Common_model->getData('tbl_courses_duration', array('courses_id' => $course['id'], 'status' => 1));
-                //         foreach ($durations as $key1 => $dur) {
-
-                //             $subscribe_free = $this->CommonModel->getData('tbl_order_courses_subscription', array('user_id' => $userData[0]['id'], 'course_id' => $course['id'], 'courses_duration_id' => $dur['id']), '', '', 'num_rows');
-                //             if (!$subscribe_free) {
-                //                 $orderNo = ORDER_NUMBER_PREFIX . "" . $userData[0]['id'] . "" . strtotime(date('Y-m-d H:i:s'));
-                //                 $insOrder = array(
-                //                     'order_no' => $orderNo,
-                //                     'user_id' => $userData[0]['id'],
-                //                     'date' => date('Y-m-d'),
-                //                     'order_status' => ORDER_NEW,
-                //                     'payment_status' => 1,
-                //                     'payment_type' => 3,
-                //                     'amount' => 0,
-                //                     'delivery_charges' => 0,
-                //                     'discount_amount' => 0,
-                //                     'gst_amount' => 0,
-                //                     'total_amount' => 0,
-                //                     'extra_note' => 0,
-                //                     'created_by' => $userData[0]['id']
-                //                 );
-
-                //                 $orderID = $this->CommonModel->iudAction('tbl_orders', $insOrder, 'insert');
-                //                 $insCart = array(
-                //                     'user_id' => $userData[0]['id'],
-                //                     'courses_id' => $course['id'],
-                //                     'lesson_id' => 0,
-                //                     'courses_duration_id' => $dur['id'],
-                //                     'type' => 1,
-                //                     'rate' => 0,
-                //                     'order_id' => $orderID,
-                //                     'is_free' => 1
-                //                 );
-
-                //                 $cartStatus = $this->CommonModel->iudAction('tbl_order_details', $insCart, 'insert');
-
-                //                 if ($userData[0]['first_name'] != NULL && $orderID) {
-                //                     $name = $userData[0]['first_name'] . " " . $userData[0]['last_name'];
-                //                     $course_name = $this->CommonModel->getData('tbl_courses', array('id' => $course['id']));
-                //                     $cname = strlen($course_name[0]['title']);
-                //                     if ($cname > 22) {
-                //                         $course_name1 = substr($course_name[0]['title'], 0, 15) . "..(Free)";
-                //                     } else {
-                //                         $course_name1 = $course_name[0]['title'] . "..(Free)";
-                //                     }
-                //                     $verificationMessage = " Dear " . $name . ", Your Course " . $course_name1 . " have been Purchased Successfully. Thanks Team Lalit Dangre";
-                //                     sendMobileMessage($verificationMessage, $userData[0]['mobile_no'], '1507163947849507459');
-
-                //                     //course subscribtion
-
-                //                     $duratoion_no_of_days = $this->CommonModel->getData('tbl_duration_master', array('id' =>  $dur['duration_id']), 'no_of_days', '', 'row_array');
-                //                     $order_date = date('Y-m-d');
-                //                     $endDate = date('Y-m-d', strtotime($order_date . " +" . $duratoion_no_of_days['no_of_days'] . " days"));
-                //                     $order_subscrb = array(
-                //                         'order_id' => $orderID,
-                //                         'order_no' => $orderNo,
-                //                         'user_id' =>  $userData[0]['id'],
-                //                         'type' => 1,
-                //                         'courses_duration_id' => $dur['id'],
-                //                         'course_id' =>  $course['id'],
-                //                         'start_date' => date('Y-m-d'),
-                //                         'end_date' => $endDate,
-                //                         'active' => 1,
-                //                         'no_of_days' => $duratoion_no_of_days['no_of_days'],
-                //                         'created_on' => date('Y-m-d H:i:s'),
-                //                     );
-                //                     $subcribtionStatus = $this->CommonModel->iudAction('tbl_order_courses_subscription', $order_subscrb, 'insert');
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
-
+                sendMobileNotification($userData[0]['notification_token'], $message, $title);
                 unset($userData[0]['last_name']);
+                unset($userData[0]['password']);
                 $response['result'] = true;
                 $response['user_profile_path'] = base_url() . USER_IMAGES;
                 $response['user_detail'] = $userData;
-                $response['message'] = "OTP verification successful, Welcome to " . APP_NAME;
+                if (isset($is_forgot) && $is_forgot == 1) {
+                    $response['message'] = "OTP verification successful, Your password has been updated successfully. Welcome to " . APP_NAME;
+                } else {
+                    $response['message'] = "OTP verification successful, Welcome to " . APP_NAME;
+                }
             } else {
                 $response['result'] = false;
                 $response['message'] = 'OTP does not matched. Please try again';
@@ -429,12 +361,13 @@ class Authentication extends CI_Controller
                     } else {
                         $otpNumber = create6NumRandom();
                         $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
-                        $title   = "OTP Verification";
-                        $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
-                        sendMobileNotification($isUserExist['notification_token'], $message, $title);
+                        // $title   = "OTP Verification";
+                        // $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                        // sendMobileNotification($isUserExist['notification_token'], $message, $title);
                         $response['result'] = true;
                         $response['mobile_verified'] = false;
                         $response['message'] = "Verify Mobile No With OTP";
+                        $response['is_forgot'] = true;
                         // $response['reason'] = "OTP sent to registerd mobile number, please verify";
                     }
                 } else {
@@ -443,6 +376,7 @@ class Authentication extends CI_Controller
                         $response['mobile_verified'] = true;
                     } else {
                         $response['mobile_verified'] = false;
+                        // $response['is_forgot'] = true;
                     }
 
                     $response['message'] = "Password does not match";
@@ -461,12 +395,13 @@ class Authentication extends CI_Controller
                 if ($isUserExist['password'] == $password) {
                     $otpNumber = create6NumRandom();
                     $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
-                    $title   = "OTP Verification";
-                    $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
-                    sendMobileNotification($isUserExist['notification_token'], $message, $title);
+                    // $title   = "OTP Verification";
+                    // $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
+                    // sendMobileNotification($isUserExist['notification_token'], $message, $title);
                     $response['result'] = true;
                     $response['mobile_verified'] = false;
                     $response['message'] = "Verify Mobile No With OTP";
+                    $response['is_forgot'] = true;
                 }
                 // if($isUserExist['is_otp_verified'] == 1){
 
@@ -528,6 +463,7 @@ class Authentication extends CI_Controller
                         $response['mobile_verified'] = true;
                     } else {
                         $response['mobile_verified'] = false;
+                        $response['is_forgot'] = true;
                     }
 
                     $response['message'] = "Password does not match";
@@ -943,5 +879,75 @@ class Authentication extends CI_Controller
         }
 
         echo json_encode($response);
+    }
+    public function verifyMobile()
+    {
+        $login_input = $this->input->post('login_input') ? trim($this->input->post('login_input')) : "";
+        $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
+        $userEmail = "";
+        $userMobile = "";
+        if (!empty($login_input)) {
+            if (ctype_digit($login_input)) {
+                $userMobile = $login_input;   // login by mobile
+            } else {
+                $userEmail = $login_input;    // login by email
+            }
+        }
+        if (empty($imei_no) || empty($login_input)) {
+
+            $response['result'] = false;
+            $response['reason'] = "Invalid input";
+            echo json_encode($response);
+            die;
+        }
+        $update_data = [
+            'is_forgot' => 1,
+            'otp' => create6NumRandom(),
+        ];
+        if ($userMobile != "") {
+            $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile, '', '', '', '', $imei_no);
+
+            if ($isUserExist) {
+                if ($isUserExist['status'] != 1) {
+                    $response['result'] = false;
+                    $response['message'] = "User Not active";
+                    echo json_encode($response);
+                    die;
+                }
+                $this->Common_model->iudAction('tbl_users', $update_data, 'update', array('id' => $isUserExist['id']));
+                $response['result'] = true;
+                $response['is_forgot'] = false;
+                $response['reason'] = "Mobile number is verfiy and otp send to registerd mobile number, please verify";
+                echo json_encode($response);
+                die;
+            } else {
+                $response['result'] = false;
+                $response['reason'] = "USER_NOT_FOUND";
+                echo json_encode($response);
+                die;
+            }
+        } elseif ($userEmail != "") {
+            $isUserExist = $this->Authentication_model->checkUserExist($userEmail, '', '', '', '', '', $imei_no);
+
+            if ($isUserExist) {
+                if ($isUserExist['status'] != 1) {
+                    $response['result'] = false;
+                    $response['message'] = "User Not active";
+                    echo json_encode($response);
+                    die;
+                }
+                $this->Common_model->iudAction('tbl_users', $update_data, 'update', array('id' => $isUserExist['id']));
+                $response['result'] = true;
+                $response['is_forgot'] = false;
+                $response['reason'] = "Email is verfiy and otp send to registerd mobile number, please verify";
+                echo json_encode($response);
+                die;
+            } else {
+                $response['result'] = false;
+                $response['reason'] = "USER_NOT_FOUND";
+                echo json_encode($response);
+                die;
+            }
+        }
     }
 }

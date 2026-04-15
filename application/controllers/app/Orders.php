@@ -524,6 +524,8 @@ class Orders extends CI_Controller
                                 // "razorpay_order_id" =>  1,
                                 "amount" => $amount_paise,
                                 "currency" => "INR",
+                                "email" => $userDetails[0]['email'],
+                                "contact" => $userDetails[0]['mobile_no'],
                                 // "key_id" => RAZORPAY_KEY_ID
                             ]
                         ];
@@ -603,7 +605,10 @@ class Orders extends CI_Controller
         if ($get_current_order_status['payment_status'] == 'CAPTURED' && $get_current_order_status['order_status'] == 'COMPLETED') {
             echo json_encode([
                 "status" => true,
-                "message" => "Payment already processed"
+                "message" => "Payment already processed",
+                "data" => [
+                    "payment_status" => "Payment Done",
+                ]
             ]);
             die;
         }
