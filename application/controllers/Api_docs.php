@@ -18,7 +18,7 @@ class Api_docs extends CI_Controller
     {
         ini_set('display_errors', 0);
         error_reporting(0);
-
+        $i = 0;
         while (ob_get_level()) {
             ob_end_clean();
         }
