@@ -141,6 +141,24 @@ class Courses extends CI_Controller
                             // }
                         }
                     }
+                    $no_of_section = $this->CommonModel->getData(
+                        'tbl_section',
+                        array('course_id' => $course['courses_id']),
+                        'count(id) as total_section',
+                        '',
+                        'row_array'
+                    );
+                    $no_of_watch_section_watched = $this->CommonModel->getData(
+                        'tbl_lesson_user_video_view',
+                        array(
+                            'courses_id' => $course['courses_id'],
+                            'user_id' => $user_id,
+                            'view_video' => 1
+                        ),
+                        'count(DISTINCT section_id) as watched_section',
+                        '',
+                        'row_array'
+                    );
                     $no_of_course_lesson_video = $this->CommonModel->getData(
                         'tbl_lesson_video',
                         array('courses_id' => $course['courses_id']),
@@ -161,10 +179,19 @@ class Courses extends CI_Controller
                         'row_array'
                     );
 
+
                     $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
                     $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
-                    if ($totalVideos > 0) {
-                        $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    // if ($totalVideos > 0) {
+                    //     $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    // } else {
+                    //     $watchPercentage = 0;
+                    // }
+                    $totalSections = (int) $no_of_section['total_section'];
+                    $watchedSections = (int) $no_of_watch_section_watched['watched_section'];
+
+                    if ($totalSections > 0) {
+                        $watchPercentage = ($watchedSections / $totalSections) * 100;
                     } else {
                         $watchPercentage = 0;
                     }
@@ -173,6 +200,8 @@ class Courses extends CI_Controller
                     $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
                     $courseList[$key]['watched_videos'] = $watchedVideos;
                     $courseList[$key]['total_videos'] = $totalVideos;
+                    $courseList[$key]['total_section'] = $no_of_section['total_section'];
+                    $courseList[$key]['watched_section'] = $no_of_watch_section_watched['watched_section'];
                 }
             }
 
@@ -297,6 +326,8 @@ class Courses extends CI_Controller
         $search = trim($this->input->post('search')) ? trim($this->input->post('search')) : "";
         $page     = $this->input->post('page_no') ? $this->input->post('page_no') : 1;
         $login_user_id = $this->regId;
+        // print_r($login_user_id);
+        // die;
         // $reg_email = $this->reg_email;
         // echo "<pre>";
         // print_r($this->user_type);
@@ -352,7 +383,8 @@ class Courses extends CI_Controller
                 $ratingData = $this->getCourseRating($course['id']);
                 $courseList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
                 foreach ($courseList[$key]['duration'] as $key2 => $value2) {
-                    $packege_subscribe = calcuateDate($user_id, $course['id'], 0, 0, $value2['duration_id']);
+                    // $packege_subscribe = calcuateDate($user_id, $course['id'], 0, 0, $value2['duration_id']);
+                    $packege_subscribe = calcuateDate($login_user_id, $course['id'], 0, 0, $value2['duration_id']);
                     // print_r($packege_subscribe);
                     // die;
                     if ($packege_subscribe) {
@@ -391,6 +423,24 @@ class Courses extends CI_Controller
                         // }
                     }
                 }
+                $no_of_section = $this->CommonModel->getData(
+                    'tbl_section',
+                    array('course_id' => $course['courses_id']),
+                    'count(id) as total_section',
+                    '',
+                    'row_array'
+                );
+                $no_of_watch_section_watched = $this->CommonModel->getData(
+                    'tbl_lesson_user_video_view',
+                    array(
+                        'courses_id' => $course['courses_id'],
+                        'user_id' => $login_user_id,
+                        'view_video' => 1
+                    ),
+                    'count(DISTINCT section_id) as watched_section',
+                    '',
+                    'row_array'
+                );
                 $no_of_course_lesson_video = $this->CommonModel->getData(
                     'tbl_lesson_video',
                     array('courses_id' => $course['courses_id']),
@@ -403,7 +453,7 @@ class Courses extends CI_Controller
                     'tbl_lesson_user_video_view',
                     array(
                         'courses_id' => $course['courses_id'],
-                        'user_id' => $user_id,
+                        'user_id' => $login_user_id,
                         'view_video' => 1
                     ),
                     'count(id) as watched_videos',
@@ -413,8 +463,16 @@ class Courses extends CI_Controller
 
                 $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
                 $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
-                if ($totalVideos > 0) {
-                    $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                // if ($totalVideos > 0) {
+                //     $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                // } else {
+                //     $watchPercentage = 0;
+                // }
+                $totalSections = (int) $no_of_section['total_section'];
+                $watchedSections = (int) $no_of_watch_section_watched['watched_section'];
+
+                if ($totalSections > 0) {
+                    $watchPercentage = ($watchedSections / $totalSections) * 100;
                 } else {
                     $watchPercentage = 0;
                 }
@@ -423,6 +481,8 @@ class Courses extends CI_Controller
                 $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
                 $courseList[$key]['watched_videos'] = $watchedVideos;
                 $courseList[$key]['total_videos'] = $totalVideos;
+                $courseList[$key]['total_section'] = $no_of_section['total_section'];
+                $courseList[$key]['watched_section'] = $no_of_watch_section_watched['watched_section'];
             }
         }
 
@@ -517,6 +577,24 @@ class Courses extends CI_Controller
                 foreach ($courseList as $key => $course) {
 
                     $ratingData = $this->getCourseRating($course['courses_id']);
+                    $no_of_section = $this->CommonModel->getData(
+                        'tbl_section',
+                        array('course_id' => $course['courses_id']),
+                        'count(id) as total_section',
+                        '',
+                        'row_array'
+                    );
+                    $no_of_watch_section_watched = $this->CommonModel->getData(
+                        'tbl_lesson_user_video_view',
+                        array(
+                            'courses_id' => $course['courses_id'],
+                            'user_id' => $user_id,
+                            'view_video' => 1
+                        ),
+                        'count(DISTINCT section_id) as watched_section',
+                        '',
+                        'row_array'
+                    );
                     $no_of_course_lesson_video = $this->CommonModel->getData(
                         'tbl_lesson_video',
                         array('courses_id' => $course['courses_id']),
@@ -539,12 +617,25 @@ class Courses extends CI_Controller
 
                     $totalVideos = (int) $no_of_course_lesson_video['total_videos'];
                     $watchedVideos = (int) $no_of_watch_user_video['watched_videos'];
-                    if ($totalVideos == $watchedVideos) {
+
+                    $totalSections = (int) $no_of_section['total_section'];
+                    $watchedSections = (int) $no_of_watch_section_watched['watched_section'];
+
+                    // if ($totalVideos == $watchedVideos) {
+                    //     unset($courseList[$key]);
+                    //     continue;
+                    // }
+                    if ($totalSections == $watchedSections) {
                         unset($courseList[$key]);
                         continue;
                     }
-                    if ($totalVideos > 0) {
-                        $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    // if ($totalVideos > 0) {
+                    //     $watchPercentage = ($watchedVideos / $totalVideos) * 100;
+                    // } else {
+                    //     $watchPercentage = 0;
+                    // }
+                    if ($totalSections > 0) {
+                        $watchPercentage = ($watchedSections / $totalSections) * 100;
                     } else {
                         $watchPercentage = 0;
                     }
@@ -553,6 +644,8 @@ class Courses extends CI_Controller
                     $courseList[$key]['watch_percentage'] = round($watchPercentage, 2);
                     $courseList[$key]['watched_videos'] = $watchedVideos;
                     $courseList[$key]['total_videos'] = $totalVideos;
+                    $courseList[$key]['total_section'] = $no_of_section['total_section'];
+                    $courseList[$key]['watched_section'] = $no_of_watch_section_watched['watched_section'];
                 }
             }
             $courseList = array_values($courseList);
@@ -865,6 +958,32 @@ class Courses extends CI_Controller
             foreach ($courseDetailsList as $key => $value) {
                 $where2['cd.courses_id'] = $courseId;
                 $courseDetailsList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+                $courseDetailsList[$key]['features'] = [
+                    'section_count' => (int) $this->CommonModel->getData(
+                        'tbl_section',
+                        ['course_id' => $courseId, 'deleted_by' => NULL],
+                        'count(id) as total_section',
+                        '',
+                        'row_array'
+                    )['total_section'] ?? 0,
+
+                    'lesson_count' => (int) $this->CommonModel->getData(
+                        'tbl_lesson',
+                        ['course_id' => $courseId, 'deleted_by' => NULL],
+                        'count(id) as total_lesson',
+                        '',
+                        'row_array'
+                    )['total_lesson'] ?? 0,
+
+                    'lesson_video_count' => (int) $this->CommonModel->getData(
+                        'tbl_lesson_video',
+                        ['courses_id' => $courseId, 'deleted_by' => NULL],
+                        'count(id) as lesson_video_count',
+                        '',
+                        'row_array'
+                    )['lesson_video_count'] ?? 0,
+                    'is_certificate' => true
+                ];
                 // print_r($courseDetailsList[$key]['duration']);
                 // die;
                 foreach ($courseDetailsList[$key]['duration'] as $key2 => $value2) {

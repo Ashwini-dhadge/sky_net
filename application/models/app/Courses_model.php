@@ -121,7 +121,7 @@ class Courses_model extends CI_Model
         //$this->db->where('c.status',ACTIVE);
         $this->db->where('c.deleted_by', NULL);
 
-        $this->db->order_by('c.sort_by', 'asc');
+        $this->db->order_by('c.id', 'desc');
 
         $result = $this->db->get();
         // print_r($this->db->last_query());die;
