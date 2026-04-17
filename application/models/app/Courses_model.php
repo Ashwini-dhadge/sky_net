@@ -608,6 +608,7 @@ class Courses_model extends CI_Model
         $this->db->select('ts.id AS section_id,ts.title ,ts.description');
         $this->db->from('tbl_section ts');
         $this->db->where('ts.course_id', $course_id);
+        $this->db->where('ts.deleted_by', NULL);
         return $this->db->get()->result_array();
     }
     public function getLessonsData($course_id, $section_id, $lesson_id)
