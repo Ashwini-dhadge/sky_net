@@ -225,8 +225,8 @@ class Lesson extends CI_Controller
 			'msg' => 'No data found'
 		]);
 	}
-	
-	
+
+
 	public function updateMcq()
 	{
 		$post = $this->input->post();
@@ -582,7 +582,7 @@ class Lesson extends CI_Controller
 			$optionC  = trim($row['D'] ?? '');
 			$optionD  = trim($row['E'] ?? '');
 			$correct  = strtoupper(trim($row['F'] ?? ''));
-			
+
 			if ($question == '') {
 				$errors[] = "Row $index : Question is required.";
 				continue;
@@ -757,7 +757,8 @@ class Lesson extends CI_Controller
 		}
 
 		if (!$validVideo) {
-			die('At least one video is required');
+			$this->session->set_flashdata("error", "Video is required");
+			redirect(ADMIN . "Lesson/addlesson");
 		}
 		$lessonData = [
 			"course_id"   => $course_id,
@@ -924,7 +925,7 @@ class Lesson extends CI_Controller
 		redirect(ADMIN . "Lesson");
 	}
 
-	
+
 
 
 	public function edit($id)
