@@ -120,7 +120,7 @@ function actionUsers(action) {
                 }
                 alert_float('success', response.reason);
             } else {
-                alert_float('error', response.reason);
+                alert_float('success', response.reason);
             }
         }
     });

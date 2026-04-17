@@ -28,6 +28,7 @@ class LessonsModel extends CI_Model
     {
         return $this->db
             ->where('lesson_id', $lesson_id)
+            ->where('deleted_at IS NULL', null, false)
             ->order_by('id', 'DESC')
             ->get('tbl_lesson_mcq')
             ->result_array();

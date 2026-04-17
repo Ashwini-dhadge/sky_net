@@ -49,9 +49,9 @@
     }
 
     .toggle-btn.active {
-        background: #007bff;
+        background: #ed2626;
         color: #fff;
-        border-color: #007bff;
+        border-color: #ed2626;
     }
 
     .upload-box {
@@ -108,233 +108,150 @@
 
 
 
+<?php $certificate = $certificate ?? []; ?>
+
 <form id="certificateForm" enctype="multipart/form-data">
 
     <input type="hidden" name="user_id" value="<?= $user_details['id'] ?>">
+    <input type="hidden" name="id" value="<?= $certificate['id'] ?? '' ?>">
 
     <div class="cert-wrapper">
-
-        <!-- LEFT SIDE FORM -->
         <div class="cert-form">
-
-
             <div class="cert-block">
-
-                <label class="cert-label">
-                    <i class="fas fa-certificate text-primary mr-1"></i>
-                    Certificate Title
-                </label>
-
+                <label class="cert-label">Certificate Title</label>
                 <input type="text"
                     name="certificate_title"
                     class="form-control"
-                    placeholder="Example: Web Development Certificate"
+                    value="<?= $certificate['certificate_title'] ?? '' ?>"
                     required>
-
             </div>
-
-
-
             <div class="cert-block">
-
-                <label class="cert-label">
-                    <i class="fas fa-book text-primary mr-1"></i>
-                    Course Type
-                </label>
-
+                <label class="cert-label">Course Type</label>
                 <div class="toggle-group">
-
-                    <label class="toggle-btn active">
-                        <input type="radio" name="course_type" value="internal" checked>
+                    <label class="toggle-btn <?= empty($certificate['external_course']) ? 'active' : '' ?>">
+                        <input type="radio" name="course_type" value="internal"
+                            <?= empty($certificate['external_course']) ? 'checked' : '' ?>>
                         Internal
                     </label>
-
-                    <label class="toggle-btn">
-                        <input type="radio" name="course_type" value="external">
+                    <label class="toggle-btn <?= !empty($certificate['external_course']) ? 'active' : '' ?>">
+                        <input type="radio" name="course_type" value="external"
+                            <?= !empty($certificate['external_course']) ? 'checked' : '' ?>>
                         External
                     </label>
-
                 </div>
-
-
-                <div class="mt-3" id="internalCourseDiv">
-
+                <div class="mt-3 <?= !empty($certificate['external_course']) ? 'd-none' : '' ?>" id="internalCourseDiv">
                     <select name="course_id" class="form-control">
-
                         <option value="">Select Course</option>
-
                         <?php foreach ($courses as $course) { ?>
-
-                            <option value="<?= $course['id'] ?>">
+                            <option value="<?= $course['id'] ?>"
+                                <?= ($certificate['course_id'] ?? '') == $course['id'] ? 'selected' : '' ?>>
                                 <?= $course['title'] ?>
                             </option>
-
                         <?php } ?>
-
                     </select>
-
                 </div>
-
-
-                <div class="mt-3 d-none" id="externalCourseDiv">
-
+                <div class="mt-3 <?= empty($certificate['external_course']) ? 'd-none' : '' ?>" id="externalCourseDiv">
                     <input type="text"
                         name="external_course"
                         class="form-control"
-                        placeholder="Enter external course name">
-
+                        value="<?= $certificate['external_course'] ?? '' ?>"
+                        placeholder="Enter external course">
                 </div>
-
             </div>
-
-
-
             <div class="cert-block">
+                <label class="cert-label">Result Type</label>
 
-                <label class="cert-label">
-                    <i class="fas fa-chart-bar text-primary mr-1"></i>
-                    Result Type
-                </label>
+                <?php
+                $resultType = 'none';
+                if (!empty($certificate['score']) && !empty($certificate['grade'])) {
+                    $resultType = 'both';
+                } elseif (!empty($certificate['score'])) {
+                    $resultType = 'score';
+                } elseif (!empty($certificate['grade'])) {
+                    $resultType = 'grade';
+                }
+                ?>
 
                 <select id="resultType" class="form-control">
-
-                    <option value="none">No Result</option>
-                    <option value="score">Score</option>
-                    <option value="grade">Grade</option>
-                    <option value="both">Score + Grade</option>
-
+                    <option value="none" <?= $resultType == 'none' ? 'selected' : '' ?>>No Result</option>
+                    <option value="score" <?= $resultType == 'score' ? 'selected' : '' ?>>Score</option>
+                    <option value="grade" <?= $resultType == 'grade' ? 'selected' : '' ?>>Grade</option>
+                    <option value="both" <?= $resultType == 'both' ? 'selected' : '' ?>>Score + Grade</option>
                 </select>
-
                 <div class="row mt-3">
-
-                    <div class="col-md-6 d-none" id="scoreDiv">
-
+                    <div class="col-md-6 <?= ($resultType == 'score' || $resultType == 'both') ? '' : 'd-none' ?>" id="scoreDiv">
                         <input type="number"
                             name="score"
                             class="form-control"
-                            placeholder="Enter Score">
-
+                            value="<?= $certificate['score'] ?? '' ?>"
+                            placeholder="Score">
                     </div>
-
-
-                    <div class="col-md-6 d-none" id="gradeDiv">
-
+                    <div class="col-md-6 <?= ($resultType == 'grade' || $resultType == 'both') ? '' : 'd-none' ?>" id="gradeDiv">
                         <select name="grade" class="form-control">
-
                             <option value="">Select Grade</option>
-                            <option>A+</option>
-                            <option>A</option>
-                            <option>B+</option>
-                            <option>B</option>
-                            <option>C</option>
-
+                            <?php
+                            $grades = ['A+', 'A', 'B+', 'B', 'C'];
+                            foreach ($grades as $g) { ?>
+                                <option value="<?= $g ?>" <?= ($certificate['grade'] ?? '') == $g ? 'selected' : '' ?>>
+                                    <?= $g ?>
+                                </option>
+                            <?php } ?>
                         </select>
-
                     </div>
-
                 </div>
-
             </div>
-
-
-
             <div class="cert-block">
-
-                <label class="cert-label">
-                    <i class="fas fa-calendar-alt text-primary mr-1"></i>
-                    Issue Date
-                </label>
-
+                <label class="cert-label">Issue Date</label>
                 <input type="date"
                     name="issued_date"
-                    class="form-control">
-
+                    class="form-control"
+                    value="<?= $certificate['issued_date'] ?? '' ?>">
             </div>
-
-
-
             <div class="cert-block">
-
-                <label class="cert-label">
-                    <i class="fas fa-upload text-primary mr-1"></i>
-                    Upload Certificate
-                </label>
-
-                <div class="upload-box">
-
-                    <input type="file"
-                        name="certificate_file"
-                        accept=".pdf,.jpg,.jpeg,.png">
-
-                    <div class="small-note">
-                        Allowed: PDF, JPG, PNG
+                <label class="cert-label">Upload Certificate</label>
+                <input type="file"
+                    name="certificate_file"
+                    accept=".pdf,.jpg,.jpeg,.png">
+                <?php if (!empty($certificate['certificate_file'])) { ?>
+                    <div class="mt-2">
+                        <a href="<?= base_url(CERTIFICATE_FILES . $certificate['certificate_file']) ?>" target="_blank">
+                            View Uploaded File
+                        </a>
                     </div>
-
-                </div>
-
+                <?php } ?>
             </div>
-
-
-            <div class="text-left">
-
-                <button type="submit" class="cert-btn">
-
-                    <i class="fas fa-check mr-1"></i>
-                    Generate Certificate
-
-                </button>
-
-            </div>
-
-
+            <button type="submit" class="cert-btn">
+                <?= !empty($certificate['id']) ? 'Update Certificate' : 'Generate Certificate' ?>
+            </button>
         </div>
-
-
-
-        <!-- RIGHT SIDE INFO -->
         <div class="cert-info">
-
             <div class="student-box">
-
-                <img src="<?= base_url(USER_PROFILE . $user_details['image']) ?>"
+                <img src="<?= !empty($user_details['image'])
+                                ? base_url(USER_PROFILE . $user_details['image'])
+                                : base_url('assets/default-user.png') ?>"
                     class="student-img">
-
                 <div>
                     <div class="student-name">
-                        <?= $user_details['first_name'] ?>
+                        <?= $user_details['first_name'] ?? '' ?>
                     </div>
-
                     <div class="small-note">
                         Student ID: <?= $user_details['id'] ?>
                     </div>
                 </div>
-
             </div>
-
-
             <hr>
-
-
             <h6 class="font-weight-bold mb-2">
                 Certificate Guide
             </h6>
-
             <div class="small-note">
-
                 • Select internal course if certificate is for LMS course <br>
                 • Use external option for outside programs<br>
                 • Score or grade is optional<br>
                 • Upload certificate if already generated<br>
-
             </div>
-
-
         </div>
-
     </div>
-
 </form>
-
 
 
 <script>

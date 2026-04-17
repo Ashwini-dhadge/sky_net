@@ -117,35 +117,55 @@ class Category extends CI_Controller
 	public function add()
 	{
 		$post = $this->input->post();
+
 		if ($post) {
 
-			if ($_FILES) {
-                $result = fileUpload(CATEGORY_IMAGES, 'category_icon', false);
-                if ($result['status'] == true) {
-                    $post['category_icon'] = $result['image_name']; 
-                }else{
-                    unset($post['category_icon']);
-                }
-            }
-			if (empty($post['id'])) {
-				if ($this->CommonModel->iudAction('tbl_categories',$post,'insert')) {
-					$this->session->set_flashdata('success', 'Category Added Succesfully!');
-				}else{
-					$this->session->set_flashdata('error','Fail To Add Category!');
-				}
-			}else{
-				if ($this->CommonModel->iudAction('tbl_categories',$post,'update',array('id'=> $post['id']))) {
-					$this->session->set_flashdata('success','Category Updated Succesfully!');
-				}else{
-					$this->session->set_flashdata('error','Fail To Update Category!');
+			$this->db->where('category_name', $post['category_name']);
+
+			if (!empty($post['id'])) {
+				$this->db->where('id !=', $post['id']);
+			}
+
+			$exists = $this->db->get('tbl_categories')->row_array();
+
+			if ($exists) {
+				$this->session->set_flashdata('error', 'Category name already exists!');
+				redirect(base_url(ADMIN . 'Category'));
+				return;
+			}
+
+			if (!empty($_FILES['category_icon']['name'])) {
+
+				$result = fileUpload(CATEGORY_IMAGES, 'category_icon', false);
+
+				if ($result['status'] == true) {
+					$post['category_icon'] = $result['image_name'];
+				} else {
+					unset($post['category_icon']);
 				}
 			}
 
-		}else{
-			$this->session->set_flashdata('error','Something went to wrong!');
+			if (empty($post['id'])) {
+
+				if ($this->CommonModel->iudAction('tbl_categories', $post, 'insert')) {
+					$this->session->set_flashdata('success', 'Category Added Successfully!');
+				} else {
+					$this->session->set_flashdata('error', 'Fail To Add Category!');
+				}
+			}
+			else {
+
+				if ($this->CommonModel->iudAction('tbl_categories', $post, 'update', ['id' => $post['id']])) {
+					$this->session->set_flashdata('success', 'Category Updated Successfully!');
+				} else {
+					$this->session->set_flashdata('error', 'Fail To Update Category!');
+				}
+			}
+		} else {
+			$this->session->set_flashdata('error', 'Something went wrong!');
 		}
 
-        redirect(base_url(ADMIN.'Category'));
+		redirect(base_url(ADMIN . 'Category'));
 	}
 
 

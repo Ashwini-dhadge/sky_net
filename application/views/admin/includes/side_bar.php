@@ -120,6 +120,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="<?= base_url('admin/Certificate'); ?>" class="waves-effect">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certifications</span>
+                    </a>
+                </li>
+                <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="ti-notepad"></i>
                         <span>Reports</span>

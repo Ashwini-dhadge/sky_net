@@ -342,7 +342,7 @@ class User extends CI_Controller
     {
         $post = $this->input->post();
         if ($post['action'] == 1) {
-            $res = $this->CommonModel->iudAction('tbl_users', array('imei_no' => $post['imei_no'], 'commsion_percentage' => $post['commsion_percentage']), 'update', array('id' => $post['id']));
+            $res = $this->CommonModel->iudAction('tbl_users', array('imei_no' => $post['imei_no'], 'commsion_percentage' => $post['commsion_percentage'] ?? null), 'update', array('id' => $post['id']));
         } else {
             $res = $this->CommonModel->iudAction('tbl_users', array('imei_no' => NULL), 'update', array('id' => $post['id']));
         }
@@ -353,7 +353,6 @@ class User extends CI_Controller
             $result['reason'] = false;
             $result['reason'] = "Data updated successfully";
         }
-        $this->session->set_flashdata('success', 'Data updated successfully');
         echo json_encode($result);
     }
     public function listUsersMyCourses()
