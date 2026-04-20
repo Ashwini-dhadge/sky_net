@@ -304,7 +304,7 @@ $(document).ready(function () {
 
         $('#answerEditorModal .modal-title')
             .html(`<i class="fa fa-reply mr-2"></i> Replying to ${replyingToUser}`);
-        $('#answerEditorModal').modal('show');
+             $('#answerEditorModal').modal('show');
     });
 
 

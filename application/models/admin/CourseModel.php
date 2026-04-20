@@ -99,11 +99,8 @@ class CourseModel extends CI_Model
             $this->db->limit($limit, $offset);
         }
 
-
         $this->db->order_by('c.id', 'DESC');
-
         $query = $this->db->get();
-
         return $query->result_array();
     }
 

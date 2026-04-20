@@ -117,6 +117,7 @@ define('FORUM', 'forum' . DS);
 define('VIDEO', 'video' . DS);
 define('PROJECTNAME', 'SKYNET');
 define('STUDENT', 'student' . DS);
+define('CERTIFICATE', 'certificate' . DS);
 
 
 

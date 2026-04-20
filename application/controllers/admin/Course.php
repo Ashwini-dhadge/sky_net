@@ -36,7 +36,7 @@ class Course extends CI_Controller
 
 		$where = [];
 
-		if ($course_type !== '') {
+		if ($course_type !== '' && empty($course_type)) {
 			$where['c.course_type'] = $course_type;
 		}
 

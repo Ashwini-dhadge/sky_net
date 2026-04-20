@@ -332,6 +332,9 @@
 <script>
     $(document).ready(function() {
 
+        // =========================
+        // THUMBNAIL PREVIEW
+        // =========================
         $(document).on('change', '.video-thumb-input', function() {
             const input = this;
             const preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
@@ -346,6 +349,9 @@
         });
 
 
+        // =========================
+        // REPEATER INIT
+        // =========================
         $('#video-repeater').repeater({
             initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
 
@@ -354,6 +360,7 @@
 
                 $item.slideDown();
 
+                // reset fields
                 $item.find('.video-thumb-preview').attr('src', '').hide();
                 $item.find('.video-thumb-input').val('');
 
@@ -377,6 +384,9 @@
         });
 
 
+        // =========================
+        // FORM SUBMIT VALIDATION
+        // =========================
         $("#lessonForm").on("submit", function(e) {
 
             let isValid = true;
@@ -385,6 +395,9 @@
             $(".is-invalid").removeClass("is-invalid");
 
 
+            // =========================
+            // BASIC VALIDATION
+            // =========================
             let course = $("#course_id").val();
             let section = $("#section_id").val();
             let title = $("#title").val().trim();
@@ -408,6 +421,24 @@
             }
 
 
+            // =========================
+            // CHECK TOTAL VIDEOS
+            // =========================
+            let totalVideos = $('#video-repeater [data-repeater-item]:visible').length;
+
+            if (totalVideos === 0) {
+                isValid = false;
+
+                $('#video-repeater').after(
+                    '<small class="error-msg text-danger">At least one video is required</small>'
+                );
+            }
+
+
+            // =========================
+            // CHECK VALID VIDEO EXISTS
+            // =========================
+            let hasValidVideo = false;
 
             $('#video-repeater [data-repeater-item]').each(function() {
 
@@ -420,6 +451,10 @@
                 let vimoCode = vimoCodeInput.val() ? vimoCodeInput.val().trim() : "";
                 let thumb = thumbInput[0] ? thumbInput[0].files.length : 0;
 
+
+                // =========================
+                // FIELD VALIDATION
+                // =========================
                 if (videoTitle === "") {
                     isValid = false;
                     videoTitleInput.addClass('is-invalid')
@@ -438,9 +473,29 @@
                         .after('<small class="error-msg text-danger">Thumbnail required</small>');
                 }
 
+
+                // =========================
+                // CHECK IF ONE VALID VIDEO EXISTS
+                // =========================
+                if (videoTitle !== "" && vimoCode !== "" && (thumb > 0 || oldThumb)) {
+                    hasValidVideo = true;
+                }
+
             });
 
 
+            if (!hasValidVideo) {
+                isValid = false;
+
+                $('#video-repeater').after(
+                    '<small class="error-msg text-danger">Please add at least one complete video</small>'
+                );
+            }
+
+
+            // =========================
+            // FINAL BLOCK SUBMIT
+            // =========================
             if (!isValid) {
                 e.preventDefault();
 

@@ -90,7 +90,10 @@ class Section extends CI_Controller
 		$data['title'] = 'Section Master';
 		$data['active'] = 'Section Master';
 		$this->load->model('/CommonModel');
-		$data['course'] = $this->CommonModel->get('tbl_courses');
+		$data['course'] = $this->CommonModel->getData(
+			'tbl_courses',
+			['status' => 1, 'deleted_by' => NULL]
+		);
 		$this->load->view(ADMIN . SECTION . 'list-section', $data);
 	}
 	//list data function
