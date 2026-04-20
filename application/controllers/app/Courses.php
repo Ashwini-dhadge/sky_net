@@ -1903,7 +1903,15 @@ class Courses extends CI_Controller
             $no_of_question = $this->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'no_of_question,exam_duration', '', 'row_array');
             $count = count($this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']));
             $questionDetailsList = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']);
-
+            // print_r($no_of_question);
+            // echo "<br>";
+            if (isset($no_of_question['no_of_question']) && $no_of_question['no_of_question'] < count($questionDetailsList)) {
+                $no_of_question['no_of_question'] = $no_of_question['no_of_question'];
+            } else {
+                $no_of_question['no_of_question'] = count($questionDetailsList);
+            }
+            // print_r($no_of_question);
+            // die;
             if ($questionDetailsList) {
                 $response['result'] = true;
                 $response['reason'] = "Lesson found";

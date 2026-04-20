@@ -901,7 +901,7 @@ class Authentication extends CI_Controller
             die;
         }
         $update_data = [
-            'is_forgot' => 1,
+            // 'is_forgot' => 1,
             'otp' => create6NumRandom(),
         ];
         if ($userMobile != "") {

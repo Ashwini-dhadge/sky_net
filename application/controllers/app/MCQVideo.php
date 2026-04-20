@@ -22,6 +22,7 @@ class MCQVideo extends CI_Controller
         // die;
         $response = array();
         $userId   = $this->regId;
+
         // $userId = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : '';
         $lesson_id = trim($this->input->post('lesson_id')) ? trim($this->input->post('lesson_id')) : '';
         //get question 
@@ -88,6 +89,15 @@ class MCQVideo extends CI_Controller
 
 
                 $no_of_question = $this->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'no_of_question', '', 'row_array');
+                $db_total_question = $this->CommonModel->getData('tbl_lesson_mcq', ['lesson_id' => $lesson_id, 'deleted_by' => NULL], 'count(id) as no_of_question', '', 'row_array');
+
+                if (isset($no_of_question['no_of_question']) &&  $no_of_question['no_of_question'] < $db_total_question['no_of_question']) {
+                    $no_of_question['no_of_question'] = $no_of_question['no_of_question'];
+                } else {
+                    $no_of_question['no_of_question'] = $db_total_question['no_of_question'];
+                }
+                // print_r($no_of_question);
+                // die;
                 $insArr = array(
                     // 'courses_id' => $getlesson['courses_id'],
                     // 'lesson_id' => $getlesson['lesson_id'],
@@ -102,7 +112,8 @@ class MCQVideo extends CI_Controller
                 );
 
                 // echo $userId;
-                // print_r($insArr);die;
+                // print_r($insArr);
+                // die;
                 if (isset($getlessonVideoMCQ) && !empty($getlessonVideoMCQ)) {
                     $insArr['updated_by'] = $userId;
                     $insArr['updated_at'] = date('Y-m-d H:i:s');
