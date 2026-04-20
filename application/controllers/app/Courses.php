@@ -143,7 +143,7 @@ class Courses extends CI_Controller
                     }
                     $no_of_section = $this->CommonModel->getData(
                         'tbl_section',
-                        array('course_id' => $course['courses_id']),
+                        array('course_id' => $course['courses_id'], 'deleted_by' => NULL),
                         'count(id) as total_section',
                         '',
                         'row_array'
@@ -153,7 +153,8 @@ class Courses extends CI_Controller
                         array(
                             'courses_id' => $course['courses_id'],
                             'user_id' => $user_id,
-                            'view_video' => 1
+                            'view_video' => 1,
+                            'deleted_by' => NULL
                         ),
                         'count(DISTINCT section_id) as watched_section',
                         '',
@@ -161,7 +162,7 @@ class Courses extends CI_Controller
                     );
                     $no_of_course_lesson_video = $this->CommonModel->getData(
                         'tbl_lesson_video',
-                        array('courses_id' => $course['courses_id']),
+                        array('courses_id' => $course['courses_id'], 'deleted_by' => NULL),
                         'count(id) as total_videos',
                         '',
                         'row_array'
@@ -172,7 +173,8 @@ class Courses extends CI_Controller
                         array(
                             'courses_id' => $course['courses_id'],
                             'user_id' => $user_id,
-                            'view_video' => 1
+                            'view_video' => 1,
+                            'deleted_by' => NULL
                         ),
                         'count(id) as watched_videos',
                         '',
@@ -425,7 +427,7 @@ class Courses extends CI_Controller
                 }
                 $no_of_section = $this->CommonModel->getData(
                     'tbl_section',
-                    array('course_id' => $course['courses_id']),
+                    array('course_id' => $course['courses_id'], 'deleted_by' => NULL),
                     'count(id) as total_section',
                     '',
                     'row_array'
@@ -435,7 +437,8 @@ class Courses extends CI_Controller
                     array(
                         'courses_id' => $course['courses_id'],
                         'user_id' => $login_user_id,
-                        'view_video' => 1
+                        'view_video' => 1,
+                        'deleted_by' => NULL
                     ),
                     'count(DISTINCT section_id) as watched_section',
                     '',
@@ -443,7 +446,7 @@ class Courses extends CI_Controller
                 );
                 $no_of_course_lesson_video = $this->CommonModel->getData(
                     'tbl_lesson_video',
-                    array('courses_id' => $course['courses_id']),
+                    array('courses_id' => $course['courses_id'], 'deleted_by' => NULL),
                     'count(id) as total_videos',
                     '',
                     'row_array'
@@ -454,7 +457,8 @@ class Courses extends CI_Controller
                     array(
                         'courses_id' => $course['courses_id'],
                         'user_id' => $login_user_id,
-                        'view_video' => 1
+                        'view_video' => 1,
+                        'deleted_by' => NULL
                     ),
                     'count(id) as watched_videos',
                     '',
@@ -579,7 +583,7 @@ class Courses extends CI_Controller
                     $ratingData = $this->getCourseRating($course['courses_id']);
                     $no_of_section = $this->CommonModel->getData(
                         'tbl_section',
-                        array('course_id' => $course['courses_id']),
+                        array('course_id' => $course['courses_id'], 'deleted_by' => NULL),
                         'count(id) as total_section',
                         '',
                         'row_array'
@@ -589,7 +593,8 @@ class Courses extends CI_Controller
                         array(
                             'courses_id' => $course['courses_id'],
                             'user_id' => $user_id,
-                            'view_video' => 1
+                            'view_video' => 1,
+                            'deleted_by' => NULL
                         ),
                         'count(DISTINCT section_id) as watched_section',
                         '',
@@ -597,7 +602,7 @@ class Courses extends CI_Controller
                     );
                     $no_of_course_lesson_video = $this->CommonModel->getData(
                         'tbl_lesson_video',
-                        array('courses_id' => $course['courses_id']),
+                        array('courses_id' => $course['courses_id'], 'deleted_by' => NULL),
                         'count(id) as total_videos',
                         '',
                         'row_array'
@@ -608,7 +613,8 @@ class Courses extends CI_Controller
                         array(
                             'courses_id' => $course['courses_id'],
                             'user_id' => $user_id,
-                            'view_video' => 1
+                            'view_video' => 1,
+                            'deleted_by' => NULL
                         ),
                         'count(id) as watched_videos',
                         '',

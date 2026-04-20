@@ -24,4 +24,8 @@ class Welcome extends CI_Controller
 		loginId();
 		redirect(base_url() . ADMIN . 'dashboard');
 	}
+	public function terms_condtions()
+	{
+		$this->load->view('terms_and_conditions');
+	}
 }

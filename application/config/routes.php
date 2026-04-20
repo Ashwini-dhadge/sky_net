@@ -123,3 +123,7 @@ $route['my_forum_list'] = 'app/Forum/myForumList';
 //Order
 $route['app_place_order'] = "app/Orders/placeOrder";
 $route['update_payment_status'] = "app/Orders/updateOrderPaymentStatus";
+
+
+// Terms and Conditions
+$route['app_terms_conditions'] = 'Welcome/terms_condtions';

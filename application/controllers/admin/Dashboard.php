@@ -8,7 +8,11 @@ class Dashboard extends CI_Controller
         $this->load->model(ADMIN . 'DashboardModel');
         loginId();
     }
+    public function terms_condtions()
+    {
 
+        $this->load->view('terms_and_conditions');
+    }
     public function index()
     {
 
