@@ -663,7 +663,7 @@ function encode_img_base64($img_path = false, $img_type = 'png')
 function save_final_exam_certificate($lesson_id, $user_id)
 {
     $CI = &get_instance();
-    $CI->load->library('m_pdf');
+    $CI->load->library('M_Pdf');
     $lesson_details = $CI->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'course_id', '', 'row_array');
     $course_details = $CI->CommonModel->getData('tbl_courses', array('id' => $lesson_details['course_id']), 'title', '', 'row_array');
     $certificate_details = $CI->CommonModel->getData('tbl_course_certificate', array('course_id' => $lesson_details['course_id']), '*', '', 'row_array');
