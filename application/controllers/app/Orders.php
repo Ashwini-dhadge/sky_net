@@ -410,7 +410,7 @@ class Orders extends CI_Controller
                             'courses_id' => $courses_id,
                             // 'lesson_id' => $lesson_id,
                             'courses_duration_id' => $coursesDuratoion['id'],
-                            // 'type' => $type,
+                            'type' => 1,
                             'rate' => $total_amount,
                             'order_id' => $orderID
 

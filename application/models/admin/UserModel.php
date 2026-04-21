@@ -279,7 +279,7 @@ class UserModel extends CI_Model
         $this->db->join('tbl_orders o', 'o.id = s.order_id', 'left');
         $this->db->where('s.user_id', $user_id);
         $this->db->where('s.deleted_on', null);
-        $this->db->where('s.active', 1);   
+        $this->db->where('s.active', 1);
 
         return $this->db->get()->result_array();
     }
@@ -321,6 +321,3 @@ class UserModel extends CI_Model
             ->result_array();
     }
 }
-
-
-
