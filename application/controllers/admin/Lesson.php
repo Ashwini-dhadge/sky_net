@@ -26,7 +26,8 @@ class Lesson extends CI_Controller
 		$data['title']  = 'Lesson Master';
 		$data['active'] = 'Lesson Master';
 		$data['course'] = $this->CommonModel->get('tbl_courses', [
-			'deleted_at' => NULL
+			'deleted_at' => NULL,
+			'status' => 1
 		]);
 		$data['section'] = [];
 
@@ -97,6 +98,172 @@ class Lesson extends CI_Controller
 		$this->load->view(ADMIN . 'lesson/mcq_list', $data);
 	}
 
+	// public function saveMcqBulk()
+	// {
+	// 	$user_id = $this->session->userdata('user_id');
+	// 	$jsonRows = $this->input->post('rows');
+
+	// 	if ($jsonRows) {
+
+	// 		$rows = json_decode($jsonRows, true);
+
+	// 		if (!empty($rows) && is_array($rows)) {
+
+	// 			$insertData = [];
+	// 			$seenQuestions = [];
+
+	// 			foreach ($rows as $row) {
+
+	// 				$lesson_id = (int)($row['lesson_id'] ?? 0);
+	// 				$question  = trim($row['question'] ?? '');
+	// 				$optionA   = trim($row['option_a'] ?? '');
+	// 				$optionB   = trim($row['option_b'] ?? '');
+	// 				$optionC   = trim($row['option_c'] ?? '');
+	// 				$optionD   = trim($row['option_d'] ?? '');
+	// 				$correct   = strtoupper(trim($row['correct_option'] ?? ''));
+
+	// 				$filledOptions = 0;
+
+	// 				if ($optionA) $filledOptions++;
+	// 				if ($optionB) $filledOptions++;
+	// 				if ($optionC) $filledOptions++;
+	// 				if ($optionD) $filledOptions++;
+
+	// 				if (
+	// 					$lesson_id <= 0 ||
+	// 					$question === '' ||
+	// 					$filledOptions < 2 ||
+	// 					!in_array($correct, ['A', 'B', 'C', 'D'])
+	// 				) {
+	// 					continue;
+	// 				}
+
+	// 				// correct option must match filled option
+	// 				$correctMap = [
+	// 					'A' => $optionA,
+	// 					'B' => $optionB,
+	// 					'C' => $optionC,
+	// 					'D' => $optionD
+	// 				];
+
+	// 				if (empty($correctMap[$correct])) {
+	// 					continue;
+	// 				}
+
+	// 				$key = strtolower(trim(preg_replace('/\s+/', ' ', $question)));
+
+	// 				if (isset($seenQuestions[$key])) {
+	// 					continue;
+	// 				}
+
+	// 				$seenQuestions[$key] = true;
+
+	// 				$exists = $this->db
+	// 					->where('lesson_id', $lesson_id)
+	// 					->where('question', $question)
+	// 					->count_all_results('tbl_lesson_mcq');
+
+	// 				if ($exists) continue;
+
+	// 				$insertData[] = [
+	// 					'lesson_id'      => $lesson_id,
+	// 					'question'       => $question,
+	// 					'option_a'       => $optionA,
+	// 					'option_b'       => $optionB,
+	// 					'option_c'       => $optionC,
+	// 					'option_d'       => $optionD,
+	// 					'correct_option' => $correct,
+	// 					'created_at'     => date('Y-m-d H:i:s'),
+	// 					'created_by'     => $user_id,
+	// 					'updated_at'     => date('Y-m-d H:i:s'),
+	// 					'updated_by'     => $user_id
+	// 				];
+	// 			}
+
+	// 			if ($insertData) {
+
+	// 				$chunks = array_chunk($insertData, 1000);
+
+	// 				foreach ($chunks as $chunk) {
+	// 					$this->db->insert_batch('tbl_lesson_mcq', $chunk);
+	// 				}
+	// 			}
+
+	// 			echo json_encode([
+	// 				'status' => true,
+	// 				'msg' => 'MCQs uploaded successfully',
+	// 				'inserted' => count($insertData)
+	// 			]);
+
+	// 			exit;
+	// 		}
+	// 	}
+
+
+	// 	$post = $this->input->post();
+	// 	$lesson_id = $post['lesson_id'];
+
+	// 	if (!empty($post['question'])) {
+
+	// 		foreach ($post['question'] as $i => $q) {
+
+	// 			$optA = trim($post['option_a'][$i] ?? '');
+	// 			$optB = trim($post['option_b'][$i] ?? '');
+	// 			$optC = trim($post['option_c'][$i] ?? '');
+	// 			$optD = trim($post['option_d'][$i] ?? '');
+	// 			$correct = strtoupper(trim($post['correct_option'][$i] ?? ''));
+
+	// 			$filledOptions = 0;
+	// 			if ($optA !== '') $filledOptions++;
+	// 			if ($optB !== '') $filledOptions++;
+	// 			if ($optC !== '') $filledOptions++;
+	// 			if ($optD !== '') $filledOptions++;
+
+	// 			if (empty($q) || $filledOptions < 2) {
+	// 				continue;
+	// 			}
+
+	// 			$correctMap = [
+	// 				'A' => $optA,
+	// 				'B' => $optB,
+	// 				'C' => $optC,
+	// 				'D' => $optD
+	// 			];
+
+	// 			if (!isset($correctMap[$correct]) || $correctMap[$correct] === '') {
+	// 				continue;
+	// 			}
+
+	// 			$this->CommonModel->iudAction(
+	// 				'tbl_lesson_mcq',
+	// 				[
+	// 					'lesson_id'      => $lesson_id,
+	// 					'question'       => $q,
+	// 					'option_a'       => $post['option_a'][$i] ?? null,
+	// 					'option_b'       => $post['option_b'][$i] ?? null,
+	// 					'option_c'       => $post['option_c'][$i] ?? null,
+	// 					'option_d'       => $post['option_d'][$i] ?? null,
+	// 					'correct_option' => $post['correct_option'][$i],
+	// 					'created_at'     => date('Y-m-d H:i:s'),
+	// 					'created_by'     => $user_id,
+	// 					'updated_at'     => date('Y-m-d H:i:s'),
+	// 					'updated_by'     => $user_id
+	// 				],
+	// 				'insert'
+	// 			);
+	// 		}
+
+	// 		redirect(ADMIN . 'Lesson/mcq/' . $lesson_id);
+	// 	}
+
+	// 	echo json_encode([
+	// 		'status' => false,
+	// 		'msg' => 'No data found'
+	// 	]);
+	// }
+
+
+
 	public function saveMcqBulk()
 	{
 		$user_id = $this->session->userdata('user_id');
@@ -121,40 +288,74 @@ class Lesson extends CI_Controller
 					$optionD   = trim($row['option_d'] ?? '');
 					$correct   = strtoupper(trim($row['correct_option'] ?? ''));
 
+					$filledOptions = 0;
+					if ($optionA !== '') $filledOptions++;
+					if ($optionB !== '') $filledOptions++;
+					if ($optionC !== '') $filledOptions++;
+					if ($optionD !== '') $filledOptions++;
+
 					if (
 						$lesson_id <= 0 ||
 						$question === '' ||
-						$optionA === '' ||
-						$optionB === '' ||
-						$optionC === '' ||
-						$optionD === '' ||
+						$filledOptions < 2 ||
 						!in_array($correct, ['A', 'B', 'C', 'D'])
 					) {
 						continue;
 					}
 
-					$key = strtolower(preg_replace('/\s+/', ' ', $question));
+					$correctMap = [
+						'A' => $optionA,
+						'B' => $optionB,
+						'C' => $optionC,
+						'D' => $optionD
+					];
 
-					if (isset($seenQuestions[$key])) {
+					if (!isset($correctMap[$correct]) || trim($correctMap[$correct]) === '') {
 						continue;
 					}
 
-					$seenQuestions[$key] = true;
+					$qKey = strtolower(trim(preg_replace('/\s+/', ' ', $question)));
+					$correctAnswer = strtolower(trim($correctMap[$correct]));
 
-					$exists = $this->db
-						->where('lesson_id', $lesson_id)
-						->where('question', $question)
-						->count_all_results('tbl_lesson_mcq');
+					$uniqueKey = $lesson_id . '_' . $qKey . '_' . $correctAnswer;
+
+					if (isset($seenQuestions[$uniqueKey])) {
+						continue;
+					}
+					$seenQuestions[$uniqueKey] = true;
+
+					$this->db->where('lesson_id', $lesson_id);
+
+					$this->db->where(
+						"LOWER(TRIM(question)) = LOWER(TRIM(" . $this->db->escape($qKey) . "))",
+						null,
+						false
+					);
+
+					$this->db->where(
+						"LOWER(TRIM(
+                        CASE correct_option
+                            WHEN 'A' THEN option_a
+                            WHEN 'B' THEN option_b
+                            WHEN 'C' THEN option_c
+                            WHEN 'D' THEN option_d
+                        END
+                    )) = LOWER(TRIM(" . $this->db->escape($correctAnswer) . "))",
+						null,
+						false
+					);
+
+					$exists = $this->db->count_all_results('tbl_lesson_mcq');
 
 					if ($exists) continue;
 
 					$insertData[] = [
 						'lesson_id'      => $lesson_id,
 						'question'       => $question,
-						'option_a'       => $optionA,
-						'option_b'       => $optionB,
-						'option_c'       => $optionC,
-						'option_d'       => $optionD,
+						'option_a'       => $optionA ?: null,
+						'option_b'       => $optionB ?: null,
+						'option_c'       => $optionC ?: null,
+						'option_d'       => $optionD ?: null,
 						'correct_option' => $correct,
 						'created_at'     => date('Y-m-d H:i:s'),
 						'created_by'     => $user_id,
@@ -164,9 +365,7 @@ class Lesson extends CI_Controller
 				}
 
 				if ($insertData) {
-
 					$chunks = array_chunk($insertData, 1000);
-
 					foreach ($chunks as $chunk) {
 						$this->db->insert_batch('tbl_lesson_mcq', $chunk);
 					}
@@ -177,11 +376,9 @@ class Lesson extends CI_Controller
 					'msg' => 'MCQs uploaded successfully',
 					'inserted' => count($insertData)
 				]);
-
 				exit;
 			}
 		}
-
 
 		$post = $this->input->post();
 		$lesson_id = $post['lesson_id'];
@@ -190,24 +387,75 @@ class Lesson extends CI_Controller
 
 			foreach ($post['question'] as $i => $q) {
 
-				if (
-					empty($q) ||
-					empty($post['option_a'][$i]) ||
-					empty($post['option_b'][$i])
-				) {
+				$q = trim($q);
+
+				$optA = trim($post['option_a'][$i] ?? '');
+				$optB = trim($post['option_b'][$i] ?? '');
+				$optC = trim($post['option_c'][$i] ?? '');
+				$optD = trim($post['option_d'][$i] ?? '');
+				$correct = strtoupper(trim($post['correct_option'][$i] ?? ''));
+
+				$filledOptions = 0;
+				if ($optA !== '') $filledOptions++;
+				if ($optB !== '') $filledOptions++;
+				if ($optC !== '') $filledOptions++;
+				if ($optD !== '') $filledOptions++;
+
+				if ($q === '' || $filledOptions < 2) {
 					continue;
 				}
+
+				$correctMap = [
+					'A' => $optA,
+					'B' => $optB,
+					'C' => $optC,
+					'D' => $optD
+				];
+
+				if (!isset($correctMap[$correct]) || trim($correctMap[$correct]) === '') {
+					continue;
+				}
+
+				// normalize
+				$qKey = strtolower(trim(preg_replace('/\s+/', ' ', $q)));
+				$correctAnswer = strtolower(trim($correctMap[$correct]));
+
+				// duplicate check
+				$this->db->where('lesson_id', $lesson_id);
+
+				$this->db->where(
+					"LOWER(TRIM(question)) = LOWER(TRIM(" . $this->db->escape($qKey) . "))",
+					null,
+					false
+				);
+
+				$this->db->where(
+					"LOWER(TRIM(
+                    CASE correct_option
+                        WHEN 'A' THEN option_a
+                        WHEN 'B' THEN option_b
+                        WHEN 'C' THEN option_c
+                        WHEN 'D' THEN option_d
+                    END
+                )) = LOWER(TRIM(" . $this->db->escape($correctAnswer) . "))",
+					null,
+					false
+				);
+
+				$exists = $this->db->count_all_results('tbl_lesson_mcq');
+
+				if ($exists) continue;
 
 				$this->CommonModel->iudAction(
 					'tbl_lesson_mcq',
 					[
 						'lesson_id'      => $lesson_id,
 						'question'       => $q,
-						'option_a'       => $post['option_a'][$i],
-						'option_b'       => $post['option_b'][$i],
-						'option_c'       => $post['option_c'][$i] ?? null,
-						'option_d'       => $post['option_d'][$i] ?? null,
-						'correct_option' => $post['correct_option'][$i],
+						'option_a'       => $optA ?: null,
+						'option_b'       => $optB ?: null,
+						'option_c'       => $optC ?: null,
+						'option_d'       => $optD ?: null,
+						'correct_option' => $correct,
 						'created_at'     => date('Y-m-d H:i:s'),
 						'created_by'     => $user_id,
 						'updated_at'     => date('Y-m-d H:i:s'),
@@ -238,11 +486,11 @@ class Lesson extends CI_Controller
 		$this->CommonModel->iudAction(
 			'tbl_lesson_mcq',
 			[
-				'question'       => $post['question'],
-				'option_a'       => $post['option_a'],
-				'option_b'       => $post['option_b'],
-				'option_c'       => $post['option_c'],
-				'option_d'       => $post['option_d'],
+				'question'       => $post['question'] ?? null,
+				'option_a'       => $post['option_a'] ?? null,
+				'option_b'       => $post['option_b'] ?? null,
+				'option_c'       => $post['option_c'] ?? null,
+				'option_d'       => $post['option_d'] ?? null,
 				'correct_option' => $post['correct_option'],
 				'updated_at'     => date('Y-m-d H:i:s'),
 				'updated_by'     => $this->session->userdata('user_id')
@@ -718,15 +966,7 @@ class Lesson extends CI_Controller
 		$course_id = $this->input->post('course_id');
 		$lesson_id = $this->input->post('lesson_id');
 
-		$this->db->where('course_id', $course_id);
-		$this->db->where('is_final_lesson', '1');
-		$this->db->where('deleted_by IS NULL', null, false);
-
-		if (!empty($lesson_id)) {
-			$this->db->where('id !=', $lesson_id);
-		}
-
-		$exists = $this->db->get('tbl_lesson')->num_rows();
+		$exists = $this->LessonsModel->checkFinalLessonExists($course_id, $lesson_id);
 
 		echo ($exists > 0) ? "exists" : "available";
 	}
@@ -969,6 +1209,16 @@ class Lesson extends CI_Controller
 			return;
 		}
 
+		$lesson = $this->Lesson_model->getLessonById($id);
+
+		if (!$lesson) {
+			echo json_encode([
+				'status'  => false,
+				'message' => 'Lesson not found'
+			]);
+			return;
+		}
+
 		$data = [
 			'deleted_at' => date('Y-m-d H:i:s'),
 			'deleted_by' => loginId()
@@ -982,6 +1232,11 @@ class Lesson extends CI_Controller
 		);
 
 		if ($result) {
+
+			if ($lesson->is_final_lesson == '1') {
+				$this->Lesson_model->assignPreviousFinalLesson($lesson->course_id, $lesson->id);
+			}
+
 			echo json_encode([
 				'status'  => true,
 				'message' => 'Lesson deleted successfully'

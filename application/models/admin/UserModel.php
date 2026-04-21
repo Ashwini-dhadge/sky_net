@@ -320,4 +320,12 @@ class UserModel extends CI_Model
             ->get('tbl_lesson_mcq')
             ->result_array();
     }
+
+    public function getLessonQuestionCount($lesson_id)
+    {
+        return $this->db
+            ->where('lesson_id', $lesson_id)
+            ->where('deleted_at IS NULL', null, false)
+            ->count_all_results('tbl_lesson_mcq');
+    }
 }

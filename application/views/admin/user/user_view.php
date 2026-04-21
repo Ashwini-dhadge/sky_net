@@ -378,7 +378,6 @@
                                                 <?php foreach ($lesson_progress as $row) : ?>
 
                                                     <?php
-                                                    // Safe decode result JSON
                                                     $resultData = [];
                                                     if (!empty($row['result']) && is_string($row['result'])) {
                                                         $decoded = json_decode($row['result'], true);
@@ -387,7 +386,7 @@
                                                         }
                                                     }
 
-                                                    $total_q = $resultData['total_question'] ?? 0;
+                                                    $total_q = $row['total_questions_db'] ?? 0;
                                                     $correct = $resultData['correct_question'] ?? 0;
                                                     $wrong   = $resultData['wrong_question'] ?? 0;
 
@@ -395,7 +394,6 @@
                                                         ? round(($correct / $total_q) * 100)
                                                         : 0;
 
-                                                    // decode solved_mcq
                                                     $solvedData = [];
                                                     if (!empty($row['solved_mcq']) && is_string($row['solved_mcq'])) {
                                                         $decodedSolved = json_decode($row['solved_mcq'], true);
@@ -405,7 +403,6 @@
                                                     }
                                                     ?>
 
-                                                    <!-- SUMMARY BOXES -->
                                                     <div class="row text-center mb-4">
                                                         <div class="col-md-3">
                                                             <div class="border rounded p-3">

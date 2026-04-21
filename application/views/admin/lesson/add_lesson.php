@@ -503,6 +503,13 @@
                     scrollTop: $(".error-msg:first").offset().top - 100
                 }, 500);
             }
+            if (isValid) {
+                isSubmitting = true;
+
+                $('#submitBtn')
+                    .prop('disabled', true)
+                    .text('Submitting...');
+            }
 
         });
 
@@ -681,20 +688,28 @@
             },
             success: function(res) {
 
-                if (res === "exists") {
+                if (res.trim() === "exists") {
+                    $("#submitBtn").prop("disabled", true);
 
-                    $("#lesson_msg").html("Lesson already exists in this section").css("color", "red");
+                    $("#lesson_msg")
+                        .html("Lesson already exists in this section")
+                        .css("color", "red");
+
                     lessonValid = false;
 
                 } else {
 
-                    $("#lesson_msg").html("Lesson title available").css("color", "green");
-                    lessonValid = true;
+                    $("#lesson_msg")
+                        .html("Lesson title available")
+                        .css("color", "green");
 
+                    lessonValid = true;
+                    if (lessonValid) {
+                        $("#submitBtn").prop("disabled", false);
+                    }
                 }
 
                 checkSubmit();
-
             }
         });
 

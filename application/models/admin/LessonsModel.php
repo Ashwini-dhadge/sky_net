@@ -87,4 +87,44 @@ class LessonsModel extends CI_Model
             'data'  => $data
         ];
     }
+
+    public function checkFinalLessonExists($course_id, $lesson_id = null)
+    {
+        $this->db->where('course_id', $course_id);
+        $this->db->where('is_final_lesson', '1');
+        $this->db->where('deleted_by IS NULL', null, false);
+
+        if (!empty($lesson_id)) {
+            $this->db->where('id !=', $lesson_id);
+        }
+
+        return $this->db->get('tbl_lesson')->num_rows();
+    }
+
+    // public function getLessonById($id)
+    // {
+    //     return $this->db
+    //         ->where('id', $id)
+    //         ->where('deleted_by IS NULL', null, false)
+    //         ->get('tbl_lesson')
+    //         ->row();
+    // }
+
+    public function assignPreviousFinalLesson($course_id, $current_id)
+    {
+        $previous = $this->db
+            ->where('course_id', $course_id)
+            ->where('id <', $current_id)
+            ->where('deleted_by IS NULL', null, false)
+            ->order_by('id', 'DESC') 
+            ->limit(1)
+            ->get('tbl_lesson')
+            ->row();
+
+        if ($previous) {
+            $this->db
+                ->where('id', $previous->id)
+                ->update('tbl_lesson', ['is_final_lesson' => '1']);
+        }
+    }
 }

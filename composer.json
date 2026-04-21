@@ -16,7 +16,8 @@
 		"razorpay/razorpay": "2.9",
 		"kreait/firebase-php": "*",
 		"google/auth": "*",
-		"mpdf/mpdf": "*"
+		"mpdf/mpdf": "*",
+		"phpoffice/phpspreadsheet": "*"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
@@ -39,7 +40,7 @@
 	},
 	"config": {
 		"platform": {
-			"php": "8.0.28"
+			"php": "8.2.12"
 		}
 	}
 }

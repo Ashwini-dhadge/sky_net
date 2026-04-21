@@ -135,7 +135,8 @@ class Student extends CI_Controller
             'tbl_courses',
             array(
                 'deleted_by' => null,
-                'course_type' => 0
+                'course_type' => 0,
+                'status' => 1
             )
         );
 
@@ -490,17 +491,25 @@ class Student extends CI_Controller
     public function view($_id, $_role)
     {
         if ($_role == 3) {
+
             $data['title'] = 'Users';
+
             $user = $this->UserModel->getUserData('', 0, 0, 0, 0, $_id);
+
             if ($user) {
+
                 $data['user'] = $user[0];
+
                 $data['forum_questions'] = $this->ForumModel->getQuestionsByUser($_id);
                 $data['qna_list'] = $this->QuestionModel->getUserCourseQna($_id);
                 $data['lesson_progress'] = $this->UserModel->getUserLessonProgress($_id);
+
                 foreach ($data['lesson_progress'] as $key => $row) {
 
                     $questions = $this->UserModel->getLessonQuestions($row['lesson_id']);
                     $data['lesson_progress'][$key]['questions'] = $questions;
+                    $data['lesson_progress'][$key]['total_questions_db'] =
+                        $this->UserModel->getLessonQuestionCount($row['lesson_id']);
                 }
 
                 $data['certificates'] = $this->CommonModel->getData(
@@ -510,6 +519,7 @@ class Student extends CI_Controller
                     '',
                     ''
                 );
+
                 $this->load->view(ADMIN . USER . 'user_view', $data);
             }
         } else {

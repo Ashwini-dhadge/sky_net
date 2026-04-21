@@ -306,11 +306,30 @@
       let errors = [];
 
       if (row.question === '') errors.push('Question required');
-      if (row.option_a === '' || row.option_b === '' || row.option_c === '' || row.option_d === '') {
-        errors.push('All 4 options required');
+      let filledOptions = 0;
+
+      if (row.option_a !== '') filledOptions++;
+      if (row.option_b !== '') filledOptions++;
+      if (row.option_c !== '') filledOptions++;
+      if (row.option_d !== '') filledOptions++;
+
+      if (filledOptions < 2) {
+        errors.push('At least 2 options required');
       }
       if (['A', 'B', 'C', 'D'].indexOf(row.correct_option) === -1) {
         errors.push('Correct option must be A,B,C or D');
+      }
+      if (row.correct_option !== '') {
+        let correctMap = {
+          'A': row.option_a,
+          'B': row.option_b,
+          'C': row.option_c,
+          'D': row.option_d
+        };
+
+        if (!correctMap[row.correct_option] || correctMap[row.correct_option] === '') {
+          errors.push('Correct option must match a filled option');
+        }
       }
 
       let qKey = row.question.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -579,8 +598,15 @@
     editedRows.forEach(function(row) {
       let errors = [];
       if ($.trim(row.question) === '') errors.push('Question required');
-      if ($.trim(row.option_a) === '' || $.trim(row.option_b) === '' || $.trim(row.option_c) === '' || $.trim(row.option_d) === '') {
-        errors.push('All 4 options required');
+      let filledOptions = 0;
+
+      if (row.option_a !== '') filledOptions++;
+      if (row.option_b !== '') filledOptions++;
+      if (row.option_c !== '') filledOptions++;
+      if (row.option_d !== '') filledOptions++;
+
+      if (filledOptions < 2) {
+        errors.push('At least 2 options required');
       }
       if (['A', 'B', 'C', 'D'].indexOf($.trim((row.correct_option || '').toUpperCase())) === -1) {
         errors.push('Correct option must be A,B,C or D');
@@ -616,16 +642,39 @@
     let rows = collectEditedRows();
 
     let hasError = false;
+
     rows.forEach(function(row) {
+
+      let question = $.trim(row.question);
+      let a = $.trim(row.option_a);
+      let b = $.trim(row.option_b);
+      let c = $.trim(row.option_c);
+      let d = $.trim(row.option_d);
+      let correct = $.trim((row.correct_option || '').toUpperCase());
+
+      let filledOptions = 0;
+      if (a !== '') filledOptions++;
+      if (b !== '') filledOptions++;
+      if (c !== '') filledOptions++;
+      if (d !== '') filledOptions++;
+
       if (
-        $.trim(row.question) === '' ||
-        $.trim(row.option_a) === '' ||
-        $.trim(row.option_b) === '' ||
-        $.trim(row.option_c) === '' ||
-        $.trim(row.option_d) === '' || ['A', 'B', 'C', 'D'].indexOf($.trim((row.correct_option || '').toUpperCase())) === -1
+        question === '' ||
+        filledOptions < 2 || ['A', 'B', 'C', 'D'].indexOf(correct) === -1
       ) {
         hasError = true;
       }
+
+      let correctMap = {
+        A: a,
+        B: b,
+        C: c,
+        D: d
+      };
+      if (correct && (!correctMap[correct] || correctMap[correct] === '')) {
+        hasError = true;
+      }
+
     });
 
     if (hasError) {

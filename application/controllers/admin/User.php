@@ -393,7 +393,7 @@ class User extends CI_Controller
                 } else {
                     array_push($row, $user['course_name']);
                 }
-                $order_no = '<a href="' . base_url() . ADMIN . 'Order/view/' . $user['order_id'] . '" title="View" class="text-primary waves-effect waves-ligh " >' . $user['order_no'] . '</a>';
+                $order_no = $user['order_no'];
                 array_push($row, $order_no);
                 if ($user['order_status'] == 'COMPLETED') {
 
