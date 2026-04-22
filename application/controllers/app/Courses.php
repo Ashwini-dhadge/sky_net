@@ -360,11 +360,12 @@ class Courses extends CI_Controller
             $where['category_id'] = $categoryId;
         }
         $where['c.status'] = ACTIVE;
-        if (isset($this->user_type) && !empty($this->user_type)) {
+        // if (isset($this->user_type) && !empty($this->user_type)) {
+        if (isset($this->user_type) && $this->user_type !== '') {
             $where['c.course_type'] = $this->user_type;
         }
         // echo "<pre>";
-        // print_r($where);
+        // print_r($this->user_type);
         // die;
         $where['o.user_id'] = $login_user_id;
         //FRANCHISE
@@ -554,7 +555,8 @@ class Courses extends CI_Controller
                 $where['category_id'] = $categoryId;
             }
             $where['c.status'] = ACTIVE;
-            if (isset($this->user_type) && !empty($this->user_type)) {
+            // if (isset($this->user_type) && !empty($this->user_type)) {
+            if (isset($this->user_type) && $this->user_type !== '') {
                 $where['c.course_type'] = $this->user_type;
             }
             if (isset($user_id) && !empty($user_id)) {

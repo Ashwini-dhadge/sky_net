@@ -238,9 +238,11 @@ class Forum extends CI_Controller
                 $row['is_my_question'] = ($row['user_id'] == $login_user_id);
 
                 // image full path (optional but recommended)
-                $row['image'] = !empty($row['image'])
-                    ? base_url('uploads/users/' . $row['image'])
-                    : null;
+                // $row['image'] = !empty($row['image'])
+                //     ? base_url('uploads/users/' . $row['image'])
+                //     : null;
+
+                $row['image'] = $row['image'] ?? null;
             }
 
             echo json_encode([
@@ -287,9 +289,7 @@ class Forum extends CI_Controller
                 $row['is_my_question'] = ($row['user_id'] == $login_user_id);
 
                 // image full path (optional but recommended)
-                $row['image'] = !empty($row['image'])
-                    ? base_url('uploads/users/' . $row['image'])
-                    : null;
+                $row['image'] = $row['image'] ?? null;
             }
 
             echo json_encode([
@@ -395,9 +395,10 @@ class Forum extends CI_Controller
         $forum['is_my_question'] = ($forum['user_id'] == $login_user_id);
 
         // User image full path
-        $forum['image'] = !empty($forum['image'])
-            ? base_url('uploads/users/' . $forum['image'])
-            : null;
+        // $forum['image'] = !empty($forum['image'])
+        //     ? base_url('uploads/users/' . $forum['image'])
+        //     : null;
+        $row['image'] = $row['image'] ?? null;
 
         // Get comments (your existing logic)
         $comments = $this->Forum_model->getForumComments($forum_id);
