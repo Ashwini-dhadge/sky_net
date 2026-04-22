@@ -36,6 +36,7 @@ class Forum extends CI_Controller
         if (isset($data['status']) && $data['status'] !== '') {
             $where['q.is_approved'] = $data['status'];
         }
+        $columns = [];
         $count = count($this->ForumModel
             ->getNonApprovedQuestions($searchVal, 0, 0, 0, 0, '', $where));
         if ($count) {
@@ -254,8 +255,8 @@ class Forum extends CI_Controller
                 'remark'      => $reason,
                 'updated_at' => date('Y-m-d H:i:s'),
                 'updated_by' => loginId(),
-                'deleted_at' => date('Y-m-d H:i:s'),
-                'deleted_by' => loginId()
+                // 'deleted_at' => date('Y-m-d H:i:s'),
+                // 'deleted_by' => loginId()
             ],
             'update',
             ['id' => $id]
