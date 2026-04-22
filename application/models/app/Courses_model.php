@@ -625,6 +625,7 @@ class Courses_model extends CI_Model
         if ($lesson_id) {  // this is for when lesson detail api use
             $this->db->where('tl.id', $lesson_id);
         }
+        $this->db->order_by('tl.sequence', 'ASC');
         $this->db->where('tl.deleted_by', NULL);
         return $this->db->get()->result_array();
     }

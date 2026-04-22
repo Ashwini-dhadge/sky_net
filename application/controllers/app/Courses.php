@@ -50,7 +50,7 @@ class Courses extends CI_Controller
 
         if ($user_id) {
             $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
-            if (!isset($this->user_type)) {
+            if (!isset($this->user_type) || $this->user_type === '') {
                 $response['result'] = false;
                 $response['message'] = "User Type Not Found";
                 echo json_encode($response);
@@ -338,7 +338,7 @@ class Courses extends CI_Controller
         // if ($user_id) {
         $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
         // if ($this->user_type !== "") {
-        if ($this->user_type == "") {
+        if (!isset($this->user_type) || $this->user_type === '') {
             $response['result'] = false;
             $response['message'] = "User Type Not Found";
             echo json_encode($response);
@@ -532,7 +532,7 @@ class Courses extends CI_Controller
 
         if ($user_id) {
             $user_type = $this->CommonModel->getData('tbl_users', ['id' => $user_id], 'user_type', '', 'row_array');
-            if (empty($this->user_type)) {
+            if (!isset($this->user_type) || $this->user_type === '') {
                 $response['result'] = false;
                 $response['message'] = "User Type Not Found";
                 echo json_encode($response);
