@@ -143,7 +143,7 @@ class Forum extends CI_Controller
             ->where('is_approved', 1)
             ->where('deleted_at IS NULL', null, false)
             ->count_all_results('tbl_forum_questions');
-
+        $columns = [];
 
         if ($totalCount) {
 
