@@ -1170,33 +1170,71 @@ class Lesson extends CI_Controller
 
 	public function edit($id)
 	{
-		$data['title'] = 'Edit Lesson';
+		$data['title']  = 'Edit Lesson';
 		$data['active'] = 'Edit Lesson';
 
-		$data['lesson'] = $this->CommonModel
-			->getData('tbl_lesson', ['id' => $id, 'deleted_by' => NULL]);
+		$lesson = $this->CommonModel->getData(
+			'tbl_lesson',
+			[
+				'id' => $id,
+				'deleted_by' => NULL
+			],
+			'*',
+			'',
+			'result_array'
+		);
 
-		$data['lesson_tags'] = $this->CommonModel
-			->getData('tbl_lesson_sub_title', ['lesson_id' => $id], 'sub_title_name');
+		if (empty($lesson)) {
+			show_404();
+		}
 
-		$data['lesson_videos'] = $this->CommonModel
-			->getData('tbl_lesson_video', ['lesson_id' => $id, 'deleted_by' => NULL]);
+		$data['lesson'] = $lesson;
 
-		$data['course'] = $this->CommonModel
-			->getData('tbl_courses', ['status' => 1, 'deleted_by' => NULL]);
+		$data['lesson_tags'] = $this->CommonModel->getData(
+			'tbl_lesson_sub_title',
+			['lesson_id' => $id],
+			'sub_title_name',
+			'',
+			'result_array'
+		);
+
+		$lesson_videos = $this->CommonModel->getData(
+			'tbl_lesson_video',
+			[
+				'lesson_id'   => $id,
+				'deleted_by'  => NULL
+			],
+			'*',
+			'',
+			'result_array'
+		);
+
+		$data['lesson_videos'] = !empty($lesson_videos) ? $lesson_videos : [];
+
+		$data['course'] = $this->CommonModel->getData(
+			'tbl_courses',
+			[
+				'status'     => 1,
+				'deleted_by' => NULL
+			],
+			'*',
+			'',
+			'result_array'
+		);
 
 		$data['section'] = $this->CommonModel->getData(
 			'tbl_section',
 			[
-				'course_id' => $data['lesson'][0]['course_id'],
+				'course_id'  => $lesson[0]['course_id'],
 				'deleted_by' => NULL
-			]
+			],
+			'*',
+			'',
+			'result_array'
 		);
-
 
 		$this->load->view(ADMIN . LESSON . 'add_lesson', $data);
 	}
-
 	public function deleteLesson()
 	{
 		$id = $this->input->post('id');

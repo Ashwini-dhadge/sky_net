@@ -3,11 +3,11 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="#" class="logo logo-dark">
+                <a href="<?= base_url(); ?>" class="logo logo-dark">
                     <img src="<?= base_url(); ?>assets/images/icon1.png" alt="" height="50" class="">
                 </a>
 
-                <a href="#" class="logo logo-light">
+                <a href="<?= base_url(); ?>" class="logo logo-light">
                     <img src="<?= base_url(); ?>assets/images/icon1.png" alt="" height="50" class="">
                 </a>
                 <!--   <h2 style="color: #fff; margin: 10px;"><?= PROJECTNAME; ?></h2> -->

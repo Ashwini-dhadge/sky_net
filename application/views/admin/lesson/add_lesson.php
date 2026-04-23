@@ -260,9 +260,8 @@
                                             <?php endforeach;
                                             endif; ?>
 
-                                            <!-- Template Item (Hidden) -->
-                                            <div data-repeater-item class="video-card mb-3 p-3">
-
+                                            <!-- Template Item -->
+                                            <div data-repeater-item class="video-card mb-3 p-3" style="display:none;">
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h6 class="video-card-title mb-0">Video Details</h6>
                                                     <button type="button" data-repeater-delete
@@ -330,11 +329,11 @@
 
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script>
+    let lesson_id = "<?= isset($lesson['id']) ? $lesson['id'] : '' ?>";
+</script>
+<script>
     $(document).ready(function() {
 
-        // =========================
-        // THUMBNAIL PREVIEW
-        // =========================
         $(document).on('change', '.video-thumb-input', function() {
             const input = this;
             const preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
@@ -349,18 +348,13 @@
         });
 
 
-        // =========================
-        // REPEATER INIT
-        // =========================
         $('#video-repeater').repeater({
             initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
-
             show: function() {
                 const $item = $(this);
 
                 $item.slideDown();
 
-                // reset fields
                 $item.find('.video-thumb-preview').attr('src', '').hide();
                 $item.find('.video-thumb-input').val('');
 
@@ -384,9 +378,7 @@
         });
 
 
-        // =========================
         // FORM SUBMIT VALIDATION
-        // =========================
         $("#lessonForm").on("submit", function(e) {
 
             let isValid = true;
@@ -395,9 +387,6 @@
             $(".is-invalid").removeClass("is-invalid");
 
 
-            // =========================
-            // BASIC VALIDATION
-            // =========================
             let course = $("#course_id").val();
             let section = $("#section_id").val();
             let title = $("#title").val().trim();
@@ -421,9 +410,6 @@
             }
 
 
-            // =========================
-            // CHECK TOTAL VIDEOS
-            // =========================
             let totalVideos = $('#video-repeater [data-repeater-item]:visible').length;
 
             if (totalVideos === 0) {
@@ -435,12 +421,9 @@
             }
 
 
-            // =========================
-            // CHECK VALID VIDEO EXISTS
-            // =========================
             let hasValidVideo = false;
 
-            $('#video-repeater [data-repeater-item]').each(function() {
+            $('#video-repeater [data-repeater-item]:visible').each(function() {
 
                 let videoTitleInput = $(this).find('input[name*="[video_title]"], input[name="video_title"]');
                 let vimoCodeInput = $(this).find('input[name*="[vimo_code]"], input[name="vimo_code"]');
@@ -451,10 +434,9 @@
                 let vimoCode = vimoCodeInput.val() ? vimoCodeInput.val().trim() : "";
                 let thumb = thumbInput[0] ? thumbInput[0].files.length : 0;
 
-
-                // =========================
-                // FIELD VALIDATION
-                // =========================
+                if (lesson_id && videoTitle === "" && vimoCode === "" && !thumb && oldThumb) {
+                    return true;
+                }
                 if (videoTitle === "") {
                     isValid = false;
                     videoTitleInput.addClass('is-invalid')
@@ -473,10 +455,6 @@
                         .after('<small class="error-msg text-danger">Thumbnail required</small>');
                 }
 
-
-                // =========================
-                // CHECK IF ONE VALID VIDEO EXISTS
-                // =========================
                 if (videoTitle !== "" && vimoCode !== "" && (thumb > 0 || oldThumb)) {
                     hasValidVideo = true;
                 }
@@ -485,24 +463,39 @@
 
 
             if (!hasValidVideo) {
-                isValid = false;
 
-                $('#video-repeater').after(
-                    '<small class="error-msg text-danger">Please add at least one complete video</small>'
-                );
+                if (lesson_id && $('#video-repeater [data-repeater-item]').length > 0) {
+                    hasValidVideo = true;
+                } else {
+                    isValid = false;
+
+                    $('#video-repeater').after(
+                        '<small class="error-msg text-danger">Please add at least one complete video</small>'
+                    );
+                }
             }
 
 
-            // =========================
-            // FINAL BLOCK SUBMIT
-            // =========================
             if (!isValid) {
+
+                if (lesson_id) {
+                    console.log("Edit mode - skipping validation");
+                    return true;
+                }
+
                 e.preventDefault();
 
-                $('html, body').animate({
-                    scrollTop: $(".error-msg:first").offset().top - 100
-                }, 500);
+                let firstError = $(".error-msg:visible").first();
+
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+
+                return false;
             }
+
             if (isValid) {
                 isSubmitting = true;
 
@@ -510,6 +503,7 @@
                     .prop('disabled', true)
                     .text('Submitting...');
             }
+
 
         });
 
@@ -645,9 +639,9 @@
     function checkSubmit() {
 
         if (lessonValid) {
-            $("#submit_btn").prop("disabled", false);
+            $("#submitBtn").prop("disabled", false);
         } else {
-            $("#submit_btn").prop("disabled", true);
+            $("#submitBtn").prop("disabled", true);
         }
 
     }
