@@ -209,9 +209,7 @@ class Authentication extends CI_Controller
                 }
             }
             $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
-            // echo json_encode($userDetail);
-            // die;
-            // echo $this->db->last_query();die;
+
             if (!empty($userDetail)) {
                 $data = array(
                     'reg_type' => $userDetail['role'],
