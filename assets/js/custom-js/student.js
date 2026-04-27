@@ -161,8 +161,8 @@ function listUsersCourses(data = '') {
             { "width": "80px", title: "Order No" },
             { "width": "50px", title: "Status" },
             { "width": "150px", title: "Purchased Date" },
-            { "width": "150px", title: "Expired Date" },
-            { "width": "50px", title: "Is Expired" },
+            // { "width": "150px", title: "Expired Date" },
+            // { "width": "50px", title: "Is Expired" },
 
         ],
 

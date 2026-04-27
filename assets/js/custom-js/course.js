@@ -34,6 +34,7 @@ function listCourse(data = '') {
       { "width": "200px", title: "Category Name" },
       // { "width": "60px", title: "Price" },
       // { "width": "60px", title: "Discount Price" },
+      { "width": "60px", title: "Corse Type" },
       { "width": "60px", title: "Status" },
       { "width": "60px", title: "Action", orderable: false, "className": "text-right" }
 

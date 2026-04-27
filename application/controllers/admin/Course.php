@@ -36,7 +36,7 @@ class Course extends CI_Controller
 
 		$where = [];
 
-		if ($course_type !== '' && empty($course_type)) {
+		if ($course_type !== '' && $course_type !== null) {
 			$where['c.course_type'] = $course_type;
 		}
 
@@ -55,6 +55,12 @@ class Course extends CI_Controller
 				array_push($row, $edit_updateTradeQty);
 				//array_push($row, $Course['Course_name']);
 				array_push($row, $Course['category_name']);
+				if ($Course['course_type'] == 0) {
+					$course_mode = '<span class="text-success ">Offline</span>';
+				} else {
+					$course_mode = '<span class="text-info">Online</span>';
+				}
+				array_push($row, $course_mode);
 				// array_push($row, $Course['title']);
 				// array_push($row, $Course['offer_amount']);
 				if ($Course['status']) {
