@@ -211,6 +211,33 @@
 
 
                             <hr>
+                            <h4 class="header-title mt-4">Add Certification Details</h4>
+                            <hr>
+
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label>Issued By</label>
+                                    <input type="text" class="form-control" name="issued_by" value="<?= (isset($certificate_details)) ? $certificate_details['issued_by'] : ''; ?>">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>Verify URL</label>
+                                    <input type="text" class="form-control" name="verify_url" value="<?= (isset($certificate_details)) ? $certificate_details['verify_url'] : ''; ?>">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>Certificate ID</label>
+                                    <input type="text" class="form-control" name="certification_id" value="<?= (isset($certificate_details)) ? $certificate_details['certification_id'] : ''; ?>">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label>Barcode Logo</label>
+                                    <input type="file" class="form-control" name="barcode_logo" id="barcode_logo"
+                                        accept=".jpg,.jpeg,.png">
+
+                                    <?= (isset($certificate_details)) ? '<img src="' . base_url(CERTIFICATE_IMAGES . $certificate_details['barcode_logo']) . '" width="80">' : ''; ?>
+
+                                </div>
+                            </div>
+
+                            <hr>
 
                             <h4 class="header-title mt-4">Add Download File Resources</h4>
                             <hr>
@@ -301,7 +328,7 @@
 
                             <hr>
 
-                            <button type="submit" id="submit_btn" class="btn btn-primary float-right mb-4" >
+                            <button type="submit" id="submit_btn" class="btn btn-primary float-right mb-4">
                                 Save Course
                             </button>
 
@@ -382,6 +409,15 @@
 
 
     $('#course_image').on('change', function() {
+        var file = this.files[0];
+        if (!file) return;
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if ($.inArray(file.type, allowedTypes) === -1) {
+            alert('Only JPG, JPEG and PNG files are allowed.');
+            $(this).val('');
+        }
+    });
+    $('#barcode_logo').on('change', function() {
         var file = this.files[0];
         if (!file) return;
         var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];

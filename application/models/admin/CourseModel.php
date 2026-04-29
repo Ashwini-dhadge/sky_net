@@ -40,6 +40,14 @@ class CourseModel extends CI_Model
             ->result_array();
     }
 
+    public function getCertificateData($course_id)
+    {
+        return $this->db
+            ->where('course_id', $course_id)
+            ->get('tbl_course_certificate')
+            ->row_array();
+    }
+
     public function getCourseResources()
     {
         return $this->db

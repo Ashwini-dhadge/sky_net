@@ -438,6 +438,7 @@ class Course extends CI_Controller
 			$data['active']   = 'Course';
 			$data['category'] = $this->CommonModel->getData('tbl_categories', ['status' => 1]);
 			$data['duration'] = $this->CommonModel->getData('tbl_duration_master');
+			$data['certificate_details'] = $this->CourseModel->getCertificateData($id);
 			$data['instructors'] = $this->CourseModel->getInstructors();
 
 			// echo '<pre>';
@@ -475,6 +476,23 @@ class Course extends CI_Controller
 			}
 		}
 
+		$course_certificate_details = [
+			'course_id' => $post['id'],
+			'issued_by' => $post['issued_by'],
+			'verify_url' => $post['verify_url'],
+			'certification_id' => $post['certification_id'],
+		];
+
+		if (!empty($_FILES['barcode_logo']['name'])) {
+			$upload = fileUpload(CERTIFICATE_IMAGES, 'barcode_logo', false);
+			if ($upload['status']) {
+				$course_certificate_details['barcode_logo'] = $upload['image_name'];
+			}
+		}
+
+
+
+
 		if (empty($post['id'])) {
 
 			$courseData['created_by'] = loginId();
@@ -483,6 +501,14 @@ class Course extends CI_Controller
 			$courseId = $this->CommonModel->iudAction(
 				'tbl_courses',
 				$courseData,
+				'insert'
+			);
+
+			$course_certificate_details['course_id'] = $courseId;
+
+			$this->CommonModel->iudAction(
+				'tbl_course_certificate',
+				$course_certificate_details,
 				'insert'
 			);
 
@@ -499,6 +525,13 @@ class Course extends CI_Controller
 				$courseData,
 				'update',
 				['id' => $courseId]
+			);
+
+			$this->CommonModel->iudAction(
+				'tbl_course_certificate',
+				$course_certificate_details,
+				'update',
+				['course_id' => $courseId]
 			);
 
 			$this->session->set_flashdata('success', 'Course updated successfully');
