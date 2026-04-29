@@ -32,7 +32,10 @@ class MCQVideo extends CI_Controller
         // die;
         // print_r($_POST);
         // die;
+        // die;
         if ($solved_mcq != "" && $lesson_id) {
+            // die;
+
             $already_submitted_test = $this->Common_model->getData('tbl_lesson_user_video', array('lesson_id' => $lesson_id, 'user_id' => $userId), 'solved_mcq,result', '', 'row_array', 'id', 'desc');
             if (isset($already_submitted_test['solved_mcq']) && !empty($already_submitted_test['solved_mcq'])) {
                 $response['result'] = false;
@@ -54,7 +57,7 @@ class MCQVideo extends CI_Controller
                 $total_question = $correct_question = $wrong_question = 0;
                 foreach ($mcq as $key => $value) {
                     // 	json array [{q_id:1,actual_ans:1,user_ans:3}] 
-                    if ($value['q_id'] && $value['actual_ans'] && $value['user_ans']) {
+                    if ($value['q_id'] && $value['actual_ans'] && ($value['user_ans'] || empty($value['user_ans']))) {
                         $total_question++;
                         $questions_ids[] = $value['q_id'];
                         if ($value['actual_ans'] == $value['user_ans']) {
@@ -88,16 +91,31 @@ class MCQVideo extends CI_Controller
                 // }
 
 
-                $no_of_question = $this->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'no_of_question', '', 'row_array');
-                $db_total_question = $this->CommonModel->getData('tbl_lesson_mcq', ['lesson_id' => $lesson_id, 'deleted_by' => NULL], 'count(id) as no_of_question', '', 'row_array');
+                $no_of_question = $this->CommonModel->getData(
+                    'tbl_lesson',
+                    array('id' => $lesson_id),
+                    'no_of_question',
+                    '',
+                    'row_array'
+                );
 
-                if (isset($no_of_question['no_of_question']) &&  $no_of_question['no_of_question'] < $db_total_question['no_of_question']) {
-                    $no_of_question['no_of_question'] = $no_of_question['no_of_question'];
+                $db_total_question = $this->CommonModel->getData(
+                    'tbl_lesson_mcq',
+                    ['lesson_id' => $lesson_id, 'deleted_by' => NULL],
+                    'count(id) as no_of_question',
+                    '',
+                    'row_array'
+                );
+
+                $lesson_limit = (int) $no_of_question['no_of_question'];
+                $db_limit = (int) $db_total_question['no_of_question'];
+                if ($lesson_limit == 0) {
+                    $final_no_of_question = $db_limit;
+                } elseif ($lesson_limit > $db_limit) {
+                    $final_no_of_question = $db_limit;
                 } else {
-                    $no_of_question['no_of_question'] = $db_total_question['no_of_question'];
+                    $final_no_of_question = $lesson_limit;
                 }
-                // print_r($no_of_question);
-                // die;
                 $insArr = array(
                     // 'courses_id' => $getlesson['courses_id'],
                     // 'lesson_id' => $getlesson['lesson_id'],
@@ -107,7 +125,7 @@ class MCQVideo extends CI_Controller
                     'solved_mcq' => $solved_mcq,
                     'result' => $result_mcq_json,
                     'total_marks' => $total_marks,
-                    'no_of_question' => $no_of_question['no_of_question'],
+                    'no_of_question' => $final_no_of_question,
                     'solved_duration' => $solved_duration,
                 );
 
@@ -134,7 +152,7 @@ class MCQVideo extends CI_Controller
                     $where['lesson_id'] = $lesson_id;
                 }
                 if ($insRes) {
-                    $out_of_marks = $no_of_question['no_of_question'] * VIDEO_QUESTION_CORRECT_PER_MARK;
+                    $out_of_marks = $final_no_of_question * VIDEO_QUESTION_CORRECT_PER_MARK;
                     $percentage = ($total_marks / $out_of_marks) * 100;
                     $final_percentage = number_format((float)$percentage, 2, '.', '');
                     $result_mcq['total_marks'] = $total_marks;

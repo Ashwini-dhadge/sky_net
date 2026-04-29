@@ -164,7 +164,12 @@ class MCQ_model extends CI_Model
             $challenges[$key]['correct_question'] = $mcq_result['correct_question'];
             $challenges[$key]['wrong_question'] = $mcq_result['wrong_question'];
 
-            $percentage = ($challenges[$key]['correct_question'] * VIDEO_QUESTION_CORRECT_PER_MARK / $challenges[$key]['out_of_mark']) * 100;
+            // $percentage = ($challenges[$key]['correct_question'] * VIDEO_QUESTION_CORRECT_PER_MARK / $challenges[$key]['out_of_mark']) * 100;
+            if (!empty($challenges[$key]['correct_question']) && $challenges[$key]['correct_question'] > 0) {
+                $percentage = ($challenges[$key]['correct_question'] * VIDEO_QUESTION_CORRECT_PER_MARK / $challenges[$key]['out_of_mark']) * 100;
+            } else {
+                $percentage = 0;
+            }
             $challenges[$key]['final_percentage'] = number_format((float)$percentage, 2, '.', '');
             // print_r($challenges);
             unset($challenges[$key]['result']);

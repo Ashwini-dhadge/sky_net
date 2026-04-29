@@ -1890,7 +1890,7 @@ class Courses extends CI_Controller
 
     public function getMcqQuestionDetails()
     {
-        authenticateUser();
+        // authenticateUser();
         $response = array();
 
         $lesson_id = trim($this->input->post('lesson_id')) ? trim($this->input->post('lesson_id')) : 0;
@@ -1903,22 +1903,42 @@ class Courses extends CI_Controller
             }
             // die();
             $no_of_question = $this->CommonModel->getData('tbl_lesson', array('id' => $lesson_id), 'no_of_question,exam_duration', '', 'row_array');
-            $count = count($this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']));
-            $questionDetailsList = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, '', $no_of_question['no_of_question']);
+            // echo "<pre>";
             // print_r($no_of_question);
-            // echo "<br>";
-            if (isset($no_of_question['no_of_question']) && $no_of_question['no_of_question'] < count($questionDetailsList)) {
-                $no_of_question['no_of_question'] = $no_of_question['no_of_question'];
+            // die;
+            $requested = (int) $no_of_question['no_of_question'];
+            $questionDetailsList = $this->Courses_model->getLessonVideoMCQData(
+                $where,
+                '',
+                0,
+                0,
+                ''
+            );
+            $available = is_array($questionDetailsList) ? count($questionDetailsList) : 0;
+            if ($requested == 0) {
+                $limit = $available;
+            } elseif ($requested > $available) {
+                $limit = $available;
             } else {
-                $no_of_question['no_of_question'] = count($questionDetailsList);
+                $limit = $requested;
             }
-            // print_r($no_of_question);
+
+
+            $questionDetailsList = $this->Courses_model->getLessonVideoMCQData(
+                $where,
+                '',
+                0,
+                0,
+                '',
+                $limit
+            );
+            // print_r(count($questionDetailsList));
             // die;
             if ($questionDetailsList) {
                 $response['result'] = true;
                 $response['reason'] = "Lesson found";
                 $response['lesson_id'] = $lesson_id;
-                $response['no_of_question'] = $no_of_question['no_of_question'];
+                $response['no_of_question'] = $limit;
                 $response['exam_duration'] = $no_of_question['exam_duration'];
                 $response['question_list'] = $questionDetailsList;
                 // $response['mcq_instructions '] = MCQ_VIDEO_INSTRUCTIONS;
