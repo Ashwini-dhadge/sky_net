@@ -217,20 +217,20 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label>Issued By</label>
-                                    <input type="text" class="form-control" name="issued_by" value="<?= (isset($certificate_details)) ? $certificate_details['issued_by'] : ''; ?>">
+                                    <input type="text" class="form-control" name="issued_by" value="<?= (isset($certificate_details)) ? $certificate_details['issued_by'] : ''; ?>" required>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Verify URL</label>
-                                    <input type="text" class="form-control" name="verify_url" value="<?= (isset($certificate_details)) ? $certificate_details['verify_url'] : ''; ?>">
+                                    <input type="text" class="form-control" name="verify_url" value="<?= (isset($certificate_details)) ? $certificate_details['verify_url'] : ''; ?>" required>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Certificate ID</label>
-                                    <input type="text" class="form-control" name="certification_id" value="<?= (isset($certificate_details)) ? $certificate_details['certification_id'] : ''; ?>">
+                                    <input type="text" class="form-control" name="certification_id" value="<?= (isset($certificate_details)) ? $certificate_details['certification_id'] : ''; ?>" required>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label>Barcode Logo</label>
                                     <input type="file" class="form-control" name="barcode_logo" id="barcode_logo"
-                                        accept=".jpg,.jpeg,.png">
+                                        accept=".jpg,.jpeg,.png" required>
 
                                     <?= (isset($certificate_details)) ? '<img src="' . base_url(CERTIFICATE_IMAGES . $certificate_details['barcode_logo']) . '" width="80">' : ''; ?>
 
