@@ -948,15 +948,23 @@ class Authentication extends CI_Controller
             'otp' => create6NumRandom(),
         ];
         if ($userMobile != "") {
-            $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile, '', '', '', '', $imei_no);
-
+            $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile, '', '', '', '', '');
+            // print_r($isUserExist);
+            // die;
             if ($isUserExist) {
+                if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
+                    $response['result'] = false;
+                    $response['reason'] = "IMEI number does not match the registered device.";
+                    echo json_encode($response);
+                    die;
+                }
                 if ($isUserExist['status'] != 1) {
                     $response['result'] = false;
                     $response['message'] = "User Not active";
                     echo json_encode($response);
                     die;
                 }
+
                 $this->Common_model->iudAction('tbl_users', $update_data, 'update', array('id' => $isUserExist['id']));
                 $response['result'] = true;
                 $response['is_forgot'] = false;
@@ -970,9 +978,15 @@ class Authentication extends CI_Controller
                 die;
             }
         } elseif ($userEmail != "") {
-            $isUserExist = $this->Authentication_model->checkUserExist($userEmail, '', '', '', '', '', $imei_no);
+            $isUserExist = $this->Authentication_model->checkUserExist($userEmail, '', '', '', '', '', '');
 
             if ($isUserExist) {
+                if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
+                    $response['result'] = false;
+                    $response['reason'] = "IMEI number does not match the registered device.";
+                    echo json_encode($response);
+                    die;
+                }
                 if ($isUserExist['status'] != 1) {
                     $response['result'] = false;
                     $response['message'] = "User Not active";
