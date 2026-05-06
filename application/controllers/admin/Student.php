@@ -389,36 +389,34 @@ class Student extends CI_Controller
     {
         $email = $this->input->post('email');
         $user_id = $this->input->post('user_id');
+
         $this->db->where('email', $email);
+        $this->db->where('is_deleted', 0); 
+
         if ($user_id) {
             $this->db->where('id !=', $user_id);
         }
+
         $query = $this->db->get('tbl_users');
 
-        if ($query->num_rows() > 0) {
-            echo "exists";
-        } else {
-            echo "available";
-        }
+        echo ($query->num_rows() > 0) ? "exists" : "available";
     }
 
     public function check_mobile()
     {
         $mobile = $this->input->post('mobile');
         $user_id = $this->input->post('user_id');
+
         $this->db->where('mobile_no', $mobile);
+        $this->db->where('is_deleted', 0); 
 
         if ($user_id) {
-            $this->db->where('id !=', $user_id);
+            $this->db->where('id !=', $user_id); 
         }
 
         $query = $this->db->get('tbl_users');
 
-        if ($query->num_rows() > 0) {
-            echo "exists";
-        } else {
-            echo "available";
-        }
+        echo ($query->num_rows() > 0) ? "exists" : "available";
     }
 
     public function add($id = '')
