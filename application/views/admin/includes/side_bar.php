@@ -12,57 +12,57 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <?php if ($this->session->userdata('role') == 1) { ?>
+                    <!-- MASTER -->
+                    <li class="menu-title">Configuration</li>
+                    <li>
+                        <a href="javascript:void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-cogs"></i>
+                            <span>Masters</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="<?= base_url('admin/Category/') ?>">
+                                    <i class="fas fa-tags"></i> Categories
+                                </a>
+                            </li>
 
-                <!-- MASTER -->
-                <li class="menu-title">Configuration</li>
-                <li>
-                    <a href="javascript:void(0);" class="has-arrow waves-effect">
-                        <i class="fas fa-cogs"></i>
-                        <span>Masters</span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="<?= base_url('admin/Category/') ?>">
-                                <i class="fas fa-tags"></i> Categories
-                            </a>
-                        </li>
-
-                        <!-- <li>
+                            <!-- <li>
                             <a href="<?= base_url('admin/DurationMaster') ?>">
                                 <i class="fas fa-hourglass-half"></i> Durations
                             </a>
                         </li> -->
-                    </ul>
-                </li>
+                        </ul>
+                    </li>
 
-                <!-- USERS -->
-                <li class="menu-title">User Management</li>
-                <li>
-                    <a href="javascript:void(0);" class="has-arrow waves-effect">
-                        <i class="fas fa-users"></i>
-                        <span>User Directory</span>
-                    </a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="<?= base_url('admin/User/') ?>">
-                                <i class="fas fa-user"></i> Users
-                            </a>
-                        </li>
+                    <!-- USERS -->
+                    <li class="menu-title">User Management</li>
+                    <li>
+                        <a href="javascript:void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-users"></i>
+                            <span>User Directory</span>
+                        </a>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="<?= base_url('admin/User/') ?>">
+                                    <i class="fas fa-user"></i> Users
+                                </a>
+                            </li>
 
-                        <li>
-                            <a href="<?= base_url('admin/Student') ?>">
-                                <i class="fas fa-user-graduate"></i> Students
-                            </a>
-                        </li>
+                            <li>
+                                <a href="<?= base_url('admin/Student') ?>">
+                                    <i class="fas fa-user-graduate"></i> Students
+                                </a>
+                            </li>
 
-                        <li>
-                            <a href="<?= base_url('admin/User/index1') ?>">
-                                <i class="fas fa-chalkboard-teacher"></i> Instructors
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
+                            <li>
+                                <a href="<?= base_url('admin/User/index1') ?>">
+                                    <i class="fas fa-chalkboard-teacher"></i> Instructors
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
                 <!-- COURSES -->
                 <li class="menu-title">Learning Management</li>
                 <li>
@@ -156,12 +156,12 @@
 </div>
 
 <?php if ($msg = $this->session->flashdata('success')): ?>
-<div class="alert alert-success" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-            aria-hidden="true">&times;</span></button><?= $msg ?>
-</div>
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button><?= $msg ?>
+    </div>
 <?php endif ?>
 <?php if ($msg = $this->session->flashdata('error')): ?>
-<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"
-        aria-label="Close"><span aria-hidden="true">&times;</span></button><?= $msg ?></div>
+    <div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"
+            aria-label="Close"><span aria-hidden="true">&times;</span></button><?= $msg ?></div>
 <?php endif ?>
