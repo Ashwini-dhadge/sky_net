@@ -13,16 +13,23 @@ class Auth extends CI_Controller
     public function index()
     {
         if ($post_data = $this->input->post()) {
-            $post_data['status'] = 1;       
+            $post_data['status'] = 1;
             $post_data['is_deleted'] = 0;
 
-            if($post_data['status'] == 0){
+            if ($post_data['status'] == 0) {
                 $this->session->set_flashdata('error', 'Your account is inactive');
                 redirect(base_url('admin'));
             }
 
-            if($post_data['is_deleted'] == 1){
+            if ($post_data['is_deleted'] == 1) {
                 $this->session->set_flashdata('error', 'Your account is deleted');
+                redirect(base_url('admin'));
+            }
+            $get_role_id = $this->CommonModel->getData('tbl_users', $post_data);
+            $post_data['role'] = $get_role_id[0]['role'];
+
+            if ($post_data['role'] == 3) {
+                $this->session->set_flashdata('error', 'Student Not Allowed To Login');
                 redirect(base_url('admin'));
             }
 

@@ -564,6 +564,32 @@
         e.target.value = formatted;
     });
 
+    const submitBtn = document.getElementById('submitBtn');
+
+    submitBtn.addEventListener('click', function(e) {
+
+        const value = time.value;
+
+        if (!value) {
+            alert('Please enter exam duration');
+            e.preventDefault();
+            return;
+        }
+
+        let parts = value.split(':');
+
+        let hh = parseInt(parts[0] || 0);
+        let mm = parseInt(parts[1] || 0);
+        let ss = parseInt(parts[2] || 0);
+
+        let totalSeconds = (hh * 3600) + (mm * 60) + ss;
+
+        if (totalSeconds < 60) {
+            alert('Minimum exam duration is 1 minute (00:01:00)');
+            e.preventDefault(); // stop form submit
+        }
+    });
+
     $(document).ready(function() {
 
         const courseSelect = $('select[name="course_id"]');
