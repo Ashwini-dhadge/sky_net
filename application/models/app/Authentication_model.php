@@ -119,7 +119,7 @@ class Authentication_model extends CI_Model
 
             $this->db->where('otp', $otp);
             // $this->db->where('is_block', IS_DELETE_NO);
-
+            $this->db->where('is_deleted', 0);
             if ($mobileNumber) {
                 $this->db->where('mobile_no', $mobileNumber);
             }

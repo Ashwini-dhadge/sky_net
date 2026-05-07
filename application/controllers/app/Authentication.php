@@ -209,7 +209,9 @@ class Authentication extends CI_Controller
                 }
             }
             $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
-
+            // echo "<pre>";
+            // print_r($userDetail);
+            // die;
             if (!empty($userDetail)) {
                 $data = array(
                     'reg_type' => $userDetail['role'],
@@ -308,6 +310,9 @@ class Authentication extends CI_Controller
         if ($userMobile != "" && $password != "" && $imei_no != "" && $notification_token !== "") {
             $isUserExist = $this->Authentication_model->checkUserExist('', $userMobile);
             // echo json_encode($isUserExist);
+            // die;
+            // echo "<pre>";
+            // print_r($isUserExist);
             // die;
             if ($isUserExist) {
 
