@@ -302,7 +302,6 @@ class User extends CI_Controller
     {
         if ($id) {
             if ($this->CommonModel->iudAction('tbl_users', array('is_deleted' => 1), 'update', array('id' => $id))) {
-
                 $this->session->set_flashdata('success', ' Deleted Successfully');
             } else {
                 $this->session->set_flashdata('error', 'Fail to Delete ');
@@ -310,8 +309,18 @@ class User extends CI_Controller
         } else {
             $this->session->set_flashdata('error', INVAILD_INPUT);
         }
+        $role = $this->db->get_where('tbl_users', ['id' => $id])->row()->role;
 
-        redirect(base_url(ADMIN . 'User/index1'));
+        if ($role == 2) {
+            redirect(base_url(ADMIN . 'User'));
+            exit;
+        } elseif ($role == 4) {
+            redirect(base_url(ADMIN . 'User/index1'));
+            exit;
+        } elseif ($role == 3) {
+            redirect(base_url(ADMIN . 'Student'));
+            exit;
+        }
     }
     public function checkMobile()
     {
