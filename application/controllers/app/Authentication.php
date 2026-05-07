@@ -361,7 +361,7 @@ class Authentication extends CI_Controller
                         // $title   = "OTP Verification";
                         // $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
                         // sendMobileNotification($isUserExist['notification_token'], $message, $title);
-                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0), '', '', 'row_array');
+                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0, 'id !='   => $isUserExist['id']), '', '', 'row_array');
                         if (!empty($imei_no_exists['imei_no'])) {
                             $response['result'] = false;
                             $response['message'] = "This device is already linked to another account.";
@@ -485,7 +485,7 @@ class Authentication extends CI_Controller
                         // }
                         // echo "hi";
                         // die;
-                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0), '', '', 'row_array');
+                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0, 'id !='   => $isUserExist['id']), '', '', 'row_array');
                         // print_r($imei_no_exists);
                         // die;
                         if (!empty($imei_no_exists['imei_no'])) {
