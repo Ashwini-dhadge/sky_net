@@ -701,7 +701,17 @@ class Authentication extends CI_Controller
                     'updated_by' => $user_id,
                     'updated_on' => date('Y-m-d H:i:s')
                 );
-                $res1 = $this->Common_model->iudAction('user_profile', $userUpdatedArray1, 'update', array('user_id' => $user_id));
+                // print_r($userUpdatedArray1);
+                // die;
+                $get_data = $this->Common_model->getData('user_profile', array('user_id' => $user_id), '', '', 'row_array');
+                if ($get_data) {
+                    // echo " found";
+                    $res1 = $this->Common_model->iudAction('user_profile', $userUpdatedArray1, 'update', array('user_id' => $user_id));
+                } else {
+                    $res1 =  $this->Common_model->iudAction('user_profile', array('user_id' => $user_id, 'gender' => $gender, 'birthdate' => $birthdate, 'updated_by' => $user_id, 'updated_on' => date('Y-m-d H:i:s')), 'insert');
+                }
+
+
                 //  print_r($this->db->last_query());die;
                 if ($res || $res1) {
                     $userData = $this->Common_model->getUserData(array('u.id' => $user_id));
