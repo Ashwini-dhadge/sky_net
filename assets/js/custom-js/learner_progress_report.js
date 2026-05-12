@@ -32,14 +32,24 @@ function filter_order() {
 	listOrders(data);
 }
 
-function resetFilter() {
-	$("#on_date").val("");
-	$("#from_date").val("");
-	$("#to_date").val("");
+// function resetFilter() {
+// 	$("#on_date").val("");
+// 	$("#from_date").val("");
+// 	$("#to_date").val("");
 
-	var data = {};
+// 	var data = {};
 
-	listOrders(data);
+// 	listOrders(data);
+// }
+function resetFilters() {
+	// Clear all select2 dropdowns
+	$("#course_id").val(null).trigger("change.select2");
+	$("#section_id").val(null).trigger("change.select2");
+	$("#lesson_id").val(null).trigger("change.select2");
+	$("#user_id").val(null).trigger("change.select2");
+
+	// Call main listing function again
+	listOrders();
 }
 var report_sales = "";
 function listOrders(data = "") {

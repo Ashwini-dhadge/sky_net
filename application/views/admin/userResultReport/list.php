@@ -315,10 +315,18 @@
                                                     </div>
 
 
-                                                    <div class="form-group col-md-3 ">
+                                                    <div class="form-group mx-2">
                                                         <div>
                                                             <button class="btn btn-info" onclick="applyResult()">
                                                                 Apply
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="form-group  ">
+                                                        <div>
+                                                            <button class="btn btn-warning" onclick="applyReset()">
+                                                                Reset
                                                             </button>
                                                         </div>
                                                     </div>
@@ -356,8 +364,18 @@
         <!-- Plugins js -->
         <script>
         $(document).ready(function() {
-            renderSectionResultCard([]); // show default empty card
+            // show default empty card
         });
+
+        function applyReset() {
+            // Reset all dropdowns
+            $('#course_id').val('').trigger('change');
+            $('#user_id').val('').trigger('change');
+            $('#section_id').val('').trigger('change');
+            $('#lesson_id').val('').trigger('change');
+
+            renderSectionResultCard([]);
+        }
         $("#course_id").select2({
             placeholder: "Search Course...",
             allowClear: true,

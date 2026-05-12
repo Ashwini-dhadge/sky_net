@@ -12,6 +12,7 @@ class Forum_model extends CI_Model
             ->select('COUNT(*)')
             ->from('tbl_forum_answers')
             ->where('tbl_forum_answers.forum_id = fq.id')
+            ->where('tbl_forum_answers.deleted_by', NULL)
             ->get_compiled_select();
 
         $this->db->select("
@@ -37,8 +38,8 @@ class Forum_model extends CI_Model
             ->from('tbl_forum_questions fq')
             ->join('tbl_users u', 'u.id = fq.user_id', 'left')
             // ->where('fq.is_approved', 1)
+            ->where('fq.deleted_by', NULL)
             ->where('fq.deleted_by', NULL);
-
         // Filter by user_id if passed (my forum list)
         if (!empty($user_id)) {
             $this->db->where('fq.user_id', $user_id);
@@ -105,6 +106,7 @@ class Forum_model extends CI_Model
             ->join('tbl_forum_answers fa', 'fa.forum_id = fq.id', 'left')
             ->where('fq.id', $forum_id)
             ->where('fq.deleted_by', NULL)
+            ->where('fa.deleted_by', NULL)
             ->group_by('fq.id')
             ->get()
             ->row_array();

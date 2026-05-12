@@ -255,10 +255,12 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="form-group col-md-3 ">
-                                                            <div>
+                                                        <div class="form-group col-md-1">
 
-                                                            </div>
+                                                            <button type="button" class="btn btn-warning btn-block"
+                                                                onclick="resetFilters()">
+                                                                Reset
+                                                            </button>
                                                         </div>
 
                                                     </div>

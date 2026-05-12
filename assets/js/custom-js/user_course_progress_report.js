@@ -8,7 +8,14 @@ $("#on_date").on("change", function () {
 		$(".on_date").show();
 	}
 });
+function resetFilters() {
+	// Clear all select2 dropdowns
+	$("#course_id").val(null).trigger("change.select2");
+	$("#user_id").val(null).trigger("change.select2");
 
+	// Call main listing function again
+	listOrders();
+}
 function filter_order() {
 	var course_id = $("#course_id").val();
 	var user_id = $("#user_id").val();

@@ -76,7 +76,7 @@
                                                             <select id="course_type" name="course_type"
                                                                 class="form-control select2" onchange="filter_order()">
                                                                 <option value=""></option>
-                                                                <option value="0">Offile</option>
+                                                                <option value="0">Offline</option>
                                                                 <option value="1">Online</option>
                                                             </select>
                                                         </div>

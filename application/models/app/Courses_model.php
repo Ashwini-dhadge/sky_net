@@ -93,6 +93,8 @@ class Courses_model extends CI_Model
         $this->db->join('tbl_courses_duration cd', 'cd.courses_id =c.id');
         if ($where['c.course_type'] == 0) {
             $this->db->join('tbl_order_courses_subscription o', 'o.course_id =c.id');
+            $this->db->where('o.deleted_by', NULL);
+            $this->db->where('o.active', 1);
         }
         // $this->db->join('tbl_users u1','u1.id =c.id');
 
@@ -174,7 +176,9 @@ class Courses_model extends CI_Model
         }
         //$this->db->where('c.status',ACTIVE);
         $this->db->where('c.deleted_by', NULL);
+        $this->db->where('o.deleted_by', NULL);
 
+        $this->db->where('o.active', 1);  // this condtion for offilne and online both subscription()
         $this->db->order_by('c.sort_by', 'asc');
 
         $result = $this->db->get();
@@ -183,15 +187,24 @@ class Courses_model extends CI_Model
     }
     function getWatchCoursesData($where = array(), $search = "", $limit = 0, $offset = 0, $where1 = "")
     {
-        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,c.skill as skill_name,
+        $this->db->select("c.*,c.id as courses_id,main.category_name as category_name,concat(u.first_name,u.last_name)as instructor_name,u.image as instructor_image ,u.email,u.mobile_no,c.skill as skill_name
         ");
 
         $this->db->from('tbl_lesson_user_video_view uv');
         $this->db->join('tbl_courses c', 'c.id =uv.courses_id');
         $this->db->join('tbl_categories main', 'main.id = c.category_id', 'left');
         $this->db->join('tbl_users u', 'u.id =c.instructor_id');
+        $this->db->join('tbl_order_courses_subscription o', 'o.course_id=uv.courses_id AND o.deleted_by IS NULL AND o.active = 1 AND o.user_id = uv.user_id');
+        // $this->db->join(
+        //     'tbl_order_courses_subscription o',
+        //     'o.course_id = c.id',
+        //     'inner'
+        // );
+        // $this->db->where('o.deleted_by', NULL);
+        // $this->db->where('o.active', 1);
         $this->db->group_by('uv.courses_id');
-
+        // $this->db->where('o.deleted_by', NULL);
+        // $this->db->where('o.active', 1);  // this condtion for offilne and online both subscription()
         if ($search) {
             $searchVal = "(
                         u.first_name like '%$search%' or

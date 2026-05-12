@@ -129,6 +129,7 @@ class SaleReportModel extends CI_Model
     ');
         $this->db->from('tbl_orders o');
         $this->db->join('tbl_users u', 'u.id = o.user_id');
+        $this->db->join('tbl_order_courses_subscription cd', 'cd.order_id = o.id AND cd.active=1', 'left');
         $this->db->join('tbl_order_details od', 'od.order_id = o.id', 'left');
         $this->db->join('tbl_courses c', 'c.id = od.courses_id', 'left');
 

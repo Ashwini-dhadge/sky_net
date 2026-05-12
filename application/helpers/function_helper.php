@@ -669,13 +669,28 @@ function save_final_exam_certificate($lesson_id, $user_id)
     $certificate_details = $CI->CommonModel->getData('tbl_course_certificate', array('course_id' => $lesson_details['course_id']), '*', '', 'row_array');
     $user_details = $CI->CommonModel->getData('tbl_users', array('id' => $user_id), 'first_name,notification_token', '', 'row_array');
     $data = [];
-    $data['course_name']      = $course_details['title'];
-    $data['name']             = $user_details['first_name'];
+    $data['course_name'] = !empty($course_details['title'])
+        ? $course_details['title']
+        : 'N/A';
+
+    $data['name'] = !empty($user_details['first_name'])
+        ? $user_details['first_name']
+        : 'N/A';
     $data['issue_date']       = date('d M Y');
-    $data['issue_by']       = $certificate_details['issued_by'];
-    $data['verify_url']       = $certificate_details['verify_url'];
-    $data['barcode_logo'] = "assets/certificate_image/" . $certificate_details['barcode_logo'];
-    $data['certification_id'] = $certificate_details['certification_id'];
+    $data['issue_by'] = !empty($certificate_details['issued_by'])
+        ? $certificate_details['issued_by']
+        : 'N/A';
+
+    $data['verify_url'] = !empty($certificate_details['verify_url'])
+        ? $certificate_details['verify_url']
+        : '';
+    $data['barcode_logo'] = !empty($certificate_details['barcode_logo'])
+        ? "assets/certificate_image/" . $certificate_details['barcode_logo']
+        : '';
+
+    $data['certification_id'] = !empty($certificate_details['certification_id'])
+        ? $certificate_details['certification_id']
+        : 'N/A';
 
     // print_r($data);
     // die;
