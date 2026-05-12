@@ -30,7 +30,7 @@
                                     </div>
                                     <div>
                                         <h5 class="mb-1 font-weight-bold">
-                                            <?= $user['first_name']; ?> <?= $user['last_name']; ?>
+                                            <?= substr($user['first_name'], 0, 20 ) . "..."; ?> <?= $user['last_name']; ?>
                                         </h5>
 
                                         <span class="badge <?= ($user['status']) ? 'badge-success' : 'badge-secondary' ?>"

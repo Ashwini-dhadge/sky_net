@@ -19,7 +19,6 @@ class QuestionModel extends CI_Model
             'tbl_course_qna.ans_created_at as answered_at'
         ]);
 
-
         $this->db->from('tbl_course_qna');
 
         $this->db->join(
@@ -52,10 +51,16 @@ class QuestionModel extends CI_Model
             $this->db->where('(tbl_course_qna.answer IS NULL OR tbl_course_qna.answer = "")');
         }
 
-        // Unanswered first (PHP 8.2 safe)
-        $this->db->order_by('(tbl_course_qna.answer IS NULL)', 'DESC', false);
-        $this->db->order_by('tbl_course_qna.id', 'DESC');
-
+        // ✅ Latest first
+        $this->db->order_by(
+            '(CASE 
+                WHEN tbl_course_qna.ans_created_at IS NOT NULL 
+                THEN tbl_course_qna.ans_created_at 
+                ELSE tbl_course_qna.created_at 
+            END)',
+            'ASC',
+            false
+        );
         return $this->db->get()->result_array();
     }
 

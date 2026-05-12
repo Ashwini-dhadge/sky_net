@@ -22,7 +22,7 @@ class Forum extends CI_Controller
         $offset = $data['start'];
         $searchVal = $data['search']['value'];
         $sortColIndex = $data['order'][0]['column'];
-        $sortBy = $data['order'][0]['dir'];
+        $sortBy = 'DESC';
         $where = [];
         $status = isset($data['status']) ? (int)$data['status'] : 0;
         // $ForumData = $this->ForumModel->getNonApprovedQuestions(

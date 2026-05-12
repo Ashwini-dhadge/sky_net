@@ -49,7 +49,7 @@ class Student extends CI_Controller
                 $img = ($user['image']) ? $user['image'] : 'no-image.png';
                 //'.base_url().ADMIN.'Users/view/'.$value['id'].'
                 $name_tag = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="View" class="text-primary waves-effect waves-ligh mr-2 " ><img src="' . base_url() . USER_IMAGES . $img . '" width="60" height="60" class="rounded-circle"></a>';
-                $name_tag1 = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="View" class="text-primary waves-effect waves-ligh mr-2 " >' . $user['first_name'] . ' ' . $user['last_name'] . '</a>';
+                $name_tag1 = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="View" class="text-primary waves-effect waves-ligh mr-2 " >' . substr($user['first_name'], 0, 20)  . ' ' . $user['last_name'] . '</a>';
                 array_push($row, $name_tag);
                 array_push($row, $name_tag1);
                 array_push($row, $user['email']);
@@ -391,7 +391,7 @@ class Student extends CI_Controller
         $user_id = $this->input->post('user_id');
 
         $this->db->where('email', $email);
-        $this->db->where('is_deleted', 0); 
+        $this->db->where('is_deleted', 0);
 
         if ($user_id) {
             $this->db->where('id !=', $user_id);
@@ -408,10 +408,10 @@ class Student extends CI_Controller
         $user_id = $this->input->post('user_id');
 
         $this->db->where('mobile_no', $mobile);
-        $this->db->where('is_deleted', 0); 
+        $this->db->where('is_deleted', 0);
 
         if ($user_id) {
-            $this->db->where('id !=', $user_id); 
+            $this->db->where('id !=', $user_id);
         }
 
         $query = $this->db->get('tbl_users');

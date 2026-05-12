@@ -97,31 +97,53 @@ class ForumModel extends CI_Model
         $where = ''
     ) {
 
-
         $this->db->select('q.*, u.first_name as asked_by');
         $this->db->from('tbl_forum_questions q');
         $this->db->join('tbl_users u', 'u.id = q.user_id', 'left');
-
 
         if (!empty($where)) {
             $this->db->where($where);
         }
 
         $this->db->where('q.deleted_by', NULL);
+
         if ($searchVal) {
-            $this->db->where("(
-                q.title LIKE '%$searchVal%' OR
-                u.first_name LIKE '%$searchVal%'
-            )");
+            $this->db->group_start();
+            $this->db->like('q.title', $searchVal);
+            $this->db->or_like('u.first_name', $searchVal);
+            $this->db->group_end();
+        }
+
+        if (isset($where['q.is_approved'])) {
+
+            switch ((int)$where['q.is_approved']) {
+
+                case 0:
+                    $this->db->order_by('q.id', 'DESC');
+                    break;
+
+                case 1:
+                    $this->db->order_by('q.id', 'DESC');
+                    break;
+
+                case 2:
+                    $this->db->order_by('q.id', 'DESC');
+                    break;
+
+                default:
+                    $orderColumn = $this->PendingQuestionColumn[$sortColIndex];
+                    $this->db->order_by($orderColumn, $sortBy);
+                    break;
+            }
+        } else {
+
+            $orderColumn = $this->PendingQuestionColumn[$sortColIndex];
+            $this->db->order_by($orderColumn, $sortBy);
         }
 
         if ($limit || $offset) {
             $this->db->limit($limit, $offset);
         }
-
-
-        $orderColumn = $this->PendingQuestionColumn[$sortColIndex];
-        $this->db->order_by($orderColumn, $sortBy);
 
         return $this->db->get()->result_array();
     }
