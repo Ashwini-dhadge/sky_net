@@ -131,7 +131,8 @@ class QuestionAnswer extends CI_Controller
     {
         $id     = $this->input->post('id');
         $answer = trim($this->input->post('answer'));
-
+        $main_instructor_id = $this->QuestionModel->getLatestInstructorId();
+        // echo'<pre>';print_r($main_instructor_id);die();
         $qna = $this->CommonModel->getData(
             'tbl_course_qna',
             ['id' => $id],
@@ -143,7 +144,8 @@ class QuestionAnswer extends CI_Controller
         $updateData = [
             'answer'         => $answer,
             'ans_updated_at' => date('Y-m-d H:i:s'),
-            'ans_updated_by' => loginId()
+            'ans_updated_by' => loginId(),
+            'main_instructor_id' => $main_instructor_id['id']
         ];
 
         if (empty($qna['answer'])) {

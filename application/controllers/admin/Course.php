@@ -527,12 +527,31 @@ class Course extends CI_Controller
 				['id' => $courseId]
 			);
 
-			$this->CommonModel->iudAction(
+			$checkCertificate = $this->CommonModel->getData(
 				'tbl_course_certificate',
-				$course_certificate_details,
-				'update',
-				['course_id' => $courseId]
+				['course_id' => $courseId],
+				'*',
+				'',
+				'row_array'
 			);
+
+			if ($checkCertificate) {
+
+
+				$this->CommonModel->iudAction(
+					'tbl_course_certificate',
+					$course_certificate_details,
+					'update',
+					['course_id' => $courseId]
+				);
+			} else {
+
+				$this->CommonModel->iudAction(
+					'tbl_course_certificate',
+					$course_certificate_details,
+					'insert'
+				);
+			}
 
 			$this->session->set_flashdata('success', 'Course updated successfully');
 		}

@@ -289,7 +289,6 @@ class Student extends CI_Controller
             }
 
             $order_no = 'ORD' . time() . rand(100, 999);
-
             $orderData = [
                 'order_no' => $order_no,
                 'user_id' => $user_id,
@@ -305,14 +304,26 @@ class Student extends CI_Controller
 
             $order_id = $this->CommonModel->iudAction('tbl_orders', $orderData, 'insert');
 
+            $course_value = $this->CommonModel->getData(
+                'tbl_courses_duration',
+                ['courses_id' => $course_id],
+                'price',
+                '',
+                'row_array',
+                'id',
+                'DESC'
+            );
+            // echo '<pre>';
+            // print_r($course_value);
+            // die;
             $orderDetailsData = [
                 'order_id' => $order_id,
                 'courses_id' => $course_id,
                 'courses_duration_id' => $course_duration_id,
                 'lesson_id' => 0,
                 'qty' => 1,
-                'rate' => 0,
-                'value' => 0,
+                'rate' => $course_value['price'] ?? 0,
+                'value' => $course_value['price'] ?? 0,
                 'user_id' => $user_id,
                 'type' => 1,
                 'is_free' => 1,

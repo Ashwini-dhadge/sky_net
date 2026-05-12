@@ -230,7 +230,7 @@
                                 <div class="form-group col-md-3">
                                     <label>Barcode Logo</label>
                                     <input type="file" class="form-control" name="barcode_logo" id="barcode_logo"
-                                        accept=".jpg,.jpeg,.png" required>
+                                        accept=".jpg,.jpeg,.png">
 
                                     <?= (isset($certificate_details)) ? '<img src="' . base_url(CERTIFICATE_IMAGES . $certificate_details['barcode_logo']) . '" width="80">' : ''; ?>
 
