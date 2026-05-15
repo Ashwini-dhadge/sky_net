@@ -6,7 +6,7 @@
     <title><?= PROJECTNAME ?? ''; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="<?= base_url(); ?>assets/images/icon.png">
+    <link rel="shortcut icon" href="<?= base_url(); ?>assets/images/tabicon.png">
 
     <link href="<?= base_url(); ?>assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <link href="<?= base_url(); ?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />

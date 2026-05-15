@@ -580,10 +580,60 @@ class Course extends CI_Controller
 						'size'     => $_FILES['resources']['size'][$index]['file'],
 					];
 
-					$upload = fileUpload(COURSE_RESOURCES, 'resource_file', false);
+					$this->load->library('upload');
 
-					if ($upload['status']) {
-						$data['file'] = $upload['image_name'];
+					$config['upload_path'] = COURSE_RESOURCES;
+
+					// IMPORTANT
+					$config['allowed_types'] = '*';
+
+					$config['max_size'] = 20480;
+
+					$config['encrypt_name'] = TRUE;
+
+					// DISABLE MIME CHECK
+					$config['detect_mime'] = FALSE;
+					$config['mod_mime_fix'] = FALSE;
+
+					$this->upload->initialize($config);
+
+					$fileName = $_FILES['resource_file']['name'];
+
+					$ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+					$allowedExtensions = [
+						'jpg',
+						'jpeg',
+						'png',
+						'gif',
+						'webp',
+						'bmp',
+						'svg',
+						'pdf',
+						'txt',
+						'csv',
+						'xls',
+						'xlsx',
+						'ppt',
+						'pptx'
+					];
+
+					if (!in_array($ext, $allowedExtensions)) {
+
+						echo 'Invalid file type';
+						die;
+					}
+
+					if ($this->upload->do_upload('resource_file')) {
+
+						$uploadData = $this->upload->data();
+
+						$data['file'] = $uploadData['file_name'];
+					} else {
+
+						echo '<pre>';
+						print_r($this->upload->display_errors());
+						die;
 					}
 				}
 
@@ -603,6 +653,7 @@ class Course extends CI_Controller
 				} else {
 
 					if (!empty($data['file'])) {
+
 						$data['created_at'] = date('Y-m-d H:i:s');
 						$data['created_by'] = loginId();
 
