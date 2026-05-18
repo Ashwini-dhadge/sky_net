@@ -1914,6 +1914,7 @@ class Courses extends CI_Controller
                 0,
                 ''
             );
+
             $available = is_array($questionDetailsList) ? count($questionDetailsList) : 0;
             if ($requested == 0) {
                 $limit = $available;
@@ -1934,6 +1935,16 @@ class Courses extends CI_Controller
             );
             // print_r(count($questionDetailsList));
             // die;
+            foreach ($questionDetailsList as &$q) {
+
+                foreach (['option_a', 'option_b', 'option_c', 'option_d'] as $key) {
+
+                    if (!isset($q[$key]) || trim((string)$q[$key]) === '' || $q[$key] === null) {
+                        unset($q[$key]);
+                    }
+                }
+            }
+            unset($q);
             if ($questionDetailsList) {
                 $response['result'] = true;
                 $response['reason'] = "Lesson found";

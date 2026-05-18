@@ -48,7 +48,11 @@ class QuestionModel extends CI_Model
         }
 
         if ($unanswered) {
+
             $this->db->where('(tbl_course_qna.answer IS NULL OR tbl_course_qna.answer = "")');
+        } else {
+            $this->db->where('tbl_course_qna.answer IS NOT NULL', null, false);
+            $this->db->where('tbl_course_qna.answer !=', '');
         }
 
         // ✅ Latest first
@@ -82,7 +86,8 @@ class QuestionModel extends CI_Model
             ->result_array();
     }
 
-    public function getLatestInstructorId(){
+    public function getLatestInstructorId()
+    {
         $this->db->select('id');
         $this->db->from('tbl_users');
         $this->db->where('role', 4);

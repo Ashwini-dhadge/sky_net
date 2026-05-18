@@ -163,8 +163,21 @@ class MCQVideo extends CI_Controller
                     $response['reason'] = 'Test Submitted Sucessfully';
                     $response['mcq_result'] = $result_mcq;
                     //   print_r($questions_ids);
-                    $response['mcq_question_set'] = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, $questions_ids);
+                    // $response['mcq_question_set'] = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, $questions_ids);
 
+                    $question_set = $this->Courses_model->getLessonVideoMCQData($where, '', 0, 0, $questions_ids);
+                    foreach ($question_set as &$q) {
+
+                        foreach (['option_a', 'option_b', 'option_c', 'option_d'] as $key) {
+
+                            if (!isset($q[$key]) || trim((string)$q[$key]) === '' || $q[$key] === null) {
+                                unset($q[$key]);
+                            }
+                        }
+                    }
+                    unset($q);
+
+                    $response['mcq_question_set'] = $question_set;
                     // add  result in Post Wall
                     //  $total_marks=$correct_question*VIDEO_QUESTION_CORRECT_PER_MARK;
 

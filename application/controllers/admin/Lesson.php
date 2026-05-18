@@ -1247,8 +1247,9 @@ class Lesson extends CI_Controller
 			return;
 		}
 
-		$lesson = $this->Lesson_model->getLessonById($id);
-
+		$lesson = $this->LessonsModel->getLessonById($id);
+		// print_r($lesson);
+		// die;
 		if (!$lesson) {
 			echo json_encode([
 				'status'  => false,
@@ -1271,8 +1272,8 @@ class Lesson extends CI_Controller
 
 		if ($result) {
 
-			if ($lesson->is_final_lesson == '1') {
-				$this->Lesson_model->assignPreviousFinalLesson($lesson->course_id, $lesson->id);
+			if ($lesson['is_final_lesson'] == '1') {
+				$this->LessonsModel->assignPreviousFinalLesson($lesson->course_id, $lesson->id);
 			}
 
 			echo json_encode([

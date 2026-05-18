@@ -382,14 +382,14 @@ class Courses_model extends CI_Model
 
         $this->db->where($where);
         if ($where_in) {
-            $this->db->where_in($where_in);
+            $this->db->where_in('id', $where_in);
         }
 
         $this->db->where('deleted_by', NULL);
 
         // $this->db->order_by('id', 'desc');
-        $this->db->order_by('rand()');
         if ($no_of_question) {
+            $this->db->order_by('rand()');
             $this->db->limit($no_of_question);
         } else {
             // $this->db->limit(DISPLAY_NO_OF_QUESTION);

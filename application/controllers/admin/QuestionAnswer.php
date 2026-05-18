@@ -36,6 +36,8 @@ class QuestionAnswer extends CI_Controller
         $unanswered = $this->input->post('unanswered');
 
         $questions = $this->QuestionModel->getallQuestion($course_id, $unanswered);
+        // echo $this->db->last_query();
+        // die;
         // echo '<pre>'; print_r($questions);die();
         $output = [];
         $sr_no  = 1;

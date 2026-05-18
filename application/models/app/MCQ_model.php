@@ -179,8 +179,21 @@ class MCQ_model extends CI_Model
                     // $where3['lesson_video_id'] = $value['lesson_video_id'];
                     $where3['id'] = $value1['q_id'];
                     $question = $this->getLessonVideoMCQData($where3, '', 0, 0, '', 0);
-                    $question[0]['user_answer'] = $value1['user_ans'];
-                    $question_set[] = $question[0];
+                    // $question[0]['user_answer'] = $value1['user_ans'];
+                    // $question_set[] = $question[0];
+                    if (!empty($question[0])) {
+
+                        // remove empty options
+                        foreach (['option_1', 'option_2', 'option_3', 'option_4'] as $opt) {
+                            if (!isset($question[0][$opt]) || trim((string)$question[0][$opt]) === '' || $question[0][$opt] === null) {
+                                unset($question[0][$opt]);
+                            }
+                        }
+
+                        $question[0]['user_answer'] = $value1['user_ans'];
+
+                        $question_set[] = $question[0];
+                    }
                     // $question_set[] = '';
                 }
             }

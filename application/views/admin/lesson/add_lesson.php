@@ -7,36 +7,36 @@
     rel="stylesheet">
 
 <style>
-    .video-card {
-        border: 1px solid #e1e1e1;
-        border-radius: 8px;
-        background: #fff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        transition: .2s;
-    }
+.video-card {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: .2s;
+}
 
-    .video-card:hover {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    }
+.video-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
 
-    .video-card-title {
-        font-weight: 600;
-        color: #444;
-    }
+.video-card-title {
+    font-weight: 600;
+    color: #444;
+}
 
-    .thumb-box {
-        border-radius: 6px;
-        background: #f7f7f7;
-    }
+.thumb-box {
+    border-radius: 6px;
+    background: #f7f7f7;
+}
 
-    .btn-outline-danger {
-        border-radius: 50%;
-        line-height: 1;
-    }
+.btn-outline-danger {
+    border-radius: 50%;
+    line-height: 1;
+}
 
-    .cke_notification {
-        display: none;
-    }
+.cke_notification {
+    display: none;
+}
 </style>
 
 <div class="main-content">
@@ -61,39 +61,42 @@
                             <div class="card-body">
                                 <h4 class="mt-0 header-title m-b-20"><?= $title; ?></h4>
                                 <hr>
-                                <form id="lessonForm" class="repeater" action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>"
-                                    method="post" enctype="multipart/form-data">
-                                    <input type="hidden" name="id" id="lesson_id" value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
+                                <form id="lessonForm" class="repeater"
+                                    action="<?= base_url(ADMIN . 'Lesson/storelesson'); ?>" method="post"
+                                    enctype="multipart/form-data">
+                                    <input type="hidden" name="id" id="lesson_id"
+                                        value="<?= isset($lesson) ? $lesson['id'] : ''; ?>">
                                     <div class="row">
                                         <div class="col-lg-4 col-12" style="border-right:1px dashed gray;">
                                             <div class="row">
                                                 <div class="form-group col-md-12">
                                                     <label>Select Course</label>
-                                                    <select class="form-control select2" name="course_id" id="course_id" required>
+                                                    <select class="form-control select2" name="course_id" id="course_id"
+                                                        required>
                                                         <option value="">Select Course</option>
                                                         <?php foreach ($course as $c) { ?>
-                                                            <option value="<?= $c['id'] ?>"
-                                                                <?php
-                                                                if (isset($lesson) && $lesson['course_id'] == $c['id']) {
-                                                                    echo "selected";
-                                                                } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
-                                                                    echo "selected";
-                                                                }
-                                                                ?>>
-                                                                <?= $c['title']; ?>
-                                                            </option>
+                                                        <option value="<?= $c['id'] ?>" <?php
+                                                                                            if (isset($lesson) && $lesson['course_id'] == $c['id']) {
+                                                                                                echo "selected";
+                                                                                            } elseif (isset($selected_course_id) && $selected_course_id == $c['id']) {
+                                                                                                echo "selected";
+                                                                                            }
+                                                                                            ?>>
+                                                            <?= $c['title']; ?>
+                                                        </option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Select Section</label>
-                                                    <select class="form-control select2" name="section_id" id="section_id" required>
+                                                    <select class="form-control select2" name="section_id"
+                                                        id="section_id" required>
                                                         <option value="">Select Section</option>
                                                         <?php foreach ($section as $s) { ?>
-                                                            <option value="<?= $s['id'] ?>"
-                                                                <?= (isset($lesson) && $lesson['section_id'] == $s['id']) ? 'selected' : '' ?>>
-                                                                <?= $s['title']; ?>
-                                                            </option>
+                                                        <option value="<?= $s['id'] ?>"
+                                                            <?= (isset($lesson) && $lesson['section_id'] == $s['id']) ? 'selected' : '' ?>>
+                                                            <?= $s['title']; ?>
+                                                        </option>
                                                         <?php } ?>
 
                                                     </select>
@@ -119,42 +122,39 @@
                                                         multiple>
                                                         <?php if (!empty($lesson_tags)) {
                                                             foreach ($lesson_tags as $t) { ?>
-                                                                <option value="<?= trim($t['sub_title_name']) ?>" selected>
-                                                                    <?= trim($t['sub_title_name']) ?>
-                                                                </option>
+                                                        <option value="<?= trim($t['sub_title_name']) ?>" selected>
+                                                            <?= trim($t['sub_title_name']) ?>
+                                                        </option>
                                                         <?php }
                                                         } ?>
                                                     </select>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>No. of Questions</label>
-                                                    <input class="form-control" type="text" name="no_of_question" id="no_of_question"
+                                                    <input class="form-control" type="number" min="1"
+                                                        name="no_of_question" id="no_of_question"
                                                         value="<?= isset($lesson) ? $lesson['no_of_question'] : ''; ?>"
-                                                        placeholder="Enter no. of questions">
+                                                        placeholder="Enter no. of questions" required>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>MCQ Exam Duration (HH:MM:SS)</label>
-                                                    <input type="text" id="time" placeholder="HH:MM:SS" maxlength="8" class="form-control" name="exam_duration" value="<?= isset($lesson) ? $lesson['exam_duration'] : ''; ?>">
+                                                    <input type="text" id="time" placeholder="HH:MM:SS" maxlength="8"
+                                                        class="form-control" name="exam_duration"
+                                                        value="<?= isset($lesson) ? $lesson['exam_duration'] : ''; ?>">
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label>Is this Final Lesson?</label><br>
 
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input"
-                                                            type="radio"
-                                                            name="is_final_lesson"
-                                                            id="final_yes"
-                                                            value="1"
+                                                        <input class="form-check-input" type="radio"
+                                                            name="is_final_lesson" id="final_yes" value="1"
                                                             <?= isset($lesson['is_final_lesson']) && $lesson['is_final_lesson'] == '1' ? 'checked' : ''; ?>>
                                                         <label class="form-check-label" for="final_yes">Yes</label>
                                                     </div>
 
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input"
-                                                            type="radio"
-                                                            name="is_final_lesson"
-                                                            id="final_no"
-                                                            value="0"
+                                                        <input class="form-check-input" type="radio"
+                                                            name="is_final_lesson" id="final_no" value="0"
                                                             <?= !isset($lesson['is_final_lesson']) || $lesson['is_final_lesson'] == '0' ? 'checked' : ''; ?>>
                                                         <label class="form-check-label" for="final_no">No</label>
                                                     </div>
@@ -181,82 +181,80 @@
                                             <!-- Existing Videos -->
                                             <?php if (!empty($lesson_videos)) :
                                                 foreach ($lesson_videos as $vid) : ?>
-                                                    <div data-repeater-item class="video-card mb-3 p-3">
+                                            <div data-repeater-item class="video-card mb-3 p-3">
 
-                                                        <div class="d-flex justify-content-between mb-2">
-                                                            <h6 class="video-card-title mb-0">Video Details</h6>
-                                                            <button type="button" data-repeater-delete
-                                                                class="btn btn-sm btn-outline-danger">✕</button>
-                                                        </div>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <h6 class="video-card-title mb-0">Video Details</h6>
+                                                    <button type="button" data-repeater-delete
+                                                        class="btn btn-sm btn-outline-danger">✕</button>
+                                                </div>
 
-                                                        <div class="row">
-                                                            <!-- Thumbnail -->
-                                                            <div class="col-md-3 text-center">
-                                                                <div class="thumb-box border p-2">
+                                                <div class="row">
+                                                    <!-- Thumbnail -->
+                                                    <div class="col-md-3 text-center">
+                                                        <div class="thumb-box border p-2">
 
-                                                                    <?php
+                                                            <?php
                                                                     $thumbPath = FCPATH . 'assets/uploads/thumbnails/video_thumbnails/' . $vid['video_thumbnail'];
                                                                     $thumbUrl  = base_url('assets/uploads/thumbnails/video_thumbnails/' . $vid['video_thumbnail']);
                                                                     ?>
 
-                                                                    <?php if (!empty($vid['video_thumbnail']) && file_exists($thumbPath)) : ?>
-                                                                        <img class="video-thumb-preview w-100"
-                                                                            src="<?= $thumbUrl; ?>"
-                                                                            style="height:150px; object-fit:contain;">
-                                                                    <?php else : ?>
-                                                                        <img class="video-thumb-preview w-100"
-                                                                            style="height:150px; object-fit:contain; display:none;">
-                                                                    <?php endif; ?>
-                                                                </div>
+                                                            <?php if (!empty($vid['video_thumbnail']) && file_exists($thumbPath)) : ?>
+                                                            <img class="video-thumb-preview w-100"
+                                                                src="<?= $thumbUrl; ?>"
+                                                                style="height:150px; object-fit:contain;">
+                                                            <?php else : ?>
+                                                            <img class="video-thumb-preview w-100"
+                                                                style="height:150px; object-fit:contain; display:none;">
+                                                            <?php endif; ?>
+                                                        </div>
 
-                                                                <input type="file" name="video_thumbnail"
-                                                                    class="video-thumb-input form-control mt-2">
+                                                        <input type="file" name="video_thumbnail"
+                                                            class="video-thumb-input form-control mt-2">
 
-                                                                <input type="hidden" name="id" value="<?= $vid['id']; ?>">
-                                                                <input type="hidden" name="old_thumbnail"
-                                                                    value="<?= $vid['video_thumbnail']; ?>">
+                                                        <input type="hidden" name="id" value="<?= $vid['id']; ?>">
+                                                        <input type="hidden" name="old_thumbnail"
+                                                            value="<?= $vid['video_thumbnail']; ?>">
+                                                    </div>
+
+                                                    <!-- Right Side -->
+                                                    <div class="col-md-9">
+
+                                                        <div class="form-group">
+                                                            <label>Video Title</label>
+                                                            <input type="text" name="video_title" class="form-control"
+                                                                value="<?= $vid['video_title']; ?>">
+                                                        </div>
+
+                                                        <div class="form-row">
+                                                            <div class="form-group col-md-7">
+                                                                <label>Vimeo Code</label>
+                                                                <input type="text" name="vimo_code" class="form-control"
+                                                                    value="<?= $vid['vimo_code']; ?>">
                                                             </div>
 
-                                                            <!-- Right Side -->
-                                                            <div class="col-md-9">
-
-                                                                <div class="form-group">
-                                                                    <label>Video Title</label>
-                                                                    <input type="text" name="video_title"
-                                                                        class="form-control"
-                                                                        value="<?= $vid['video_title']; ?>">
-                                                                </div>
-
-                                                                <div class="form-row">
-                                                                    <div class="form-group col-md-7">
-                                                                        <label>Vimeo Code</label>
-                                                                        <input type="text" name="vimo_code"
-                                                                            class="form-control"
-                                                                            value="<?= $vid['vimo_code']; ?>">
-                                                                    </div>
-
-                                                                    <div class="form-group col-md-5">
-                                                                        <label>Type</label>
-                                                                        <select name="video_type" class="form-control">
-                                                                            <option value="THORATICAL"
-                                                                                <?= $vid['video_type'] == 'THORATICAL' ? 'selected' : ''; ?>>
-                                                                                Theoretical
-                                                                            </option>
-                                                                            <option value="PRACTICAL"
-                                                                                <?= $vid['video_type'] == 'PRACTICAL' ? 'selected' : ''; ?>>
-                                                                                Practical
-                                                                            </option>
-                                                                            <option value="BOTH"
-                                                                                <?= $vid['video_type'] == 'BOTH' ? 'selected' : ''; ?>>
-                                                                                Both
-                                                                            </option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-
+                                                            <div class="form-group col-md-5">
+                                                                <label>Type</label>
+                                                                <select name="video_type" class="form-control">
+                                                                    <option value="THORATICAL"
+                                                                        <?= $vid['video_type'] == 'THORATICAL' ? 'selected' : ''; ?>>
+                                                                        Theoretical
+                                                                    </option>
+                                                                    <option value="PRACTICAL"
+                                                                        <?= $vid['video_type'] == 'PRACTICAL' ? 'selected' : ''; ?>>
+                                                                        Practical
+                                                                    </option>
+                                                                    <option value="BOTH"
+                                                                        <?= $vid['video_type'] == 'BOTH' ? 'selected' : ''; ?>>
+                                                                        Both
+                                                                    </option>
+                                                                </select>
                                                             </div>
                                                         </div>
+
                                                     </div>
+                                                </div>
+                                            </div>
                                             <?php endforeach;
                                             endif; ?>
 
@@ -290,7 +288,8 @@
                                                         <div class="form-row">
                                                             <div class="form-group col-md-7">
                                                                 <label>Vimeo Code</label>
-                                                                <input type="text" name="vimo_code" class="form-control">
+                                                                <input type="text" name="vimo_code"
+                                                                    class="form-control">
                                                             </div>
 
                                                             <div class="form-group col-md-5">
@@ -309,8 +308,8 @@
 
                                         </div>
 
-                                        <button type="button" data-repeater-create
-                                            class="btn btn-success mt-3">+ Add Another Video</button>
+                                        <button type="button" data-repeater-create class="btn btn-success mt-3">+ Add
+                                            Another Video</button>
                                     </div>
                                     <div class="form-group col-md-12 text-right mt-3">
                                         <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
@@ -329,445 +328,450 @@
 
 <script src="<?= base_url(); ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script>
-    let lesson_id = "<?= isset($lesson['id']) ? $lesson['id'] : '' ?>";
+let lesson_id = "<?= isset($lesson['id']) ? $lesson['id'] : '' ?>";
 </script>
 <script>
-    $(document).ready(function() {
-
-        $(document).on('change', '.video-thumb-input', function() {
-            const input = this;
-            const preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
-
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.attr('src', e.target.result).show();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        });
-
-
-        $('#video-repeater').repeater({
-            initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
-            show: function() {
-                const $item = $(this);
-
-                $item.slideDown();
-
-                $item.find('.video-thumb-preview').attr('src', '').hide();
-                $item.find('.video-thumb-input').val('');
-
-                $item.find('input[name="id"]').remove();
-                $item.find('input[name="old_thumbnail"]').remove();
-            },
-
-            hide: function(deleteElement) {
-
-                let total = $('#video-repeater [data-repeater-item]:visible').length;
-
-                if (total <= 1) {
-                    alert('At least one video is required');
-                    return;
-                }
-
-                if (confirm('Are you sure you want to remove this video?')) {
-                    $(this).slideUp(deleteElement);
-                }
-            }
-        });
-
-
-        // FORM SUBMIT VALIDATION
-        $("#lessonForm").on("submit", function(e) {
-
-            let isValid = true;
-
-            $(".error-msg").remove();
-            $(".is-invalid").removeClass("is-invalid");
-
-
-            let course = $("#course_id").val();
-            let section = $("#section_id").val();
-            let title = $("#title").val().trim();
-
-            if (course === "") {
-                isValid = false;
-                $("#course_id").addClass("is-invalid")
-                    .after('<small class="error-msg text-danger">Course required</small>');
-            }
-
-            if (section === "") {
-                isValid = false;
-                $("#section_id").addClass("is-invalid")
-                    .after('<small class="error-msg text-danger">Section required</small>');
-            }
-
-            if (title === "") {
-                isValid = false;
-                $("#title").addClass("is-invalid")
-                    .after('<small class="error-msg text-danger">Title required</small>');
-            }
-
-
-            let totalVideos = $('#video-repeater [data-repeater-item]:visible').length;
-
-            if (totalVideos === 0) {
-                isValid = false;
-
-                $('#video-repeater').after(
-                    '<small class="error-msg text-danger">At least one video is required</small>'
-                );
-            }
-
-
-            let hasValidVideo = false;
-
-            $('#video-repeater [data-repeater-item]:visible').each(function() {
-
-                let videoTitleInput = $(this).find('input[name*="[video_title]"], input[name="video_title"]');
-                let vimoCodeInput = $(this).find('input[name*="[vimo_code]"], input[name="vimo_code"]');
-                let thumbInput = $(this).find('input[type="file"]');
-                let oldThumb = $(this).find('input[name*="[old_thumbnail]"], input[name="old_thumbnail"]').val();
-
-                let videoTitle = videoTitleInput.val() ? videoTitleInput.val().trim() : "";
-                let vimoCode = vimoCodeInput.val() ? vimoCodeInput.val().trim() : "";
-                let thumb = thumbInput[0] ? thumbInput[0].files.length : 0;
-
-                if (lesson_id && videoTitle === "" && vimoCode === "" && !thumb && oldThumb) {
-                    return true;
-                }
-                if (videoTitle === "") {
-                    isValid = false;
-                    videoTitleInput.addClass('is-invalid')
-                        .after('<small class="error-msg text-danger">Video title required</small>');
-                }
-
-                if (vimoCode === "") {
-                    isValid = false;
-                    vimoCodeInput.addClass('is-invalid')
-                        .after('<small class="error-msg text-danger">Vimeo code required</small>');
-                }
-
-                if (thumb === 0 && !oldThumb) {
-                    isValid = false;
-                    thumbInput.addClass('is-invalid')
-                        .after('<small class="error-msg text-danger">Thumbnail required</small>');
-                }
-
-                if (videoTitle !== "" && vimoCode !== "" && (thumb > 0 || oldThumb)) {
-                    hasValidVideo = true;
-                }
-
-            });
-
-
-            if (!hasValidVideo) {
-
-                if (lesson_id && $('#video-repeater [data-repeater-item]').length > 0) {
-                    hasValidVideo = true;
-                } else {
-                    isValid = false;
-
-                    $('#video-repeater').after(
-                        '<small class="error-msg text-danger">Please add at least one complete video</small>'
-                    );
-                }
-            }
-
-
-            if (!isValid) {
-
-                if (lesson_id) {
-                    console.log("Edit mode - skipping validation");
-                    return true;
-                }
-
-                e.preventDefault();
-
-                let firstError = $(".error-msg:visible").first();
-
-                if (firstError.length) {
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 100
-                    }, 500);
-                }
-
-                return false;
-            }
-
-            if (isValid) {
-                isSubmitting = true;
-
-                $('#submitBtn')
-                    .prop('disabled', true)
-                    .text('Submitting...');
-            }
-
-
-        });
-
-    });
-</script>
-<script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
-<script>
-    CKEDITOR.replace('benefits', {
-        height: '385px'
-    });
-
-    $("#tags_input").select2({
-        tags: true,
-        tokenSeparators: [','],
-        placeholder: "Type and press Enter to add tag",
-        width: '100%'
-    });
-
-    const time = document.getElementById('time');
-
-    time.addEventListener('input', function(e) {
-
-        let value = e.target.value.replace(/\D/g, '').substring(0, 6);
-
-        let hh = value.substring(0, 2);
-        let mm = value.substring(2, 4);
-        let ss = value.substring(4, 6);
-
-        if (hh.length === 2) {
-            let hourNum = parseInt(hh, 10);
-            if (hourNum > 23) hh = '23';
-        }
-
-        if (mm.length === 2) {
-            let minNum = parseInt(mm, 10);
-            if (minNum > 59) mm = '59';
-        }
-
-        if (ss.length === 2) {
-            let secNum = parseInt(ss, 10);
-            if (secNum > 59) ss = '59';
-        }
-
-        let formatted = '';
-
-        if (hh.length) {
-            formatted = hh;
-        }
-
-        if (mm.length) {
-            formatted += ':' + mm;
-        }
-
-        if (ss.length) {
-            formatted += ':' + ss;
-        }
-
-        e.target.value = formatted;
-    });
-
-    const submitBtn = document.getElementById('submitBtn');
-
-    submitBtn.addEventListener('click', function(e) {
-
-        const value = time.value;
-
-        if (!value) {
-            alert('Please enter exam duration');
-            e.preventDefault();
-            return;
-        }
-
-        let parts = value.split(':');
-
-        let hh = parseInt(parts[0] || 0);
-        let mm = parseInt(parts[1] || 0);
-        let ss = parseInt(parts[2] || 0);
-
-        let totalSeconds = (hh * 3600) + (mm * 60) + ss;
-
-        if (totalSeconds < 60) {
-            alert('Minimum exam duration is 1 minute (00:01:00)');
-            e.preventDefault(); // stop form submit
+$(document).ready(function() {
+
+    $(document).on('change', '.video-thumb-input', function() {
+        const input = this;
+        const preview = $(this).closest('[data-repeater-item]').find('.video-thumb-preview');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(input.files[0]);
         }
     });
 
-    $(document).ready(function() {
 
-        const courseSelect = $('select[name="course_id"]');
-        const sectionSelect = $('select[name="section_id"]');
+    $('#video-repeater').repeater({
+        initEmpty: <?= empty($lesson_videos) ? 'true' : 'false'; ?>,
+        show: function() {
+            const $item = $(this);
 
-        // Grab selected section from edit mode
-        let selectedSection = sectionSelect.val();
+            $item.slideDown();
 
-        function loadSections(course_id, selected = null) {
-            sectionSelect.html('<option value="">Loading...</option>').trigger('change');
+            $item.find('.video-thumb-preview').attr('src', '').hide();
+            $item.find('.video-thumb-input').val('');
 
-            $.ajax({
-                url: base_url + _admin + 'Lesson/getSectionsByCourse',
-                type: 'POST',
-                data: {
-                    course_id: course_id
-                },
-                success: function(res) {
+            $item.find('input[name="id"]').remove();
+            $item.find('input[name="old_thumbnail"]').remove();
+        },
 
-                    let response = JSON.parse(res);
+        hide: function(deleteElement) {
 
-                    if (!response.status) {
-                        sectionSelect.html('<option value="">Select Section</option>');
-                        return;
-                    }
+            let total = $('#video-repeater [data-repeater-item]:visible').length;
 
-                    let options = '<option value="">Select Section</option>';
-
-                    response.data.forEach(function(sec) {
-
-                        let isSelected = (selected && selected == sec.id) ?
-                            'selected' :
-                            '';
-
-                        options += `<option value="${sec.id}" ${isSelected}>${sec.title}</option>`;
-                    });
-
-                    sectionSelect.html(options).trigger('change');
-                }
-            });
-        }
-
-        courseSelect.on('change', function() {
-            let course_id = $(this).val();
-
-            if (!course_id) {
-                sectionSelect.html('<option value="">Select Section</option>').trigger('change');
+            if (total <= 1) {
+                alert('At least one video is required');
                 return;
             }
 
-            loadSections(course_id);
-        });
-
-
-        let existingCourse = courseSelect.val();
-
-        if (existingCourse && selectedSection) {
-            loadSections(existingCourse, selectedSection);
+            if (confirm('Are you sure you want to remove this video?')) {
+                $(this).slideUp(deleteElement);
+            }
         }
-
     });
 
 
-    function checkSubmit() {
-        if (lessonValid && finalLessonValid) {
-            $("button[type='submit']").prop("disabled", false);
-        } else {
-            $("button[type='submit']").prop("disabled", true);
+    // FORM SUBMIT VALIDATION
+    $("#lessonForm").on("submit", function(e) {
+
+        let isValid = true;
+
+        $(".error-msg").remove();
+        $(".is-invalid").removeClass("is-invalid");
+
+
+        let course = $("#course_id").val();
+        let section = $("#section_id").val();
+        let title = $("#title").val().trim();
+
+        if (course === "") {
+            isValid = false;
+            $("#course_id").addClass("is-invalid")
+                .after('<small class="error-msg text-danger">Course required</small>');
         }
+
+        if (section === "") {
+            isValid = false;
+            $("#section_id").addClass("is-invalid")
+                .after('<small class="error-msg text-danger">Section required</small>');
+        }
+
+        if (title === "") {
+            isValid = false;
+            $("#title").addClass("is-invalid")
+                .after('<small class="error-msg text-danger">Title required</small>');
+        }
+
+
+        let totalVideos = $('#video-repeater [data-repeater-item]:visible').length;
+
+        if (totalVideos === 0) {
+            isValid = false;
+
+            $('#video-repeater').after(
+                '<small class="error-msg text-danger">At least one video is required</small>'
+            );
+        }
+
+
+        let hasValidVideo = false;
+
+        $('#video-repeater [data-repeater-item]:visible').each(function() {
+
+            let videoTitleInput = $(this).find(
+                'input[name*="[video_title]"], input[name="video_title"]');
+            let vimoCodeInput = $(this).find(
+                'input[name*="[vimo_code]"], input[name="vimo_code"]');
+            let thumbInput = $(this).find('input[type="file"]');
+            let oldThumb = $(this).find(
+                'input[name*="[old_thumbnail]"], input[name="old_thumbnail"]').val();
+
+            let videoTitle = videoTitleInput.val() ? videoTitleInput.val().trim() : "";
+            let vimoCode = vimoCodeInput.val() ? vimoCodeInput.val().trim() : "";
+            let thumb = thumbInput[0] ? thumbInput[0].files.length : 0;
+
+            if (lesson_id && videoTitle === "" && vimoCode === "" && !thumb && oldThumb) {
+                return true;
+            }
+            if (videoTitle === "") {
+                isValid = false;
+                videoTitleInput.addClass('is-invalid')
+                    .after('<small class="error-msg text-danger">Video title required</small>');
+            }
+
+            if (vimoCode === "") {
+                isValid = false;
+                vimoCodeInput.addClass('is-invalid')
+                    .after('<small class="error-msg text-danger">Vimeo code required</small>');
+            }
+
+            if (thumb === 0 && !oldThumb) {
+                isValid = false;
+                thumbInput.addClass('is-invalid')
+                    .after('<small class="error-msg text-danger">Thumbnail required</small>');
+            }
+
+            if (videoTitle !== "" && vimoCode !== "" && (thumb > 0 || oldThumb)) {
+                hasValidVideo = true;
+            }
+
+        });
+
+
+        if (!hasValidVideo) {
+
+            if (lesson_id && $('#video-repeater [data-repeater-item]').length > 0) {
+                hasValidVideo = true;
+            } else {
+                isValid = false;
+
+                $('#video-repeater').after(
+                    '<small class="error-msg text-danger">Please add at least one complete video</small>'
+                );
+            }
+        }
+
+
+        if (!isValid) {
+
+            if (lesson_id) {
+                console.log("Edit mode - skipping validation");
+                return true;
+            }
+
+            e.preventDefault();
+
+            let firstError = $(".error-msg:visible").first();
+
+            if (firstError.length) {
+                $('html, body').animate({
+                    scrollTop: firstError.offset().top - 100
+                }, 500);
+            }
+
+            return false;
+        }
+
+        if (isValid) {
+            isSubmitting = true;
+
+            $('#submitBtn')
+                .prop('disabled', true)
+                .text('Submitting...');
+        }
+
+
+    });
+
+});
+</script>
+<script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
+<script>
+CKEDITOR.replace('benefits', {
+    height: '385px'
+});
+
+$("#tags_input").select2({
+    tags: true,
+    tokenSeparators: [','],
+    placeholder: "Type and press Enter to add tag",
+    width: '100%'
+});
+
+const time = document.getElementById('time');
+
+time.addEventListener('input', function(e) {
+
+    let value = e.target.value.replace(/\D/g, '').substring(0, 6);
+
+    let hh = value.substring(0, 2);
+    let mm = value.substring(2, 4);
+    let ss = value.substring(4, 6);
+
+    if (hh.length === 2) {
+        let hourNum = parseInt(hh, 10);
+        if (hourNum > 23) hh = '23';
     }
-    let lessonValid = false;
 
-    function checkSubmit() {
-
-        if (lessonValid) {
-            $("#submitBtn").prop("disabled", false);
-        } else {
-            $("#submitBtn").prop("disabled", true);
-        }
-
+    if (mm.length === 2) {
+        let minNum = parseInt(mm, 10);
+        if (minNum > 59) mm = '59';
     }
 
-    $("#title").keyup(function() {
+    if (ss.length === 2) {
+        let secNum = parseInt(ss, 10);
+        if (secNum > 59) ss = '59';
+    }
 
-        let title = $(this).val().trim();
-        let course_id = $("#course_id").val();
-        let section_id = $("#section_id").val();
-        let id = $("#lesson_id").val();
+    let formatted = '';
 
-        if (title.length < 3) {
+    if (hh.length) {
+        formatted = hh;
+    }
 
-            $("#lesson_msg").html("Lesson must be at least 3 characters").css("color", "red");
-            lessonValid = false;
-            checkSubmit();
-            return;
+    if (mm.length) {
+        formatted += ':' + mm;
+    }
 
-        }
+    if (ss.length) {
+        formatted += ':' + ss;
+    }
 
-        if (!course_id || !section_id) {
+    e.target.value = formatted;
+});
 
-            $("#lesson_msg").html("Select course and section first").css("color", "red");
-            lessonValid = false;
-            checkSubmit();
-            return;
+const submitBtn = document.getElementById('submitBtn');
 
-        }
+submitBtn.addEventListener('click', function(e) {
+
+    const value = time.value;
+
+    if (!value) {
+        alert('Please enter exam duration');
+        e.preventDefault();
+        return;
+    }
+
+    let parts = value.split(':');
+
+    let hh = parseInt(parts[0] || 0);
+    let mm = parseInt(parts[1] || 0);
+    let ss = parseInt(parts[2] || 0);
+
+    let totalSeconds = (hh * 3600) + (mm * 60) + ss;
+
+    if (totalSeconds < 60) {
+        alert('Minimum exam duration is 1 minute (00:01:00)');
+        e.preventDefault(); // stop form submit
+    }
+});
+
+$(document).ready(function() {
+
+    const courseSelect = $('select[name="course_id"]');
+    const sectionSelect = $('select[name="section_id"]');
+
+    // Grab selected section from edit mode
+    let selectedSection = sectionSelect.val();
+
+    function loadSections(course_id, selected = null) {
+        sectionSelect.html('<option value="">Loading...</option>').trigger('change');
 
         $.ajax({
-            url: "<?= base_url('admin/Lesson/check_lesson_title') ?>",
+            url: base_url + _admin + 'Lesson/getSectionsByCourse',
+            type: 'POST',
+            data: {
+                course_id: course_id
+            },
+            success: function(res) {
+
+                let response = JSON.parse(res);
+
+                if (!response.status) {
+                    sectionSelect.html('<option value="">Select Section</option>');
+                    return;
+                }
+
+                let options = '<option value="">Select Section</option>';
+
+                response.data.forEach(function(sec) {
+
+                    let isSelected = (selected && selected == sec.id) ?
+                        'selected' :
+                        '';
+
+                    options +=
+                        `<option value="${sec.id}" ${isSelected}>${sec.title}</option>`;
+                });
+
+                sectionSelect.html(options).trigger('change');
+            }
+        });
+    }
+
+    courseSelect.on('change', function() {
+        let course_id = $(this).val();
+
+        if (!course_id) {
+            sectionSelect.html('<option value="">Select Section</option>').trigger('change');
+            return;
+        }
+
+        loadSections(course_id);
+    });
+
+
+    let existingCourse = courseSelect.val();
+
+    if (existingCourse && selectedSection) {
+        loadSections(existingCourse, selectedSection);
+    }
+
+});
+
+
+function checkSubmit() {
+    if (lessonValid && finalLessonValid) {
+        $("button[type='submit']").prop("disabled", false);
+    } else {
+        $("button[type='submit']").prop("disabled", true);
+    }
+}
+let lessonValid = false;
+
+function checkSubmit() {
+
+    if (lessonValid) {
+        $("#submitBtn").prop("disabled", false);
+    } else {
+        $("#submitBtn").prop("disabled", true);
+    }
+
+}
+
+$("#title").keyup(function() {
+
+    let title = $(this).val().trim();
+    let course_id = $("#course_id").val();
+    let section_id = $("#section_id").val();
+    let id = $("#lesson_id").val();
+
+    if (title.length < 3) {
+
+        $("#lesson_msg").html("Lesson must be at least 3 characters").css("color", "red");
+        lessonValid = false;
+        checkSubmit();
+        return;
+
+    }
+
+    if (!course_id || !section_id) {
+
+        $("#lesson_msg").html("Select course and section first").css("color", "red");
+        lessonValid = false;
+        checkSubmit();
+        return;
+
+    }
+
+    $.ajax({
+        url: "<?= base_url('admin/Lesson/check_lesson_title') ?>",
+        type: "POST",
+        data: {
+            title: title,
+            course_id: course_id,
+            section_id: section_id,
+            id: id
+        },
+        success: function(res) {
+
+            if (res.trim() === "exists") {
+                $("#submitBtn").prop("disabled", true);
+
+                $("#lesson_msg")
+                    .html("Lesson already exists in this section")
+                    .css("color", "red");
+
+                lessonValid = false;
+
+            } else {
+
+                $("#lesson_msg")
+                    .html("Lesson title available")
+                    .css("color", "green");
+
+                lessonValid = true;
+                if (lessonValid) {
+                    $("#submitBtn").prop("disabled", false);
+                }
+            }
+
+            checkSubmit();
+        }
+    });
+
+});
+
+
+let finalLessonValid = true;
+
+$(document).on('change', 'input[name="is_final_lesson"]', function() {
+
+    let isFinal = $(this).val();
+    let course_id = $("select[name='course_id']").val();
+    let lesson_id = $("#lesson_id").val();
+
+    if (isFinal === "1") {
+
+        $.ajax({
+            url: "<?= base_url('admin/Lesson/check_final_lesson') ?>",
             type: "POST",
             data: {
-                title: title,
                 course_id: course_id,
-                section_id: section_id,
-                id: id
+                lesson_id: lesson_id
             },
             success: function(res) {
 
                 if (res.trim() === "exists") {
-                    $("#submitBtn").prop("disabled", true);
 
-                    $("#lesson_msg")
-                        .html("Lesson already exists in this section")
-                        .css("color", "red");
-
-                    lessonValid = false;
+                    $("#final_lesson_msg").html("Final lesson already exists for this course").css(
+                        "color", "red");
+                    $("#final_no").prop("checked", true);
 
                 } else {
-
-                    $("#lesson_msg")
-                        .html("Lesson title available")
-                        .css("color", "green");
-
-                    lessonValid = true;
-                    if (lessonValid) {
-                        $("#submitBtn").prop("disabled", false);
-                    }
+                    $("#final_lesson_msg").html("");
                 }
-
-                checkSubmit();
             }
         });
 
-    });
-
-
-    let finalLessonValid = true;
-
-    $(document).on('change', 'input[name="is_final_lesson"]', function() {
-
-        let isFinal = $(this).val();
-        let course_id = $("select[name='course_id']").val();
-        let lesson_id = $("#lesson_id").val();
-
-        if (isFinal === "1") {
-
-            $.ajax({
-                url: "<?= base_url('admin/Lesson/check_final_lesson') ?>",
-                type: "POST",
-                data: {
-                    course_id: course_id,
-                    lesson_id: lesson_id
-                },
-                success: function(res) {
-
-                    if (res.trim() === "exists") {
-
-                        $("#final_lesson_msg").html("Final lesson already exists for this course").css("color", "red");
-                        $("#final_no").prop("checked", true);
-
-                    } else {
-                        $("#final_lesson_msg").html("");
-                    }
-                }
-            });
-
-        } else {
-            $("#final_lesson_msg").html("");
-        }
-    });
+    } else {
+        $("#final_lesson_msg").html("");
+    }
+});
 </script>

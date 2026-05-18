@@ -74,10 +74,12 @@ class User extends CI_Controller
                 $action = '
                 <a href="' . site_url() . ADMIN . 'User/add/' . $user['id'] . '" title="Edit" class="btn btn-success waves-effect waves-light btn-sm " ><i class="fas fa-edit" aria-hidden="true"></i></a>
                 <a href="' . base_url() . ADMIN . 'User/view/' . $user['id'] . '/' . $user['role'] . '" title="view" class="btn btn-primary btn-sm waves-effect waves-light" ><i class="fas fa-eye" aria-hidden="true"></i></a>
-                <a onclick="return ' . $confirm . '" href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
-                
+            
                 ';
 
+                if ($user['role'] != 4) {
+                    $action .= '<a onclick="return ' . $confirm . '" href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>';
+                }
 
                 array_push($row, $action);
 

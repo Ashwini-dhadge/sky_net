@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class LessonsModel extends CI_Model
 {
-    
+
 
     public function getLessonById($id)
     {
@@ -13,7 +13,8 @@ class LessonsModel extends CI_Model
             l.sequence,
             l.description,
             c.title AS course_name,
-            s.title AS section_title
+            s.title AS section_title,
+            l.is_final_lesson
         ");
         $this->db->from('tbl_lesson l');
         $this->db->join('tbl_courses c', 'c.id = l.course_id', 'LEFT');
@@ -116,7 +117,7 @@ class LessonsModel extends CI_Model
             ->where('course_id', $course_id)
             ->where('id <', $current_id)
             ->where('deleted_by IS NULL', null, false)
-            ->order_by('id', 'DESC') 
+            ->order_by('id', 'DESC')
             ->limit(1)
             ->get('tbl_lesson')
             ->row();

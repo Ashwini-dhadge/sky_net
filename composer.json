@@ -12,12 +12,12 @@
 	},
 	"require": {
 		"php": ">=5.3.7",
-		"zircote/swagger-php": "*",
+		"zircote/swagger-php": "4.8",
 		"razorpay/razorpay": "2.9",
 		"kreait/firebase-php": "*",
 		"google/auth": "*",
 		"mpdf/mpdf": "*",
-		"phpoffice/phpspreadsheet": "*"
+		"phpoffice/phpspreadsheet": "1.29"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
