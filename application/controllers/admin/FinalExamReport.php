@@ -47,7 +47,7 @@ class FinalExamReport extends CI_Controller
 
         $where = [];
         if (isset($data['course_id']) && !empty($data['course_id'])) {
-            $where['luv.course_id'] = $data['course_id'];
+            $where['luv.courses_id'] = $data['course_id'];
         }
         if (isset($data['user_id']) && !empty($data['user_id'])) {
             $where['luv.user_id'] = $data['user_id'];
@@ -138,7 +138,7 @@ class FinalExamReport extends CI_Controller
         $searchTerm = !empty($get['searchTerm']) ? $get['searchTerm'] : '';
         $user_type = $get['user_type'] ?? '';
 
-        $where = ['is_deleted' => 0, 'status' => 1];
+        $where = ['is_deleted' => 0, 'status' => 1, 'role' => 3];
         if (!empty($user_type)) {
             $where['user_type LIKE'] = '%' . $user_type . '%';
         }

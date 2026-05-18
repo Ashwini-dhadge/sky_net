@@ -283,7 +283,7 @@ class UserCourseProgressReport extends CI_Controller
         $searchTerm = !empty($get['searchTerm']) ? $get['searchTerm'] : '';
 
 
-        $where = ['is_deleted' => 0, 'status' => 1];
+        $where = ['is_deleted' => 0, 'status' => 1, 'role' => 3];
 
 
         if (!empty($searchTerm)) {
