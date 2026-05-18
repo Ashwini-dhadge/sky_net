@@ -18,7 +18,7 @@
                         <h4 class="mt-0 header-title m-b-20"><?= $title; ?></h4>
                         <hr>
                         <form class="repeater" action="<?= base_url(ADMIN . 'Course/Course'); ?>" method="post"
-                            enctype="multipart/form-data" enctype="multipart/form-data">
+                            enctype="multipart/form-data" >
                             <input type="hidden" name="id" id="id"
                                 value="<?= (isset($course)) ? $course['id'] : ''; ?>">
 
@@ -230,7 +230,7 @@
                                 <div class="form-group col-md-3">
                                     <label>Barcode Logo</label>
                                     <input type="file" class="form-control" name="barcode_logo" id="barcode_logo"
-                                        accept=".jpg,.jpeg,.png" required>
+                                        accept=".jpg,.jpeg,.png">
 
                                     <?= (isset($certificate_details)) ? '<img src="' . base_url(CERTIFICATE_IMAGES . $certificate_details['barcode_logo']) . '" width="80">' : ''; ?>
 
@@ -261,8 +261,13 @@
 
                                                         <div class="col-md-5">
                                                             <label>File</label>
-                                                            <input type="file" name="file" class="form-control"
+                                                            <input type="file" name="file" class="form-control file_resource"
                                                                 onchange="updatePreviewButton(this)">
+
+                                                            <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
+                                                                class="" target="_blank">
+                                                                Open File
+                                                            </a>
                                                         </div>
 
                                                         <div class="col-md-2">
@@ -295,7 +300,7 @@
 
                                                     <div class="col-md-5">
                                                         <label>File</label>
-                                                        <input type="file" name="file" class="form-control"
+                                                        <input type="file" name="file" class="form-control file_resource"
                                                             onchange="updatePreviewButton(this)">
                                                     </div>
 
@@ -417,6 +422,37 @@
             $(this).val('');
         }
     });
+
+    $(document).on('change', '.file_resource', function() {
+
+        var file = this.files[0];
+        if (!file) return;
+
+        // Allowed extensions
+        var allowedExtensions = [
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg',
+            'pdf',
+            'txt',
+            'csv',
+            'xls',
+            'xlsx',
+            'ppt',
+            'pptx'
+        ];
+
+        // Get file extension
+        var fileName = file.name.toLowerCase();
+        var extension = fileName.split('.').pop();
+
+        // Check extension
+        if ($.inArray(extension, allowedExtensions) === -1) {
+            alert('Only Images, PDF, TXT, CSV, Excel, and PowerPoint files are allowed.');
+            $(this).val('');
+            return false;
+        }
+
+    });
+
     $('#barcode_logo').on('change', function() {
         var file = this.files[0];
         if (!file) return;

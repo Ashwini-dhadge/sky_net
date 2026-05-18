@@ -81,4 +81,13 @@ class QuestionModel extends CI_Model
             ->get()
             ->result_array();
     }
+
+    public function getLatestInstructorId(){
+        $this->db->select('id');
+        $this->db->from('tbl_users');
+        $this->db->where('role', 4);
+        $this->db->order_by('id', 'DESC');
+        $this->db->limit(1);
+        return $this->db->get()->row_array();
+    }
 }
