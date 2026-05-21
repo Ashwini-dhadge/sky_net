@@ -32,7 +32,8 @@
                       <i class="fa fa-upload"></i> Upload MCQ
                     </button>
 
-                    <a href="<?= base_url(ADMIN . 'Lesson/AddLesson'); ?>" class="btn btn-primary waves-effect waves-light">
+                    <a href="<?= base_url(ADMIN . 'Lesson/AddLesson'); ?>"
+                      class="btn btn-primary waves-effect waves-light">
                       Add Lesson
                     </a>
                   </div>
@@ -106,7 +107,8 @@
                       </div>
 
                       <div class="progress mt-3" id="uploadProgressWrapper" style="display:none;height:22px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadProgressBar" role="progressbar" style="width:0%">0%</div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="uploadProgressBar"
+                          role="progressbar" style="width:0%">0%</div>
                       </div>
 
                       <button type="submit" class="btn btn-success mt-3" id="previewBtn">
@@ -122,7 +124,8 @@
                     <div id="mcqPreviewSection" style="display:none;">
                       <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="mb-0">Preview MCQs</h5>
-                        <button type="button" class="btn btn-danger btn-sm" id="downloadErrorExcelBtn" style="display:none;">
+                        <button type="button" class="btn btn-danger btn-sm" id="downloadErrorExcelBtn"
+                          style="display:none;">
                           <i class="fa fa-download"></i> Download Error Excel
                         </button>
                       </div>
@@ -175,13 +178,13 @@
 <script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/lesson-list.js"></script>
 <script>
-  $(document).on('change', '.video-thumb-input', function() {
+  $(document).on('change', '.video-thumb-input', function () {
     const input = this;
     const preview = $(this).closest('.col-md-3').find('.video-thumb-preview');
 
     if (input.files && input.files[0]) {
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         preview.attr('src', e.target.result).show();
       };
       reader.readAsDataURL(input.files[0]);
@@ -192,7 +195,7 @@
   $('#video-repeater').repeater({
     initEmpty: <?= empty($lesson_videos) ? 'true' : 'false' ?>,
 
-    show: function() {
+    show: function () {
       $(this).find('.video-thumb-preview')
         .attr('src', '')
         .hide();
@@ -205,7 +208,7 @@
       $(this).slideDown();
     },
 
-    hide: function(deleteElement) {
+    hide: function (deleteElement) {
       if (confirm('Are you sure you want to remove this video?')) {
         $(this).slideUp(deleteElement);
       }
@@ -214,14 +217,14 @@
 </script>
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
 
     $('.resource-repeater').repeater({
       initEmpty: false,
-      show: function() {
+      show: function () {
         $(this).slideDown();
       },
-      hide: function(deleteElement) {
+      hide: function (deleteElement) {
         if (confirm('Remove this resource?')) {
           $(this).slideUp(deleteElement);
         }
@@ -278,12 +281,12 @@
 
   function renderSummary(summary) {
     const html = `
-			<div class="alert alert-success mb-3">
-				<strong>Total Rows:</strong> ${summary.total} &nbsp; | &nbsp;
-				<strong>Valid:</strong> ${summary.valid} &nbsp; | &nbsp;
-				<strong>Invalid:</strong> ${summary.invalid}
-			</div>
-		`;
+      <div class="alert alert-success mb-3">
+        <strong>Total Rows:</strong> ${summary.total} &nbsp; | &nbsp;
+        <strong>Valid:</strong> ${summary.valid} &nbsp; | &nbsp;
+        <strong>Invalid:</strong> ${summary.invalid}
+      </div>
+    `;
     $('#importSummary').html(html).show();
   }
 
@@ -295,7 +298,7 @@
     let invalid = 0;
     let duplicateCheck = {};
 
-    rows.forEach(function(row, index) {
+    rows.forEach(function (row, index) {
       row.question = $.trim(row.question || '');
       row.option_a = $.trim(row.option_a || '');
       row.option_b = $.trim(row.option_b || '');
@@ -353,26 +356,92 @@
       let badge = errors.length ? 'danger' : 'success';
       let status = errors.length ? errors.join(', ') : 'Valid';
 
+
+      // PUT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+      let correctOptionsHtml = '<option value="">Select</option>';
+
+      if (row.option_a !== '') {
+        correctOptionsHtml += `
+          <option value="A" ${row.correct_option === 'A' ? 'selected' : ''}>
+            A
+          </option>
+        `;
+      }
+
+      if (row.option_b !== '') {
+        correctOptionsHtml += `
+          <option value="B" ${row.correct_option === 'B' ? 'selected' : ''}>
+            B
+          </option>
+        `;
+      }
+
+      if (row.option_c !== '') {
+        correctOptionsHtml += `
+          <option value="C" ${row.correct_option === 'C' ? 'selected' : ''}>
+            C
+          </option>
+        `;
+      }
+
+      if (row.option_d !== '') {
+        correctOptionsHtml += `
+          <option value="D" ${row.correct_option === 'D' ? 'selected' : ''}>
+            D
+          </option>
+        `;
+      }
+
+
+      // END HERE ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+      // then your existing html += starts
+
       html += `
-				<tr class="${errors.length ? 'table-danger' : ''}" data-index="${index}">
-					<td>${row.row}</td>
-					<td><textarea class="form-control edit-question" rows="3">${escapeHtml(row.question)}</textarea></td>
-					<td><input type="text" class="form-control edit-a" value="${escapeHtml(row.option_a)}"></td>
-					<td><input type="text" class="form-control edit-b" value="${escapeHtml(row.option_b)}"></td>
-					<td><input type="text" class="form-control edit-c" value="${escapeHtml(row.option_c)}"></td>
-					<td><input type="text" class="form-control edit-d" value="${escapeHtml(row.option_d)}"></td>
-					<td>
-						<select class="form-control edit-correct">
-							<option value="">Select</option>
-							<option value="A" ${row.correct_option === 'A' ? 'selected' : ''}>A</option>
-							<option value="B" ${row.correct_option === 'B' ? 'selected' : ''}>B</option>
-							<option value="C" ${row.correct_option === 'C' ? 'selected' : ''}>C</option>
-							<option value="D" ${row.correct_option === 'D' ? 'selected' : ''}>D</option>
-						</select>
-					</td>
-					<td><span class="badge badge-${badge}">${status}</span></td>
-				</tr>
-			`;
+        <tr class="${errors.length ? 'table-danger' : ''}" data-index="${index}">
+          <td>${row.row}</td>
+
+          <td>
+            <textarea class="form-control edit-question" rows="3">
+              ${escapeHtml(row.question)}
+            </textarea>
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-a"
+            value="${escapeHtml(row.option_a)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-b"
+            value="${escapeHtml(row.option_b)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-c"
+            value="${escapeHtml(row.option_c)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-d"
+            value="${escapeHtml(row.option_d)}">
+          </td>
+
+          <td>
+            <select class="form-control edit-correct">
+              ${correctOptionsHtml}
+            </select>
+          </td>
+
+          <td>
+            <span class="badge badge-${badge}">
+              ${status}
+            </span>
+          </td>
+        </tr>
+      `;
     });
 
     $('#mcqPreviewTable').html(html);
@@ -405,7 +474,7 @@
   function collectEditedRows() {
     let rows = [];
 
-    $('#mcqPreviewTable tr').each(function() {
+    $('#mcqPreviewTable tr').each(function () {
       let index = $(this).data('index');
       let original = mcqPreviewData[index];
 
@@ -425,7 +494,50 @@
     return rows;
   }
 
-  $('#mcq_course_id').on('change', function() {
+  $(document).on('input', '.edit-a, .edit-b, .edit-c, .edit-d', function () {
+
+    let row = $(this).closest('tr');
+
+    let a = $.trim(row.find('.edit-a').val());
+    let b = $.trim(row.find('.edit-b').val());
+    let c = $.trim(row.find('.edit-c').val());
+    let d = $.trim(row.find('.edit-d').val());
+
+    let currentSelected = row.find('.edit-correct').val();
+
+    let html = '<option value="">Select</option>';
+
+    if (a !== '') {
+      html += `<option value="A">A</option>`;
+    }
+
+    if (b !== '') {
+      html += `<option value="B">B</option>`;
+    }
+
+    if (c !== '') {
+      html += `<option value="C">C</option>`;
+    }
+
+    if (d !== '') {
+      html += `<option value="D">D</option>`;
+    }
+
+    row.find('.edit-correct').html(html);
+
+    // restore selected if still valid
+    if (
+      (currentSelected === 'A' && a !== '') ||
+      (currentSelected === 'B' && b !== '') ||
+      (currentSelected === 'C' && c !== '') ||
+      (currentSelected === 'D' && d !== '')
+    ) {
+      row.find('.edit-correct').val(currentSelected);
+    }
+
+  });
+
+  $('#mcq_course_id').on('change', function () {
     const courseId = $(this).val();
 
     $('#mcq_section_id').html('<option value="">Loading...</option>');
@@ -439,12 +551,12 @@
 
     $.post(
       "<?= base_url(ADMIN . 'Lesson/getSectionsByCourse'); ?>", {
-        course_id: courseId
-      },
-      function(res) {
+      course_id: courseId
+    },
+      function (res) {
         let html = '<option value="">-- Select Section --</option>';
         if (res.status) {
-          res.data.forEach(function(s) {
+          res.data.forEach(function (s) {
             html += `<option value="${s.id}">${s.title}</option>`;
           });
         }
@@ -454,7 +566,7 @@
     );
   });
 
-  $('#mcq_section_id').on('change', function() {
+  $('#mcq_section_id').on('change', function () {
     const sectionId = $(this).val();
 
     $('#mcq_lesson_id').html('<option value="">Loading...</option>');
@@ -467,12 +579,12 @@
 
     $.post(
       "<?= base_url(ADMIN . 'Lesson/getLessonsBySection'); ?>", {
-        section_id: sectionId
-      },
-      function(res) {
+      section_id: sectionId
+    },
+      function (res) {
         let html = '<option value="">-- Select Lesson --</option>';
         if (res.status) {
-          res.data.forEach(function(l) {
+          res.data.forEach(function (l) {
             html += `<option value="${l.id}">${l.title}</option>`;
           });
         }
@@ -482,7 +594,7 @@
     );
   });
 
-  $('#mcq_lesson_id').on('change', function() {
+  $('#mcq_lesson_id').on('change', function () {
     const lessonId = $(this).val();
 
     if (!lessonId) {
@@ -494,14 +606,14 @@
     $('#upload_lesson_id').val(lessonId);
   });
 
-  $('#downloadTemplateBtn').on('click', function() {
+  $('#downloadTemplateBtn').on('click', function () {
     const lessonId = $('#mcq_lesson_id').val();
     if (!lessonId) return;
 
     window.location.href = "<?= base_url(ADMIN . 'Lesson/downloadMcqXlsxTemplate/'); ?>" + lessonId;
   });
 
-  $('#uploadMcqForm').on('submit', function(e) {
+  $('#uploadMcqForm').on('submit', function (e) {
     e.preventDefault();
 
     let lessonId = $('#upload_lesson_id').val();
@@ -530,9 +642,9 @@
       data: formData,
       processData: false,
       contentType: false,
-      xhr: function() {
+      xhr: function () {
         let xhr = new window.XMLHttpRequest();
-        xhr.upload.addEventListener("progress", function(evt) {
+        xhr.upload.addEventListener("progress", function (evt) {
           if (evt.lengthComputable) {
             let percent = Math.round((evt.loaded / evt.total) * 100);
             $('#uploadProgressBar')
@@ -542,7 +654,7 @@
         }, false);
         return xhr;
       },
-      success: function(res) {
+      success: function (res) {
         let data = typeof res === 'object' ? res : JSON.parse(res);
 
         if (!data.status) {
@@ -568,7 +680,7 @@
         });
         validateRows(mcqPreviewData);
       },
-      error: function() {
+      error: function () {
         $('#uploadProgressBar')
           .removeClass('progress-bar-animated')
           .addClass('bg-danger')
@@ -578,12 +690,12 @@
     });
   });
 
-  $('#revalidateBtn').on('click', function() {
+  $('#revalidateBtn').on('click', function () {
     let editedRows = collectEditedRows();
     validateRows(editedRows);
   });
 
-  $('#cancelPreviewBtn').on('click', function() {
+  $('#cancelPreviewBtn').on('click', function () {
     $('#mcqPreviewSection').hide();
     $('#mcqPreviewTable').html('');
     $('#importSummary').hide();
@@ -591,11 +703,11 @@
     $('#downloadErrorExcelBtn').hide();
   });
 
-  $('#downloadErrorExcelBtn').on('click', function() {
+  $('#downloadErrorExcelBtn').on('click', function () {
     let editedRows = collectEditedRows();
     let errorRows = [];
 
-    editedRows.forEach(function(row) {
+    editedRows.forEach(function (row) {
       let errors = [];
       if ($.trim(row.question) === '') errors.push('Question required');
       let filledOptions = 0;
@@ -638,12 +750,12 @@
     form.remove();
   });
 
-  $('#confirmUploadBtn').on('click', function() {
+  $('#confirmUploadBtn').on('click', function () {
     let rows = collectEditedRows();
 
     let hasError = false;
 
-    rows.forEach(function(row) {
+    rows.forEach(function (row) {
 
       let question = $.trim(row.question);
       let a = $.trim(row.option_a);
@@ -692,7 +804,7 @@
       data: {
         rows: JSON.stringify(rows)
       },
-      success: function(res) {
+      success: function (res) {
         if (res.status) {
           alert(res.msg + ' Inserted: ' + res.inserted);
           location.reload();
@@ -701,7 +813,7 @@
           $('#confirmUploadBtn').prop('disabled', false).text('Confirm Upload');
         }
       },
-      error: function() {
+      error: function () {
         alert('Something went wrong while saving MCQs.');
         $('#confirmUploadBtn').prop('disabled', false).text('Confirm Upload');
       }

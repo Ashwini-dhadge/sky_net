@@ -60,35 +60,35 @@
                                         </thead>
                                         <tbody>
                                             <?php if (!empty($mcqs)) { ?>
-                                            <?php $i = 1;
+                                                <?php $i = 1;
                                                 foreach ($mcqs as $mcq) { ?>
-                                            <tr>
-                                                <td><?= $i++; ?></td>
-                                                <td><?= htmlspecialchars($mcq['question']); ?></td>
-                                                <td>
-                                                    <span class="badge badge-success">
-                                                        Option <?= $mcq['correct_option']; ?>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-warning btn-sm"
-                                                        onclick='openEditMcqModal(<?= json_encode($mcq, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>)'>
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
+                                                    <tr>
+                                                        <td><?= $i++; ?></td>
+                                                        <td><?= htmlspecialchars($mcq['question']); ?></td>
+                                                        <td>
+                                                            <span class="badge badge-success">
+                                                                Option <?= $mcq['correct_option']; ?>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-warning btn-sm"
+                                                                onclick='openEditMcqModal(<?= json_encode($mcq, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>)'>
+                                                                <i class="fa fa-edit"></i>
+                                                            </button>
 
-                                                    <button class="btn btn-danger btn-sm"
-                                                        onclick="deleteMcq(<?= $mcq['id']; ?>, <?= $lesson['id']; ?>)">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <?php } ?>
+                                                            <button class="btn btn-danger btn-sm"
+                                                                onclick="deleteMcq(<?= $mcq['id']; ?>, <?= $lesson['id']; ?>)">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
                                             <?php } else { ?>
-                                            <tr>
-                                                <td colspan="4" class="text-center text-muted">
-                                                    No MCQs added yet
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">
+                                                        No MCQs added yet
+                                                    </td>
+                                                </tr>
                                             <?php } ?>
                                         </tbody>
                                     </table>
@@ -422,121 +422,121 @@
 
 <?php init_footer(); ?>
 <script>
-let mcqPreviewData = [];
+    let mcqPreviewData = [];
 
-/* ===============================
-UPLOAD & PREVIEW EXCEL
-================================= */
+    /* ===============================
+    UPLOAD & PREVIEW EXCEL
+    ================================= */
 
-$('#uploadMcqForm').on('submit', function(e) {
+    $('#uploadMcqForm').on('submit', function (e) {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    let lessonId = $('#upload_lesson_id').val();
+        let lessonId = $('#upload_lesson_id').val();
 
-    if (!lessonId) {
-        alert('Lesson not found');
-        return;
-    }
+        if (!lessonId) {
+            alert('Lesson not found');
+            return;
+        }
 
-    let formData = new FormData(this);
-    formData.append('lesson_id', lessonId);
+        let formData = new FormData(this);
+        formData.append('lesson_id', lessonId);
 
-    $('#uploadProgressWrapper').show();
+        $('#uploadProgressWrapper').show();
 
-    $('#uploadProgressBar')
-        .removeClass('bg-success bg-danger')
-        .addClass('progress-bar-animated progress-bar-striped')
-        .css('width', '0%')
-        .text('0%');
+        $('#uploadProgressBar')
+            .removeClass('bg-success bg-danger')
+            .addClass('progress-bar-animated progress-bar-striped')
+            .css('width', '0%')
+            .text('0%');
 
-    $('#mcqPreviewSection').hide();
-    $('#importSummary').hide();
+        $('#mcqPreviewSection').hide();
+        $('#importSummary').hide();
 
-    $.ajax({
+        $.ajax({
 
-        url: "<?= base_url(ADMIN . 'Lesson/previewMcqXlsx') ?>",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
+            url: "<?= base_url(ADMIN . 'Lesson/previewMcqXlsx') ?>",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
 
-        xhr: function() {
+            xhr: function () {
 
-            let xhr = new window.XMLHttpRequest();
+                let xhr = new window.XMLHttpRequest();
 
-            xhr.upload.addEventListener("progress", function(evt) {
+                xhr.upload.addEventListener("progress", function (evt) {
 
-                if (evt.lengthComputable) {
+                    if (evt.lengthComputable) {
 
-                    let percent = Math.round((evt.loaded / evt.total) * 100);
+                        let percent = Math.round((evt.loaded / evt.total) * 100);
+
+                        $('#uploadProgressBar')
+                            .css('width', percent + '%')
+                            .text(percent + '%');
+
+                    }
+
+                }, false);
+
+                return xhr;
+
+            },
+
+            success: function (res) {
+
+                let data = typeof res === 'object' ? res : JSON.parse(res);
+
+                if (!data.status) {
 
                     $('#uploadProgressBar')
-                        .css('width', percent + '%')
-                        .text(percent + '%');
+                        .removeClass('progress-bar-animated')
+                        .addClass('bg-danger')
+                        .text(data.msg || 'Upload failed');
+
+                    alert(data.msg || 'Upload failed');
+
+                    return;
 
                 }
 
-            }, false);
+                $('#uploadProgressBar')
+                    .removeClass('progress-bar-animated')
+                    .addClass('bg-success')
+                    .css('width', '100%')
+                    .text('Upload Complete');
 
-            return xhr;
+                mcqPreviewData = data.data || [];
 
-        },
+                renderSummary(data.summary);
 
-        success: function(res) {
+                validateRows(mcqPreviewData);
 
-            let data = typeof res === 'object' ? res : JSON.parse(res);
+            },
 
-            if (!data.status) {
+            error: function () {
 
                 $('#uploadProgressBar')
                     .removeClass('progress-bar-animated')
                     .addClass('bg-danger')
-                    .text(data.msg || 'Upload failed');
+                    .text('Upload failed');
 
-                alert(data.msg || 'Upload failed');
-
-                return;
+                alert('Error uploading Excel file');
 
             }
 
-            $('#uploadProgressBar')
-                .removeClass('progress-bar-animated')
-                .addClass('bg-success')
-                .css('width', '100%')
-                .text('Upload Complete');
-
-            mcqPreviewData = data.data || [];
-
-            renderSummary(data.summary);
-
-            validateRows(mcqPreviewData);
-
-        },
-
-        error: function() {
-
-            $('#uploadProgressBar')
-                .removeClass('progress-bar-animated')
-                .addClass('bg-danger')
-                .text('Upload failed');
-
-            alert('Error uploading Excel file');
-
-        }
+        });
 
     });
 
-});
 
+    /* ===============================
+    RENDER SUMMARY
+    ================================= */
 
-/* ===============================
-RENDER SUMMARY
-================================= */
+    function renderSummary(summary) {
 
-function renderSummary(summary) {
-
-    let html = `
+        let html = `
 <div class="alert alert-success">
 <b>Total Rows:</b> ${summary.total}
 &nbsp; | &nbsp;
@@ -546,346 +546,438 @@ function renderSummary(summary) {
 </div>
 `;
 
-    $('#importSummary').html(html).show();
-
-}
-
-
-/* ===============================
-VALIDATE ROWS
-================================= */
-
-function validateRows(rows) {
-
-    let html = '';
-    let duplicateCheck = {};
-
-    let valid = 0;
-    let invalid = 0;
-
-    rows.forEach(function(row, index) {
-
-        row.question = $.trim(row.question || '');
-        row.option_a = $.trim(row.option_a || '');
-        row.option_b = $.trim(row.option_b || '');
-        row.option_c = $.trim(row.option_c || '');
-        row.option_d = $.trim(row.option_d || '');
-        row.correct_option = $.trim((row.correct_option || '').toUpperCase());
-
-        let errors = [];
-
-        /* question required */
-
-        if (row.question == '')
-            errors.push('Question required');
-
-        /* options required */
-
-        let filledOptions = 0;
-
-        if (row.option_a !== '') filledOptions++;
-        if (row.option_b !== '') filledOptions++;
-        if (row.option_c !== '') filledOptions++;
-        if (row.option_d !== '') filledOptions++;
-
-        if (filledOptions < 2) {
-            errors.push('At least 2 options required');
-        }
-
-        /* correct option */
-
-        if (['A', 'B', 'C', 'D'].indexOf(row.correct_option) === -1)
-            errors.push('Correct option must be A,B,C or D');
-
-        /* duplicate detection */
-
-        let qKey = row.question.toLowerCase().replace(/\s+/g, ' ').trim();
-
-        if (qKey != '') {
-
-            if (duplicateCheck[qKey])
-                errors.push('Duplicate question in preview');
-
-            duplicateCheck[qKey] = true;
-
-        }
-
-        row.errors = errors;
-
-        if (errors.length) {
-            invalid++;
-        } else {
-            valid++;
-        }
-
-        let badge = errors.length ? 'danger' : 'success';
-        let status = errors.length ? errors.join(', ') : 'Valid';
-
-        html += `
-            <tr class="${errors.length ? 'table-danger':''}" data-index="${index}">
-
-                <td>${row.row}</td>
-
-                <td>
-                <textarea class="form-control edit-question" rows="3">${escapeHtml(row.question)}</textarea>
-                </td>
-
-                <td>
-                    <input class="form-control edit-a" value="${escapeHtml(row.option_a)}">
-                </td>
-
-                <td>
-                    <input class="form-control edit-b" value="${escapeHtml(row.option_b)}">
-                </td>
-
-                <td>
-                    <input class="form-control edit-c" value="${escapeHtml(row.option_c)}">
-                </td>
-
-                <td>
-                    <input class="form-control edit-d" value="${escapeHtml(row.option_d)}">
-                </td>
-
-                <td>
-                    <select class="form-control edit-correct">
-
-                    <option value="">Select</option>
-
-                    <option value="A" ${row.correct_option=='A'?'selected':''}>A</option>
-                    <option value="B" ${row.correct_option=='B'?'selected':''}>B</option>
-                    <option value="C" ${row.correct_option=='C'?'selected':''}>C</option>
-                    <option value="D" ${row.correct_option=='D'?'selected':''}>D</option>
-
-                    </select>
-                </td>
-
-                <td>
-                <span class="badge badge-${badge}">${status}</span>
-                </td>
-
-            </tr>
-            `;
-
-    });
-
-    $('#mcqPreviewTable').html(html);
-    $('#mcqPreviewSection').show();
-
-
-    if (invalid > 0) {
-
-        $('#downloadErrorExcelBtn').show();
-
-        $('#confirmUploadBtn')
-            .prop('disabled', true)
-            .removeClass('btn-primary btn-success')
-            .addClass('btn-secondary')
-            .text('Fix Errors Before Upload');
-
-    } else {
-
-        $('#downloadErrorExcelBtn').hide();
-
-        $('#confirmUploadBtn')
-            .prop('disabled', false)
-            .removeClass('btn-secondary')
-            .addClass('btn-primary')
-            .text('Confirm Upload');
+        $('#importSummary').html(html).show();
 
     }
 
-    mcqPreviewData = rows;
 
-}
+    /* ===============================
+    VALIDATE ROWS
+    ================================= */
+
+    function validateRows(rows) {
+
+        let html = '';
+        let duplicateCheck = {};
+
+        let valid = 0;
+        let invalid = 0;
+
+        rows.forEach(function (row, index) {
+
+            row.question = $.trim(row.question || '');
+            row.option_a = $.trim(row.option_a || '');
+            row.option_b = $.trim(row.option_b || '');
+            row.option_c = $.trim(row.option_c || '');
+            row.option_d = $.trim(row.option_d || '');
+            row.correct_option = $.trim((row.correct_option || '').toUpperCase());
+
+            let errors = [];
+
+            /* question required */
+
+            if (row.question == '')
+                errors.push('Question required');
+
+            /* options required */
+
+            let filledOptions = 0;
+
+            if (row.option_a !== '') filledOptions++;
+            if (row.option_b !== '') filledOptions++;
+            if (row.option_c !== '') filledOptions++;
+            if (row.option_d !== '') filledOptions++;
+
+            if (filledOptions < 2) {
+                errors.push('At least 2 options required');
+            }
+
+            /* correct option */
+
+            if (['A', 'B', 'C', 'D'].indexOf(row.correct_option) === -1)
+                errors.push('Correct option must be A,B,C or D');
+
+            /* duplicate detection */
+
+            let qKey = row.question.toLowerCase().replace(/\s+/g, ' ').trim();
+
+            if (qKey != '') {
+
+                if (duplicateCheck[qKey])
+                    errors.push('Duplicate question in preview');
+
+                duplicateCheck[qKey] = true;
+
+            }
+
+            row.errors = errors;
+
+            if (errors.length > 0) {
+                hasError = true;
+                invalid++;
+            } else {
+                valid++;
+            }
+
+            let badge = errors.length ? 'danger' : 'success';
+            let status = errors.length ? errors.join(', ') : 'Valid';
 
 
-function collectEditedRows() {
+            // PUT HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
-    let rows = [];
+            let correctOptionsHtml = '<option value="">Select</option>';
 
-    $('#mcqPreviewTable tr').each(function() {
+            if (row.option_a !== '') {
+                correctOptionsHtml += `
+          <option value="A" ${row.correct_option === 'A' ? 'selected' : ''}>
+            A
+          </option>
+        `;
+            }
 
-        let index = $(this).data('index');
+            if (row.option_b !== '') {
+                correctOptionsHtml += `
+          <option value="B" ${row.correct_option === 'B' ? 'selected' : ''}>
+            B
+          </option>
+        `;
+            }
 
-        let original = mcqPreviewData[index];
+            if (row.option_c !== '') {
+                correctOptionsHtml += `
+          <option value="C" ${row.correct_option === 'C' ? 'selected' : ''}>
+            C
+          </option>
+        `;
+            }
 
-        rows.push({
+            if (row.option_d !== '') {
+                correctOptionsHtml += `
+          <option value="D" ${row.correct_option === 'D' ? 'selected' : ''}>
+            D
+          </option>
+        `;
+            }
 
-            row: original.row,
-            lesson_id: original.lesson_id,
 
-            question: $(this).find('.edit-question').val(),
-            option_a: $(this).find('.edit-a').val(),
-            option_b: $(this).find('.edit-b').val(),
-            option_c: $(this).find('.edit-c').val(),
-            option_d: $(this).find('.edit-d').val(),
-            correct_option: $(this).find('.edit-correct').val(),
-            errors: []
+            html += `
+        <tr class="${errors.length ? 'table-danger' : ''}" data-index="${index}">
+          <td>${row.row}</td>
+
+          <td>
+            <textarea class="form-control edit-question" rows="3">
+              ${escapeHtml(row.question)}
+            </textarea>
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-a"
+            value="${escapeHtml(row.option_a)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-b"
+            value="${escapeHtml(row.option_b)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-c"
+            value="${escapeHtml(row.option_c)}">
+          </td>
+
+          <td>
+            <input type="text" class="form-control edit-d"
+            value="${escapeHtml(row.option_d)}">
+          </td>
+
+          <td>
+            <select class="form-control edit-correct">
+              ${correctOptionsHtml}
+            </select>
+          </td>
+
+          <td>
+            <span class="badge badge-${badge}">
+              ${status}
+            </span>
+          </td>
+        </tr>
+      `;
+        });
+
+        $('#mcqPreviewTable').html(html);
+        $('#mcqPreviewSection').show();
+
+
+        if (invalid > 0) {
+
+            $('#downloadErrorExcelBtn').show();
+
+            $('#confirmUploadBtn')
+                .prop('disabled', true)
+                .removeClass('btn-primary btn-success')
+                .addClass('btn-secondary')
+                .text('Fix Errors Before Upload');
+
+        } else {
+
+            $('#downloadErrorExcelBtn').hide();
+
+            $('#confirmUploadBtn')
+                .prop('disabled', false)
+                .removeClass('btn-secondary')
+                .addClass('btn-primary')
+                .text('Confirm Upload');
+
+        }
+
+        mcqPreviewData = rows;
+
+    }
+
+
+    function collectEditedRows() {
+
+        let rows = [];
+
+        $('#mcqPreviewTable tr').each(function () {
+
+            let index = $(this).data('index');
+
+            let original = mcqPreviewData[index];
+
+            rows.push({
+
+                row: original.row,
+                lesson_id: original.lesson_id,
+
+                question: $(this).find('.edit-question').val(),
+                option_a: $(this).find('.edit-a').val(),
+                option_b: $(this).find('.edit-b').val(),
+                option_c: $(this).find('.edit-c').val(),
+                option_d: $(this).find('.edit-d').val(),
+                correct_option: $(this).find('.edit-correct').val(),
+                errors: []
+
+            });
 
         });
 
-    });
-
-    return rows;
-
-}
-
-
-$('#revalidateBtn').click(function() {
-
-    let rows = collectEditedRows();
-
-    validateRows(rows);
-
-});
-
-
-
-$('#cancelPreviewBtn').click(function() {
-
-    $('#mcqPreviewSection').hide();
-    $('#mcqPreviewTable').html('');
-    $('#importSummary').hide();
-
-    mcqPreviewData = [];
-
-});
-
-
-
-$('#downloadErrorExcelBtn').click(function() {
-
-    let rows = collectEditedRows();
-
-    let errorRows = [];
-
-    rows.forEach(function(row) {
-
-        let errors = [];
-
-        if ($.trim(row.question) == '')
-            errors.push('Question required');
-
-        let filledOptions = 0;
-
-        if (row.option_a !== '') filledOptions++;
-        if (row.option_b !== '') filledOptions++;
-        if (row.option_c !== '') filledOptions++;
-        if (row.option_d !== '') filledOptions++;
-
-        if (filledOptions < 2) {
-            errors.push('At least 2 options required');
-        }
-
-        if (['A', 'B', 'C', 'D'].indexOf($.trim(row.correct_option)) === -1)
-            errors.push('Correct option must be A,B,C or D');
-
-        row.errors = errors;
-
-        if (errors.length)
-            errorRows.push(row);
-
-    });
-
-    if (errorRows.length == 0) {
-
-        alert('No error rows');
-
-        return;
+        return rows;
 
     }
 
-    let form = $('<form>', {
-        method: 'POST',
-        action: "<?= base_url(ADMIN . 'Lesson/downloadErrorExcel') ?>"
-    });
+    $(document).on('input', '.edit-a, .edit-b, .edit-c, .edit-d', function () {
 
-    form.append($('<input>', {
-        type: 'hidden',
-        name: 'rows',
-        value: JSON.stringify(errorRows)
-    }));
+        let row = $(this).closest('tr');
 
-    $('body').append(form);
+        let a = $.trim(row.find('.edit-a').val());
+        let b = $.trim(row.find('.edit-b').val());
+        let c = $.trim(row.find('.edit-c').val());
+        let d = $.trim(row.find('.edit-d').val());
 
-    form.submit();
+        let currentSelected = row.find('.edit-correct').val();
 
-    form.remove();
+        let html = '<option value="">Select</option>';
 
-});
+        if (a !== '') {
+            html += `<option value="A">A</option>`;
+        }
 
+        if (b !== '') {
+            html += `<option value="B">B</option>`;
+        }
 
-$('#confirmUploadBtn').click(function() {
+        if (c !== '') {
+            html += `<option value="C">C</option>`;
+        }
 
-    let rows = collectEditedRows();
+        if (d !== '') {
+            html += `<option value="D">D</option>`;
+        }
 
-    let hasError = false;
+        row.find('.edit-correct').html(html);
 
-    rows.forEach(function(row) {
-
-        let question = $.trim(row.question);
-        let a = $.trim(row.option_a);
-        let b = $.trim(row.option_b);
-        let c = $.trim(row.option_c);
-        let d = $.trim(row.option_d);
-        let correct = $.trim((row.correct_option || '').toUpperCase());
-
-        let filledOptions = 0;
-        if (a !== '') filledOptions++;
-        if (b !== '') filledOptions++;
-        if (c !== '') filledOptions++;
-        if (d !== '') filledOptions++;
-
+        // restore selected if still valid
         if (
-            question === '' ||
-            filledOptions < 2 || ['A', 'B', 'C', 'D'].indexOf(correct) === -1
+            (currentSelected === 'A' && a !== '') ||
+            (currentSelected === 'B' && b !== '') ||
+            (currentSelected === 'C' && c !== '') ||
+            (currentSelected === 'D' && d !== '')
         ) {
-            hasError = true;
-        }
-
-        let correctMap = {
-            A: a,
-            B: b,
-            C: c,
-            D: d
-        };
-        if (correct && (!correctMap[correct] || correctMap[correct] === '')) {
-            hasError = true;
+            row.find('.edit-correct').val(currentSelected);
         }
 
     });
 
-    if (hasError) {
-        alert('Please fix validation errors before upload.');
+
+    $('#revalidateBtn').click(function () {
+
+        let rows = collectEditedRows();
+
         validateRows(rows);
-        return;
-    }
 
-    $('#confirmUploadBtn')
-        .prop('disabled', true)
-        .text('Uploading...');
+    });
 
-    $.ajax({
 
-        url: "<?= base_url(ADMIN . 'Lesson/saveMcqBulk') ?>",
-        type: "POST",
-        dataType: "json",
 
-        data: {
-            rows: JSON.stringify(rows)
-        },
+    $('#cancelPreviewBtn').click(function () {
 
-        success: function(res) {
+        $('#mcqPreviewSection').hide();
+        $('#mcqPreviewTable').html('');
+        $('#importSummary').hide();
 
-            if (res.status) {
+        mcqPreviewData = [];
 
-                alert(res.msg + ' | Inserted: ' + res.inserted);
+    });
 
-                location.reload();
 
-            } else {
 
-                alert(res.msg || 'Upload failed');
+    $('#downloadErrorExcelBtn').click(function () {
+
+        let rows = collectEditedRows();
+
+        let errorRows = [];
+
+        rows.forEach(function (row) {
+
+            let errors = [];
+
+            if ($.trim(row.question) == '')
+                errors.push('Question required');
+
+            let filledOptions = 0;
+
+            if (row.option_a !== '') filledOptions++;
+            if (row.option_b !== '') filledOptions++;
+            if (row.option_c !== '') filledOptions++;
+            if (row.option_d !== '') filledOptions++;
+
+            if (filledOptions < 2) {
+                errors.push('At least 2 options required');
+            }
+
+            if (['A', 'B', 'C', 'D'].indexOf($.trim(row.correct_option)) === -1)
+                errors.push('Correct option must be A,B,C or D');
+
+            row.errors = errors;
+
+            if (errors.length)
+                errorRows.push(row);
+
+        });
+
+        if (errorRows.length == 0) {
+
+            alert('No error rows');
+
+            return;
+
+        }
+
+        let form = $('<form>', {
+            method: 'POST',
+            action: "<?= base_url(ADMIN . 'Lesson/downloadErrorExcel') ?>"
+        });
+
+        form.append($('<input>', {
+            type: 'hidden',
+            name: 'rows',
+            value: JSON.stringify(errorRows)
+        }));
+
+        $('body').append(form);
+
+        form.submit();
+
+        form.remove();
+
+    });
+
+
+    $('#confirmUploadBtn').click(function () {
+
+        let rows = collectEditedRows();
+
+        let hasError = false;
+
+        rows.forEach(function (row) {
+
+            let question = $.trim(row.question);
+            let a = $.trim(row.option_a);
+            let b = $.trim(row.option_b);
+            let c = $.trim(row.option_c);
+            let d = $.trim(row.option_d);
+            let correct = $.trim((row.correct_option || '').toUpperCase());
+
+            let filledOptions = 0;
+            if (a !== '') filledOptions++;
+            if (b !== '') filledOptions++;
+            if (c !== '') filledOptions++;
+            if (d !== '') filledOptions++;
+
+            if (
+                question === '' ||
+                filledOptions < 2 || ['A', 'B', 'C', 'D'].indexOf(correct) === -1
+            ) {
+                hasError = true;
+            }
+
+            let correctMap = {
+                A: a,
+                B: b,
+                C: c,
+                D: d
+            };
+            if (correct && (!correctMap[correct] || correctMap[correct] === '')) {
+                hasError = true;
+            }
+
+        });
+
+        if (hasError) {
+            alert('Please fix validation errors before upload.');
+            validateRows(rows);
+            return;
+        }
+
+        $('#confirmUploadBtn')
+            .prop('disabled', true)
+            .text('Uploading...');
+
+        $.ajax({
+
+            url: "<?= base_url(ADMIN . 'Lesson/saveMcqBulk') ?>",
+            type: "POST",
+            dataType: "json",
+
+            data: {
+                rows: JSON.stringify(rows)
+            },
+
+            success: function (res) {
+
+                if (res.status) {
+
+                    alert(res.msg + ' | Inserted: ' + res.inserted);
+
+                    location.reload();
+
+                } else {
+
+                    alert(res.msg || 'Upload failed');
+
+                    $('#confirmUploadBtn')
+                        .prop('disabled', false)
+                        .text('Confirm Upload');
+
+                }
+
+            },
+
+            error: function () {
+
+                alert('Server error');
 
                 $('#confirmUploadBtn')
                     .prop('disabled', false)
@@ -893,195 +985,183 @@ $('#confirmUploadBtn').click(function() {
 
             }
 
-        },
-
-        error: function() {
-
-            alert('Server error');
-
-            $('#confirmUploadBtn')
-                .prop('disabled', false)
-                .text('Confirm Upload');
-
-        }
+        });
 
     });
 
-});
+    function escapeHtml(text) {
 
-function escapeHtml(text) {
+        return $('<div>').text(text).html();
 
-    return $('<div>').text(text).html();
-
-}
+    }
 </script>
 <script>
-// function updateCorrectOptions(mcqItem) {
+    // function updateCorrectOptions(mcqItem) {
 
-//     let select = mcqItem.find('.correct-option-select');
-//     let currentVal = select.val();
+    //     let select = mcqItem.find('.correct-option-select');
+    //     let currentVal = select.val();
 
-//     select.html('<option value="">Select</option>');
+    //     select.html('<option value="">Select</option>');
 
-//     mcqItem.find('.option-input').each(function() {
+    //     mcqItem.find('.option-input').each(function() {
 
-//         let value = $(this).val().trim();
-//         let option = $(this).data('option');
+    //         let value = $(this).val().trim();
+    //         let option = $(this).data('option');
 
-//         if (value !== '') {
+    //         if (value !== '') {
 
-//             select.append(
-//                 `<option value="${option}">
-//                 Option ${option}
-//             </option>`
-//             );
-//         }
-//     });
+    //             select.append(
+    //                 `<option value="${option}">
+    //                 Option ${option}
+    //             </option>`
+    //             );
+    //         }
+    //     });
 
-//     // restore selected value if still exists
-//     if (select.find(`option[value="${currentVal}"]`).length) {
-//         select.val(currentVal);
-//     }
-// }
-function updateCorrectOptions(mcqItem) {
+    //     // restore selected value if still exists
+    //     if (select.find(`option[value="${currentVal}"]`).length) {
+    //         select.val(currentVal);
+    //     }
+    // }
+    function updateCorrectOptions(mcqItem) {
 
-    let select = mcqItem.find('.correct-option-select');
-    let currentVal = select.val();
+        let select = mcqItem.find('.correct-option-select');
+        let currentVal = select.val();
 
-    // clear all options first
-    select.empty();
+        // clear all options first
+        select.empty();
 
-    // default option
-    select.append('<option value="">Select</option>');
+        // default option
+        select.append('<option value="">Select</option>');
 
-    mcqItem.find('.option-input').each(function() {
+        mcqItem.find('.option-input').each(function () {
 
-        let value = $(this).val().trim();
-        let option = $(this).data('option');
+            let value = $(this).val().trim();
+            let option = $(this).data('option');
 
-        if (value !== '') {
+            if (value !== '') {
 
-            select.append(
-                `<option value="${option}">
+                select.append(
+                    `<option value="${option}">
                 Option ${option}
             </option>`
-            );
+                );
+            }
+        });
+
+        // restore selected value if available
+        if (select.find(`option[value="${currentVal}"]`).length) {
+            select.val(currentVal);
         }
+    }
+    $(document).on('keyup change', '.option-input', function () {
+
+        let mcqItem = $(this).closest('.mcq-item');
+        updateCorrectOptions(mcqItem);
+
     });
 
-    // restore selected value if available
-    if (select.find(`option[value="${currentVal}"]`).length) {
-        select.val(currentVal);
-    }
-}
-$(document).on('keyup change', '.option-input', function() {
-
-    let mcqItem = $(this).closest('.mcq-item');
-    updateCorrectOptions(mcqItem);
-
-});
-
-function openAddMcqModal() {
-    $('#mcqMode').val('add');
-    $('#mcqModalTitle').text('Add MCQs');
-    $('#mcqRepeater').html($('#mcqItemTemplate').html());
-    updateCorrectOptions($('#mcqRepeater .mcq-item'));
-    $('#mcqModal').modal('show');
-}
-
-function openEditMcqModal(mcq) {
-    $('#edit_id').val(mcq.id);
-    $('#edit_question').val(mcq.question);
-    $('#edit_a').val(mcq.option_a);
-    $('#edit_b').val(mcq.option_b);
-    $('#edit_c').val(mcq.option_c);
-    $('#edit_d').val(mcq.option_d);
-    $('#edit_correct').val(mcq.correct_option);
-    updateEditCorrectOptions();
-    $('#editMcqModal').modal('show');
-}
-$(document).on('keyup change', '#edit_a, #edit_b, #edit_c, #edit_d', function() {
-
-    updateEditCorrectOptions();
-
-});
-
-function updateEditCorrectOptions() {
-
-    $('#edit_correct option').prop('disabled', false);
-
-    if ($('#edit_a').val().trim() === '') {
-        $('#edit_correct option[value="A"]').prop('disabled', true);
+    function openAddMcqModal() {
+        $('#mcqMode').val('add');
+        $('#mcqModalTitle').text('Add MCQs');
+        $('#mcqRepeater').html($('#mcqItemTemplate').html());
+        updateCorrectOptions($('#mcqRepeater .mcq-item'));
+        $('#mcqModal').modal('show');
     }
 
-    if ($('#edit_b').val().trim() === '') {
-        $('#edit_correct option[value="B"]').prop('disabled', true);
+    function openEditMcqModal(mcq) {
+        $('#edit_id').val(mcq.id);
+        $('#edit_question').val(mcq.question);
+        $('#edit_a').val(mcq.option_a);
+        $('#edit_b').val(mcq.option_b);
+        $('#edit_c').val(mcq.option_c);
+        $('#edit_d').val(mcq.option_d);
+        $('#edit_correct').val(mcq.correct_option);
+        updateEditCorrectOptions();
+        $('#editMcqModal').modal('show');
     }
+    $(document).on('keyup change', '#edit_a, #edit_b, #edit_c, #edit_d', function () {
 
-    if ($('#edit_c').val().trim() === '') {
-        $('#edit_correct option[value="C"]').prop('disabled', true);
-    }
+        updateEditCorrectOptions();
 
-    if ($('#edit_d').val().trim() === '') {
-        $('#edit_correct option[value="D"]').prop('disabled', true);
-    }
+    });
 
-    // reset selected if disabled
-    let selected = $('#edit_correct').val();
+    function updateEditCorrectOptions() {
 
-    if ($('#edit_correct option:selected').prop('disabled')) {
-        $('#edit_correct').val('');
-    }
-}
+        $('#edit_correct option').prop('disabled', false);
 
-function deleteMcq(id, lessonId) {
-    if (!confirm('Delete this MCQ?')) return;
-
-    $.post("<?= base_url(ADMIN . 'Lesson/deleteMcq'); ?>", {
-        id
-    }, function(res) {
-        if (res.status) {
-            location.href = "<?= base_url(ADMIN . 'Lesson/mcq/'); ?>" + lessonId;
+        if ($('#edit_a').val().trim() === '') {
+            $('#edit_correct option[value="A"]').prop('disabled', true);
         }
-    }, 'json');
-}
 
+        if ($('#edit_b').val().trim() === '') {
+            $('#edit_correct option[value="B"]').prop('disabled', true);
+        }
 
+        if ($('#edit_c').val().trim() === '') {
+            $('#edit_correct option[value="C"]').prop('disabled', true);
+        }
 
-$(document).on('click', '#addMoreMcq', function() {
-    $('#mcqRepeater').append($('#mcqItemTemplate').html());
-    $('#mcqRepeater').append(newItem);
+        if ($('#edit_d').val().trim() === '') {
+            $('#edit_correct option[value="D"]').prop('disabled', true);
+        }
 
-    let lastItem = $('#mcqRepeater .mcq-item').last();
+        // reset selected if disabled
+        let selected = $('#edit_correct').val();
 
-    updateCorrectOptions(lastItem);
-});
-
-$(document).on('click', '.removeMcq', function() {
-    if ($('.mcq-item').length > 1) {
-        $(this).closest('.mcq-item').remove();
+        if ($('#edit_correct option:selected').prop('disabled')) {
+            $('#edit_correct').val('');
+        }
     }
-});
+
+    function deleteMcq(id, lessonId) {
+        if (!confirm('Delete this MCQ?')) return;
+
+        $.post("<?= base_url(ADMIN . 'Lesson/deleteMcq'); ?>", {
+            id
+        }, function (res) {
+            if (res.status) {
+                location.href = "<?= base_url(ADMIN . 'Lesson/mcq/'); ?>" + lessonId;
+            }
+        }, 'json');
+    }
+
+
+
+    $(document).on('click', '#addMoreMcq', function () {
+        $('#mcqRepeater').append($('#mcqItemTemplate').html());
+        $('#mcqRepeater').append(newItem);
+
+        let lastItem = $('#mcqRepeater .mcq-item').last();
+
+        updateCorrectOptions(lastItem);
+    });
+
+    $(document).on('click', '.removeMcq', function () {
+        if ($('.mcq-item').length > 1) {
+            $(this).closest('.mcq-item').remove();
+        }
+    });
 </script>
 
 <script>
-function deleteMcq(id, lessonId) {
-    if (!confirm('Delete this MCQ?')) return;
+    function deleteMcq(id, lessonId) {
+        if (!confirm('Delete this MCQ?')) return;
 
-    $.ajax({
-        url: "<?= base_url(ADMIN . 'Lesson/deleteMcq'); ?>",
-        type: "POST",
-        data: {
-            id: id
-        },
-        dataType: "json",
-        success: function(res) {
-            if (res.status) {
-                location.href = "<?= base_url(ADMIN . 'Lesson/mcq/'); ?>" + lessonId;
-            } else {
-                alert(res.message || 'Delete failed');
+        $.ajax({
+            url: "<?= base_url(ADMIN . 'Lesson/deleteMcq'); ?>",
+            type: "POST",
+            data: {
+                id: id
+            },
+            dataType: "json",
+            success: function (res) {
+                if (res.status) {
+                    location.href = "<?= base_url(ADMIN . 'Lesson/mcq/'); ?>" + lessonId;
+                } else {
+                    alert(res.message || 'Delete failed');
+                }
             }
-        }
-    });
-}
+        });
+    }
 </script>
