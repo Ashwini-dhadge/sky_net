@@ -112,7 +112,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane active" id="settings" role="tabpanel">
+                                <div class="tab-pane " id="settings" role="tabpanel">
                                     <div class="card-body">
 
                                         <form id="profile_form" enctype="multipart/form-data">
@@ -250,9 +250,9 @@ $(document).ready(function () {
                             text: response.message
                         });
 
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1500);
+                        // setTimeout(function () {
+                        //     location.reload();
+                        // }, 1500);
 
                     } else {
 
