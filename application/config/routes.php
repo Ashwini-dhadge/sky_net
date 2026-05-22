@@ -62,6 +62,7 @@ $route['logout'] = ADMIN . "Auth/logout";
 $route['admin/profile/(:any)'] = ADMIN . 'Authentication/profile/$1';
 $route['admin/serviceList/(:any)'] = ADMIN . 'Service/serviceList/$1';
 $route['dashboard'] = ADMIN . "Dashboard";
+$route['profile'] = ADMIN . "Dashboard/edit_profile";
 $route['admin/Category']             = ADMIN . 'Category';
 
 

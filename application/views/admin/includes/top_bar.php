@@ -39,10 +39,10 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     <!-- item-->
-                    <!--   <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1"></i> Profile</a>-->
+                      <a class="dropdown-item" href="<?= base_url('profile'); ?>"><i class="mdi mdi-account-circle font-size-17 align-middle mr-1 text-success"></i> Profile</a>
 
                     <a class="dropdown-item text-danger" href="<?= base_url('logout'); ?>"><i
-                            class="bx bx-power-off font-size-17 align-middle mr-1 text-danger"></i> Logout</a>
+                            class="mdi mdi-logout font-size-17 align-middle mr-1 text-danger"></i> Logout</a>
                 </div>
             </div>
 

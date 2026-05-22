@@ -83,31 +83,56 @@ class Student extends CI_Controller
                     ';
                 }
 
-                $action .= '
-                    <a href="javascript:void(0);" 
-                    title="Certificate" 
-                    class="btn btn-warning btn-sm waves-effect waves-light certificateModal" data-id="' . $user['id'] . '">
-                    <i class="fas fa-award"></i>
-                    </a>
+                $action = '
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                        type="button" 
+                        id="dropdownMenuButton' . $user['id'] . '" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="false"
+                        style="padding: 4px 8px;">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
 
-                    <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
-                    title="Edit" 
-                    class="btn btn-success btn-sm waves-effect waves-light">
-                    <i class="fas fa-edit"></i>
-                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton' . $user['id'] . '">
+                ';
 
-                    <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
-                    title="View" 
-                    class="btn btn-primary btn-sm waves-effect waves-light">
-                    <i class="fas fa-eye"></i>
-                    </a>
+                                if ($user['user_type'] == 0) {
+                                    $action .= '
+                        <a href="javascript:void(0);" 
+                            class="dropdown-item openAssignModal"
+                            data-id="' . $user['id'] . '">
+                            <i class="fas fa-book text-info mr-2"></i> Assign Course
+                        </a>
+                    ';
+                                }
 
-                    <a onclick="return ' . $confirm . '" 
-                    href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" 
-                    title="Delete" 
-                    class="btn btn-danger btn-sm waves-effect waves-light">
-                    <i class="fas fa-trash-alt"></i>
-                    </a>
+                                $action .= '
+                        <a href="javascript:void(0);" 
+                            class="dropdown-item certificateModal"
+                            data-id="' . $user['id'] . '">
+                            <i class="fas fa-award text-warning mr-2"></i> Certificate
+                        </a>
+
+                        <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
+                            class="dropdown-item">
+                            <i class="fas fa-edit text-success mr-2"></i> Edit
+                        </a>
+
+                        <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
+                            class="dropdown-item">
+                            <i class="fas fa-eye text-primary mr-2"></i> View
+                        </a>
+
+                        <a onclick="return ' . $confirm . '" 
+                            href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" 
+                            class="dropdown-item text-danger">
+                            <i class="fas fa-trash-alt mr-2"></i> Delete
+                        </a>
+
+                    </div>
+                </div>
                 ';
 
 

@@ -65,10 +65,7 @@
             <small class="text-muted">Assign or manage user course access</small>
         </div>
 
-        <input type="text"
-            id="courseSearch"
-            class="form-control form-control-sm"
-            placeholder="Search course..."
+        <input type="text" id="courseSearch" class="form-control form-control-sm" placeholder="Search course..."
             style="width:220px;">
     </div>
 
@@ -90,7 +87,7 @@
             $sub = isset($sub_map[$course['id']]) ? $sub_map[$course['id']] : null;
             $isSubscribed = $sub ? true : false;
             $isExpired = ($sub && strtotime($sub['end_date']) < time());
-        ?>
+            ?>
 
             <div class="course-item mb-2">
 
@@ -101,11 +98,12 @@
                     <div class="d-flex align-items-start">
 
                         <div class="form-check me-3 mt-1">
-                            <input type="checkbox"
-                                name="course_ids[]"
-                                value="<?= $course['id'] ?>"
-                                class="form-check-input course-checkbox"
-                                <?= $isSubscribed && !$isExpired ? 'checked' : '' ?>>
+                            <input type="checkbox" name="course_ids[]" value="<?= $course['id'] ?>"
+                                class="form-check-input course-checkbox" <?= $isSubscribed && !$isExpired ? 'checked disabled' : '' ?>>
+
+                            <?php if ($isSubscribed && !$isExpired): ?>
+                                <input type="hidden" name="course_ids[]" value="<?= $course['id'] ?>">
+                            <?php endif; ?>
                         </div>
 
                         <div>
@@ -119,6 +117,13 @@
                                     Start: <?= date('d M Y', strtotime($sub['start_date'])) ?> |
                                     Expiry: <?= date('d M Y', strtotime($sub['end_date'])) ?>
                                 </div>
+                            
+                                <?php if (!$isExpired): ?>
+                                    <small class="text-danger">
+                                        Already assigned course cannot be unassigned.
+                                    </small>
+                                <?php endif; ?>
+                            
                             <?php endif; ?>
                         </div>
 
@@ -134,7 +139,8 @@
                                     <span class="badge status-badge" style="border:1px solid #198754">Active</span>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <span class="badge  status-badge" style="border:1px solid #919191; background-color: #ededed">Not Assigned</span>
+                                <span class="badge  status-badge"
+                                    style="border:1px solid #919191; background-color: #ededed">Not Assigned</span>
                             <?php endif; ?>
 
                             <!-- <?php if ($isSubscribed): ?>
@@ -168,13 +174,11 @@
 
     <!-- Footer -->
     <div class="mt-4 pt-3 border-top text-right">
-        <button class="btn btn-secondary"
-            data-dismiss="modal">
+        <button class="btn btn-secondary" data-dismiss="modal">
             Close
         </button>
 
-        <button type="button"
-            class="btn btn-primary px-4 saveAssignCourse">
+        <button type="button" class="btn btn-primary px-4 saveAssignCourse">
             <i class="fas fa-save me-1"></i>
             Save Changes
         </button>
@@ -183,14 +187,14 @@
 
 <script>
     // Select All
-    $(document).on("change", "#selectAllCourses", function() {
+    $(document).on("change", "#selectAllCourses", function () {
         $(".course-checkbox").prop("checked", $(this).prop("checked"));
     });
 
     // Search Filter
-    $("#courseSearch").on("keyup", function() {
+    $("#courseSearch").on("keyup", function () {
         var value = $(this).val().toLowerCase();
-        $(".course-item").filter(function() {
+        $(".course-item").filter(function () {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });
     });
