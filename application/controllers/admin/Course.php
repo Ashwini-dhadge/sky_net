@@ -366,13 +366,13 @@ class Course extends CI_Controller
 						MCQ
 					</a>
 
-					<a class="btn btn-danger btn-sm"
-					href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
-					onclick="return confirm(\'Delete this lesson?\')">
-						<i class="fas fa-trash-alt"></i>
-					</a>
 					';
 
+					// <a class="btn btn-danger btn-sm"
+					// href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
+					// onclick="return confirm(\'Delete this lesson?\')">
+					// 	<i class="fas fa-trash-alt"></i>
+					// </a>
 				$row[] = $action;
 				$rows[] = $row;
 			}
@@ -733,13 +733,21 @@ class Course extends CI_Controller
 
 	public function check_course_title()
 	{
-		$title = $this->input->post('title');
+		$title = trim($this->input->post('title'));
 		$id = $this->input->post('id');
-		$this->db->where('title', $title);
-		if ($id) {
+
+		$this->db->from('tbl_courses');
+
+		$this->db->where('LOWER(TRIM(title)) =', strtolower($title));
+
+		$this->db->where('deleted_by IS NULL', null, false);
+
+		if (!empty($id)) {
 			$this->db->where('id !=', $id);
 		}
-		$query = $this->db->get('tbl_courses');
+
+		$query = $this->db->get();
+
 		if ($query->num_rows() > 0) {
 			echo "exists";
 		} else {

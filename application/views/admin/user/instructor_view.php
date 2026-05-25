@@ -15,7 +15,8 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="float-right d-none d-md-block">
-                                <button type="button" class="btn btn-secondary waves-effect waves-light mb-0" onclick="window.history.back()">Back</button>
+                                <button type="button" class="btn btn-secondary waves-effect waves-light mb-0"
+                                    onclick="window.history.back()">Back</button>
                             </div>
                         </div>
                     </div>
@@ -30,11 +31,31 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="float-left mr-4">
-                                                <?php $img = ($user['image']) ? $user['image'] : 'no-image.png'; ?>
-                                                <img src="<?= base_url() . USER_IMAGES . $user['image'] ?>" alt="" class="rounded-circle" width="150" height="140">
+                                                <?php
+
+                                                $image = trim($user['image'] ?? '');
+
+                                                $uploadPath = FCPATH . 'assets/uploads/user_image/' . $image;
+
+                                                if ($image != '' && $image != 'null' && is_file($uploadPath)) {
+
+                                                    $imagePath = base_url('assets/uploads/user_image/' . $image);
+
+                                                } else {
+
+                                                    $imagePath = base_url('assets/images/user.png');
+
+                                                }
+
+                                                ?>
+
+                                                <img src="<?= $imagePath ?>"
+                                                    style="width:85px;height:85px;object-fit:cover;border-radius:15px;">
                                             </div>
-                                            <h4 class="text-success"><?= $user['first_name']; ?><?= $user['last_name']; ?></h4>
-                                            <p class="text-muted"><?= $user['email']; ?><br><?= $user['mobile_no']; ?></p>
+                                            <h4 class="text-success">
+                                                <?= $user['first_name']; ?><?= $user['last_name']; ?></h4>
+                                            <p class="text-muted"><?= $user['email']; ?><br><?= $user['mobile_no']; ?>
+                                            </p>
                                         </div>
                                         <div class="col-lg-6">
                                             <table class="table">

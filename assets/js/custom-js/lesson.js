@@ -64,12 +64,6 @@ function listLesson() {
                     Edit
                 </a>
 
-                <a href="javascript:void(0);"
-                    class="dropdown-item text-danger"
-                    onclick="deleteLesson(${data.lesson_id})">
-                    <i class="fa fa-trash mr-2"></i>
-                    Delete
-                </a>
 
             </div>
         </div>
@@ -80,6 +74,8 @@ function listLesson() {
 
 	});
 }
+
+
 
 $(document).ready(function () {
 	listLesson();

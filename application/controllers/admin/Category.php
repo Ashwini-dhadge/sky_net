@@ -54,10 +54,10 @@ class Category extends CI_Controller
                 array_push($row, $status);
             	$confirm = "confirm('Do you want to delete this record?');";
             	$action = '
-                <a href="javascript:void(0);" title="Edit" class="btn btn-primary waves-effect waves-light btn-sm categoryModal" onclick="categoryModal('.$Category['id'] .')" data-id="'.$Category['id'] .'" ><i class="fas fa-edit" aria-hidden="true"></i></a>
-                <a onclick="return '.$confirm.'" href="'.base_url() .ADMIN.'Category/delete/'.$Category['id'] .'" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>';
+                <a href="javascript:void(0);" title="Edit" class="btn btn-primary waves-effect waves-light btn-sm categoryModal" onclick="categoryModal('.$Category['id'] .')" data-id="'.$Category['id'] .'" ><i class="fas fa-edit" aria-hidden="true"></i></a>';
                 array_push($row, $action);
-            	
+
+				// <a onclick="return '.$confirm.'" href="'.base_url() .ADMIN.'Category/delete/'.$Category['id'] .'" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
                 $columns[] = $row;
             }
         }

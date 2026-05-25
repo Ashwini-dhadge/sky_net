@@ -119,11 +119,8 @@
         <div class="cert-form">
             <div class="cert-block">
                 <label class="cert-label">Certificate Title</label>
-                <input type="text"
-                    name="certificate_title"
-                    class="form-control"
-                    value="<?= $certificate['certificate_title'] ?? '' ?>"
-                    required>
+                <input type="text" name="certificate_title" class="form-control"
+                    value="<?= $certificate['certificate_title'] ?? '' ?>" required>
             </div>
             <div class="cert-block">
                 <label class="cert-label">Course Type</label>
@@ -143,19 +140,15 @@
                     <select name="course_id" class="form-control">
                         <option value="">Select Course</option>
                         <?php foreach ($courses as $course) { ?>
-                            <option value="<?= $course['id'] ?>"
-                                <?= ($certificate['course_id'] ?? '') == $course['id'] ? 'selected' : '' ?>>
+                            <option value="<?= $course['id'] ?>" <?= ($certificate['course_id'] ?? '') == $course['id'] ? 'selected' : '' ?>>
                                 <?= $course['title'] ?>
                             </option>
                         <?php } ?>
                     </select>
                 </div>
                 <div class="mt-3 <?= empty($certificate['external_course']) ? 'd-none' : '' ?>" id="externalCourseDiv">
-                    <input type="text"
-                        name="external_course"
-                        class="form-control"
-                        value="<?= $certificate['external_course'] ?? '' ?>"
-                        placeholder="Enter external course">
+                    <input type="text" name="external_course" class="form-control"
+                        value="<?= $certificate['external_course'] ?? '' ?>" placeholder="Enter external course">
                 </div>
             </div>
             <div class="cert-block">
@@ -179,14 +172,13 @@
                     <option value="both" <?= $resultType == 'both' ? 'selected' : '' ?>>Score + Grade</option>
                 </select>
                 <div class="row mt-3">
-                    <div class="col-md-6 <?= ($resultType == 'score' || $resultType == 'both') ? '' : 'd-none' ?>" id="scoreDiv">
-                        <input type="number"
-                            name="score"
-                            class="form-control"
-                            value="<?= $certificate['score'] ?? '' ?>"
-                            placeholder="Score">
+                    <div class="col-md-6 <?= ($resultType == 'score' || $resultType == 'both') ? '' : 'd-none' ?>"
+                        id="scoreDiv">
+                        <input type="number" name="score" class="form-control"
+                            value="<?= $certificate['score'] ?? '' ?>" placeholder="Score">
                     </div>
-                    <div class="col-md-6 <?= ($resultType == 'grade' || $resultType == 'both') ? '' : 'd-none' ?>" id="gradeDiv">
+                    <div class="col-md-6 <?= ($resultType == 'grade' || $resultType == 'both') ? '' : 'd-none' ?>"
+                        id="gradeDiv">
                         <select name="grade" class="form-control">
                             <option value="">Select Grade</option>
                             <?php
@@ -202,16 +194,12 @@
             </div>
             <div class="cert-block">
                 <label class="cert-label">Issue Date</label>
-                <input type="date"
-                    name="issued_date"
-                    class="form-control"
+                <input type="date" name="issued_date" class="form-control"
                     value="<?= $certificate['issued_date'] ?? '' ?>">
             </div>
             <div class="cert-block">
                 <label class="cert-label">Upload Certificate</label>
-                <input type="file"
-                    name="certificate_file"
-                    accept=".pdf,.jpg,.jpeg,.png">
+                <input type="file" name="certificate_file" accept=".pdf,.jpg,.jpeg,.png">
                 <?php if (!empty($certificate['certificate_file'])) { ?>
                     <div class="mt-2">
                         <a href="<?= base_url(CERTIFICATE_FILES . $certificate['certificate_file']) ?>" target="_blank">
@@ -226,10 +214,18 @@
         </div>
         <div class="cert-info">
             <div class="student-box">
-                <img src="<?= !empty($user_details['image'])
-                                ? base_url(USER_PROFILE . $user_details['image'])
-                                : base_url('assets/default-user.png') ?>"
-                    class="student-img">
+                <?php
+                $imagePath = base_url('assets/images/user.png');
+
+                if (
+                    !empty($user_details['image']) &&
+                    file_exists(FCPATH . USER_PROFILE . $user_details['image'])
+                ) {
+                    $imagePath = base_url(USER_PROFILE . $user_details['image']);
+                }
+                ?>
+
+                <img src="<?= $imagePath ?>" class="student-img" >
                 <div>
                     <div class="student-name">
                         <?= $user_details['first_name'] ?? '' ?>
@@ -255,7 +251,7 @@
 
 
 <script>
-    $(document).on("change", "input[name='course_type']", function() {
+    $(document).on("change", "input[name='course_type']", function () {
 
         $(".toggle-btn").removeClass("active");
         $(this).parent().addClass("active");
@@ -271,7 +267,7 @@
     });
 
 
-    $("#resultType").change(function() {
+    $("#resultType").change(function () {
 
         let type = $(this).val();
 

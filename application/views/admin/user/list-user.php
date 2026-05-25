@@ -1,4 +1,12 @@
 <?php init_header(); ?>
+<style>
+    .student-name-wrap{
+    white-space: normal !important;
+    word-break: break-word;
+    display: block;
+    line-height: 18px;
+}
+</style>
 
 <div class="main-content">
     <!-- ============================================================== -->

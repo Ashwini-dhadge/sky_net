@@ -1,4 +1,13 @@
 <?php init_header(); ?>
+<style>
+    .student-name-wrap{
+    white-space: normal !important;
+    word-break: break-word;
+    display: block;
+    line-height: 18px;
+}
+</style>
+
 <div class="main-content">
     <div class="content-page">
         <div class="content">
@@ -25,11 +34,28 @@
 
                                 <div class="mb-4">
                                     <div class="mr-3">
-                                        <img src="<?= base_url(USER_PROFILE . $user['image']) ?>"
-                                            style="width:85px;height:85px;object-fit:cover;border-radius:15px;">
+                                <?php
+
+                                $image = trim($user['image'] ?? '');
+
+                                $uploadPath = FCPATH . 'assets/uploads/user_image/' . $image;
+
+                                if ($image != '' && $image != 'null' && is_file($uploadPath)) {
+
+                                    $imagePath = base_url('assets/uploads/user_image/' . $image);
+
+                                } else {
+
+                                    $imagePath = base_url('assets/images/user.png');
+
+                                }
+
+                                ?>
+                                
+                                <img src="<?= $imagePath ?>" style="width:85px;height:85px;object-fit:cover;border-radius:15px;">
                                     </div>
                                     <div>
-                                        <h5 class="mb-3 mt-3 font-weight-bold">
+                                        <h5 class="mb-3 mt-3 font-weight-bold student-name-wrap">
                                             <?= $user['first_name']; ?> <?= $user['last_name']; ?>
                                         </h5>   
 
