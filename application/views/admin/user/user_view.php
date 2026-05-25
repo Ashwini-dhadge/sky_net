@@ -23,15 +23,15 @@
                                 <input type="hidden" name="action" id="action" value="2">
                                 <?php $img = (!empty($user['image'])) ? $user['image'] : 'no-image.png'; ?>
 
-                                <div class="d-flex align-items-center mb-4">
+                                <div class="mb-4">
                                     <div class="mr-3">
                                         <img src="<?= base_url(USER_PROFILE . $user['image']) ?>"
                                             style="width:85px;height:85px;object-fit:cover;border-radius:15px;">
                                     </div>
                                     <div>
-                                        <h5 class="mb-1 font-weight-bold">
-                                            <?= substr($user['first_name'], 0, 20 ) . "..."; ?> <?= $user['last_name']; ?>
-                                        </h5>
+                                        <h5 class="mb-3 mt-3 font-weight-bold">
+                                            <?= $user['first_name']; ?> <?= $user['last_name']; ?>
+                                        </h5>   
 
                                         <span class="badge <?= ($user['status']) ? 'badge-success' : 'badge-secondary' ?>"
                                             style="padding:6px 14px;border-radius:30px;font-size:12px;">
@@ -40,11 +40,12 @@
                                     </div>
                                 </div>
                                 <hr class="my-3">
-                                <div class="profile-info d-flex">
+                                <div class="profile-info ">
                                     <div class="mr-5">
                                         <small class="text-muted d-block">Email Address</small>
                                         <span class="font-weight-medium"><?= $user['email']; ?></span>
                                     </div>
+                                    <hr>
                                     <div class="mb-3">
                                         <small class="text-muted d-block">Mobile Number</small>
                                         <span class="font-weight-medium"><?= $user['mobile_no']; ?></span>
