@@ -225,7 +225,7 @@
                 }
                 ?>
 
-                <img src="<?= $imagePath ?>" class="student-img" >
+                <img src="<?= $imagePath ?>" class="student-img">
                 <div>
                     <div class="student-name">
                         <?= $user_details['first_name'] ?? '' ?>
@@ -253,18 +253,20 @@
 <script>
     $(document).on("change", "input[name='course_type']", function () {
 
-        $(".toggle-btn").removeClass("active");
-        $(this).parent().addClass("active");
+    $(".toggle-btn").removeClass("active");
+    $(this).parent().addClass("active");
 
-        if ($(this).val() == "external") {
-            $("#internalCourseDiv").addClass("d-none");
-            $("#externalCourseDiv").removeClass("d-none");
-        } else {
-            $("#externalCourseDiv").addClass("d-none");
-            $("#internalCourseDiv").removeClass("d-none");
-        }
+    if ($(this).val() == "external") {
 
-    });
+        $("#internalCourseDiv").addClass("d-none");
+        $("#externalCourseDiv").removeClass("d-none");
+
+    } else {
+
+        $("#externalCourseDiv").addClass("d-none");
+        $("#internalCourseDiv").removeClass("d-none");
+    }
+});
 
 
     $("#resultType").change(function () {

@@ -502,7 +502,9 @@ class Student extends CI_Controller
             $student['self_code'] = "LMS" . $student['mobile_no'];
             $student['otp'] = create6NumRandom();
             $student['user_from'] = 1;
-            $student['user_type'] = 0;
+            if(isset($post['user_type'])){
+                $student['user_type'] = $post['user_type'];
+            }
             $student['is_otp_verified'] = 0;
 
             if (!empty($post['id'])) {

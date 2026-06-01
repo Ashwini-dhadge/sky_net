@@ -436,7 +436,7 @@ class Course extends CI_Controller
 			}
 
 			$data['active']   = 'Course';
-			$data['category'] = $this->CommonModel->getData('tbl_categories', ['status' => 1]);
+			$data['category'] = $this->CommonModel->getData('tbl_categories', ['status' => 1, 'is_deleted' => 0]);
 			$data['duration'] = $this->CommonModel->getData('tbl_duration_master');
 			$data['certificate_details'] = $this->CourseModel->getCertificateData($id);
 			$data['instructors'] = $this->CourseModel->getInstructors();
