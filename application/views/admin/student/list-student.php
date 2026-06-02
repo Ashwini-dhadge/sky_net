@@ -1,5 +1,12 @@
 <?php init_header(); ?>
-
+<style>
+    .student-name-wrap {
+        white-space: normal !important;
+        word-break: break-word;
+        display: block;
+        line-height: 18px;
+    }
+</style>
 <div class="main-content">
     <div class="content-page">
         <div class="content">
@@ -9,7 +16,8 @@
                         <div class="card  mb-4 mt-4">
                             <div class="card-body">
 
-                                <a href="<?= base_url(ADMIN . 'Student/add_student'); ?>" class="btn btn-primary waves-effect waves-light float-right">Add Offline Student</a>
+                                <a href="<?= base_url(ADMIN . 'Student/add_student'); ?>"
+                                    class="btn btn-primary waves-effect waves-light float-right">Add Offline Student</a>
                                 <h4 class="card-title"><?= $title ?></h4>
                                 <select id="student_type_filter" class="form-control" style="width:20%;">
                                     <option value="">All Students</option>
@@ -26,7 +34,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">Assign Course</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body" style="padding: 10px;" id="assignCourseModalBody">
                                 <div class="text-center">
@@ -41,7 +49,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">Certification</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                             </div>
                             <div class="modal-body" style="padding: 10px;" id="certificateModalBody">
                                 <div class="text-center">

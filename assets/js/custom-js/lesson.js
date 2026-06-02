@@ -31,35 +31,51 @@ function listLesson() {
 				render: function (data) {
 
 					return `
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton${data.lesson_id}"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                style="padding:4px 8px;">
+                <i class="fa fa-ellipsis-v"></i>
+            </button>
+
+            <div class="dropdown-menu dropdown-menu-right"
+                aria-labelledby="dropdownMenuButton${data.lesson_id}">
+
                 <a href="javascript:void(0);"
-                    class="btn btn-sm btn-outline-secondary text-warning mr-1"
+                    class="dropdown-item"
                     onclick="openLessonModel(${data.course_id},${data.section_id},${data.lesson_id})">
-                    <i class="fa fa-book"></i>
+                    <i class="fa fa-book text-warning mr-2"></i>
+                    Add Videos
                 </a>
-				
 
                 <a href="${base_url + _admin}Lesson/mcq/${data.lesson_id}"
-                    class="btn btn-sm btn-outline-secondary text-primary mr-1">
-                    <i class="fa fa-list"></i>
+                    class="dropdown-item">
+                    <i class="fa fa-list text-primary mr-2"></i>
+                    MCQ
                 </a>
 
                 <a href="${base_url + _admin}Lesson/edit/${data.lesson_id}"
-                    class="btn btn-sm btn-success mr-1">
-                    <i class="fa fa-edit"></i>
+                    class="dropdown-item">
+                    <i class="fa fa-edit text-success mr-2"></i>
+                    Edit
                 </a>
 
-                <a href="javascript:void(0);"
-                    class="btn btn-sm btn-danger"
-                    onclick="deleteLesson(${data.lesson_id})">
-                    <i class="fa fa-trash"></i>
-                </a>
-            `;
+
+            </div>
+        </div>
+        `;
 				}
 			}
 		]
 
 	});
 }
+
+
 
 $(document).ready(function () {
 	listLesson();

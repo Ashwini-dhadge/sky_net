@@ -46,10 +46,29 @@ class Student extends CI_Controller
                 $row = [];
                 $no = $offset + ($key + 1);
                 array_push($row, $offset + ($key + 1));
-                $img = ($user['image']) ? $user['image'] : 'no-image.png';
-                //'.base_url().ADMIN.'Users/view/'.$value['id'].'
-                $name_tag = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="View" class="text-primary waves-effect waves-ligh mr-2 " ><img src="' . base_url() . USER_IMAGES . $img . '" width="60" height="60" class="rounded-circle"></a>';
-                $name_tag1 = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" title="View" class="text-primary waves-effect waves-ligh mr-2 " >' . substr($user['first_name'], 0, 20)  . ' ' . $user['last_name'] . '</a>';
+                $img = (!empty($user['image']) && file_exists(FCPATH . USER_IMAGES . $user['image']))
+                    ? $user['image']
+                    : 'user.png'; // default image inside assets/images/
+
+                $imagePath = (!empty($user['image']) && file_exists(FCPATH . USER_IMAGES . $user['image']))
+                    ? base_url() . USER_IMAGES . $user['image']
+                    : base_url() . 'assets/images/user.png';
+
+                $name_tag = '<a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
+                    title="View" 
+                    class="text-primary waves-effect waves-ligh mr-2">
+                    
+                    <img src="' . $imagePath . '" 
+                        width="40" 
+                        height="40" 
+                        class="rounded-circle">
+                </a>';
+                $name_tag1 = '
+                <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
+                title="View" 
+                class="student-name-wrap text-primary waves-effect waves-ligh mr-2">
+                ' . $user['first_name'] . ' ' . $user['last_name'] . '
+                </a>';
                 array_push($row, $name_tag);
                 array_push($row, $name_tag1);
                 array_push($row, $user['email']);
@@ -83,33 +102,58 @@ class Student extends CI_Controller
                     ';
                 }
 
-                $action .= '
-                    <a href="javascript:void(0);" 
-                    title="Certificate" 
-                    class="btn btn-warning btn-sm waves-effect waves-light certificateModal" data-id="' . $user['id'] . '">
-                    <i class="fas fa-award"></i>
-                    </a>
+                $action = '
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" 
+                        type="button" 
+                        id="dropdownMenuButton' . $user['id'] . '" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="false"
+                        style="padding: 4px 8px;">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
 
-                    <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
-                    title="Edit" 
-                    class="btn btn-success btn-sm waves-effect waves-light">
-                    <i class="fas fa-edit"></i>
-                    </a>
-
-                    <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
-                    title="View" 
-                    class="btn btn-primary btn-sm waves-effect waves-light">
-                    <i class="fas fa-eye"></i>
-                    </a>
-
-                    <a onclick="return ' . $confirm . '" 
-                    href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" 
-                    title="Delete" 
-                    class="btn btn-danger btn-sm waves-effect waves-light">
-                    <i class="fas fa-trash-alt"></i>
-                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton' . $user['id'] . '">
                 ';
 
+                if ($user['user_type'] == 0) {
+                    $action .= '
+                        <a href="javascript:void(0);" 
+                            class="dropdown-item openAssignModal"
+                            data-id="' . $user['id'] . '">
+                            <i class="fas fa-book text-info mr-2"></i> Assign Course
+                        </a>
+                    ';
+                }
+
+                $action .= '
+                        <a href="javascript:void(0);" 
+                            class="dropdown-item certificateModal"
+                            data-id="' . $user['id'] . '">
+                            <i class="fas fa-award text-warning mr-2"></i> Certificate
+                        </a>
+
+                        <a href="' . base_url() . ADMIN . 'Student/add/' . $user['id'] . '" 
+                            class="dropdown-item">
+                            <i class="fas fa-edit text-success mr-2"></i> Edit
+                        </a>
+
+                        <a href="' . base_url() . ADMIN . 'Student/view/' . $user['id'] . '/' . $user['role'] . '" 
+                            class="dropdown-item">
+                            <i class="fas fa-eye text-primary mr-2"></i> View
+                        </a>
+
+
+                    </div>
+                </div>
+                ';
+
+                // <a onclick="return ' . $confirm . '" 
+                //     href="' . base_url() . ADMIN . 'User/delete/' . $user['id'] . '" 
+                //     class="dropdown-item text-danger">
+                //     <i class="fas fa-trash-alt mr-2"></i> Delete
+                // </a>
 
                 array_push($row, $action);
 
@@ -188,11 +232,11 @@ class Student extends CI_Controller
         if (!empty($_FILES['certificate_file']['name'])) {
 
             $_FILES['cert_file'] = [
-                'name'     => $_FILES['certificate_file']['name'],
-                'type'     => $_FILES['certificate_file']['type'],
+                'name' => $_FILES['certificate_file']['name'],
+                'type' => $_FILES['certificate_file']['type'],
                 'tmp_name' => $_FILES['certificate_file']['tmp_name'],
-                'error'    => $_FILES['certificate_file']['error'],
-                'size'     => $_FILES['certificate_file']['size'],
+                'error' => $_FILES['certificate_file']['error'],
+                'size' => $_FILES['certificate_file']['size'],
             ];
 
             $upload = fileUpload(CERTIFICATE_FILES, 'cert_file', false);
@@ -433,7 +477,7 @@ class Student extends CI_Controller
     public function add($id = '')
     {
         $data['title'] = 'Add Student';
-        $data['role']  = 3;
+        $data['role'] = 3;
         $post = $this->input->post();
 
         if ($post) {
@@ -442,11 +486,11 @@ class Student extends CI_Controller
             if (!empty($_FILES['image']['name'])) {
 
                 $_FILES['profile_file'] = [
-                    'name'     => $_FILES['image']['name'],
-                    'type'     => $_FILES['image']['type'],
+                    'name' => $_FILES['image']['name'],
+                    'type' => $_FILES['image']['type'],
                     'tmp_name' => $_FILES['image']['tmp_name'],
-                    'error'    => $_FILES['image']['error'],
-                    'size'     => $_FILES['image']['size'],
+                    'error' => $_FILES['image']['error'],
+                    'size' => $_FILES['image']['size'],
                 ];
 
                 $upload = fileUpload(USER_PROFILE, 'profile_file', false);
@@ -458,7 +502,9 @@ class Student extends CI_Controller
             $student['self_code'] = "LMS" . $student['mobile_no'];
             $student['otp'] = create6NumRandom();
             $student['user_from'] = 1;
-            $student['user_type'] = 0;
+            if(isset($post['user_type'])){
+                $student['user_type'] = $post['user_type'];
+            }
             $student['is_otp_verified'] = 0;
 
             if (!empty($post['id'])) {

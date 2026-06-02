@@ -43,8 +43,11 @@ class Certificate extends CI_Controller
                 $row[] = $rowData['certificate_title'];
                 $row[] = $rowData['certificate_number'];
                 $row[] = $rowData['first_name'] . ' ' . $rowData['last_name'];
-                $row[] = $rowData['course_name'] ?? 'N/A';
-                $row[] = $rowData['score'] ? $rowData['score'] : 'N/A';
+                $row[] = !empty($rowData['course_name'])
+                    ? $rowData['course_name']
+                    : (!empty($rowData['external_course'])
+                        ? $rowData['external_course']
+                        : 'N/A');                $row[] = $rowData['score'] ? $rowData['score'] : 'N/A';
                 $row[] = $rowData['grade'] ? $rowData['grade'] : 'N/A';
                 $row[] = $rowData['issued_date'];
 
@@ -190,38 +193,62 @@ class Certificate extends CI_Controller
     {
         $post = $this->input->post();
 
-        $course_id = $post['course_id'] ?? '';
-        $external_course = $post['external_course'] ?? '';
+        $oldData = [];
 
-        $course_id = trim($course_id);
-        $external_course = trim($external_course);
+        if (!empty($post['id'])) {
+            $oldData = $this->db
+                ->where('id', $post['id'])
+                ->get('tbl_certificates')
+                ->row_array();
+        }
 
-        if ($course_id !== '') {
+        $course_type = $post['course_type'] ?? 'internal';
+
+        if ($course_type == 'internal') {
+
+            $course_id = !empty($post['course_id'])
+                ? $post['course_id']
+                : null;
+
             $external_course = null;
-        } elseif ($external_course !== '') {
-            $course_id = null;
+
+            if (!empty($course_id)) {
+
+                $course = $this->db
+                    ->select('title')
+                    ->where('id', $course_id)
+                    ->get('tbl_courses')
+                    ->row_array();
+
+                $external_course = $course['title'] ?? null;
+            }
         } else {
+
             $course_id = null;
-            $external_course = null;
+
+            $external_course = !empty($post['external_course'])
+                ? trim($post['external_course'])
+                : null;
         }
 
         $data = [
-            'user_id' => $post['user_id'],
+            'user_id' => $post['user_id'] ?? ($oldData['user_id'] ?? null),
             'course_id' => $course_id,
             'external_course' => $external_course,
-            'certificate_title' => $post['certificate_title'],
-            'score' => $post['score'] ?? null,
-            'grade' => $post['grade'] ?? null,
-            'issued_date' => $post['issued_date'],
+            'certificate_title' => $post['certificate_title'] ?? ($oldData['certificate_title'] ?? null),
+            'score' => isset($post['score']) ? $post['score'] : ($oldData['score'] ?? null),
+            'grade' => isset($post['grade']) ? $post['grade'] : ($oldData['grade'] ?? null),
+            'issued_date' => $post['issued_date'] ?? ($oldData['issued_date'] ?? null),
         ];
 
         if (!empty($_FILES['certificate_file']['name'])) {
+
             $_FILES['cert_file'] = [
-                'name'     => $_FILES['certificate_file']['name'],
-                'type'     => $_FILES['certificate_file']['type'],
+                'name' => $_FILES['certificate_file']['name'],
+                'type' => $_FILES['certificate_file']['type'],
                 'tmp_name' => $_FILES['certificate_file']['tmp_name'],
-                'error'    => $_FILES['certificate_file']['error'],
-                'size'     => $_FILES['certificate_file']['size'],
+                'error' => $_FILES['certificate_file']['error'],
+                'size' => $_FILES['certificate_file']['size'],
             ];
 
             $upload = fileUpload(CERTIFICATE_FILES, 'cert_file', false);
@@ -229,9 +256,23 @@ class Certificate extends CI_Controller
             if ($upload['status']) {
                 $data['certificate_file'] = $upload['image_name'];
             }
+        } elseif (!empty($oldData['certificate_file'])) {
+
+            $data['certificate_file'] = $oldData['certificate_file'];
         }
 
         if (!empty($post['id'])) {
+
+            $oldCourseId = $oldData['course_id'] ?? null;
+            $oldExternalCourse = $oldData['external_course'] ?? null;
+
+            // if (
+            //     $oldCourseId != $course_id ||
+            //     $oldExternalCourse != $external_course
+            // ) {
+            //     $data['certificate_title'] = null;
+            // }
+
             $data['updated_at'] = date('Y-m-d H:i:s');
 
             $this->CommonModel->iudAction(
@@ -246,6 +287,7 @@ class Certificate extends CI_Controller
                 'message' => 'Certificate Updated Successfully'
             ]);
         } else {
+
             $data['certificate_number'] = 'CERT' . time();
             $data['created_at'] = date('Y-m-d H:i:s');
 
@@ -261,6 +303,7 @@ class Certificate extends CI_Controller
             ]);
         }
     }
+    
     
     public function delete($id = '')
     {

@@ -138,8 +138,7 @@ class Section extends CI_Controller
             	<a class="btn btn-danger btn-sm waves-effect waves-light" href="'.base_url().'admin/Course/CourseLessonDelete/'.$lesson['course_id'].'/'.$lesson['id'].'" role="button" onclick="return '.$alert.'" ><i class="fas fa-trash-alt"></i></a>';
                 array_push($row, $action);*/
 				$action = '
-            	<a class="btn btn-success btn-sm waves-effect waves-light" href="' . base_url() . 'admin/Section/Section/' . $lesson['id'] . '" role="button"><i class="fas fa-edit"></i></a>
-            	<a class="btn btn-danger btn-sm waves-effect waves-light" onclick="return confirm(\'Do you want to delete this record?\')" href="' . base_url() . 'admin/Section/CourseSectionDelete/' . $lesson['id']  . '"><i class="fas fa-trash"></i></a>';
+            	<a class="btn btn-success btn-sm waves-effect waves-light" href="' . base_url() . 'admin/Section/Section/' . $lesson['id'] . '" role="button"><i class="fas fa-edit"></i></a>';
 
 				// 			$action .= '
 				//         	<a class="btn btn-info btn-sm waves-effect waves-light" 
@@ -147,6 +146,9 @@ class Section extends CI_Controller
 				//     role="button">
 				//     <i class="fas fa-video" Title="Add Video"></i>
 				// </a>';
+
+				
+            	// <a class="btn btn-danger btn-sm waves-effect waves-light" onclick="return confirm(\'Do you want to delete this record?\')" href="' . base_url() . 'admin/Section/CourseSectionDelete/' . $lesson['id']  . '"><i class="fas fa-trash"></i></a>
 				array_push($row, $action);
 				$columns[] = $row;
 			}

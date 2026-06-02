@@ -56,20 +56,20 @@ class Dashboard extends CI_Controller
                 'is_approved' => 1,
                 'approved_at' => date('Y-m-d H:i:s'),
                 'approved_by' => loginId(),
-                'remark'      => NULL,
-                'updated_at'  => date('Y-m-d H:i:s'),
-                'updated_by'  => loginId()
+                'remark' => NULL,
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId()
             ],
             'update',
             ['id' => $id]
         );
 
         $this->ForumModel->logAction([
-            'forum_id'    => $id,
+            'forum_id' => $id,
             'is_approved' => 1,
-            'remark'      => NULL,
-            'created_by'  => loginId(),
-            'created_at'  => date('Y-m-d H:i:s')
+            'remark' => NULL,
+            'created_by' => loginId(),
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
         $this->session->set_flashdata('success', 'Question Approved Successfully!');
@@ -79,7 +79,7 @@ class Dashboard extends CI_Controller
 
     public function reject()
     {
-        $id     = $this->input->post('id');
+        $id = $this->input->post('id');
         $reason = $this->input->post('reason');
 
         if (!$id || !$reason) {
@@ -91,22 +91,22 @@ class Dashboard extends CI_Controller
             'tbl_forum_questions',
             [
                 'is_approved' => 2,
-                'remark'      => $reason,
+                'remark' => $reason,
                 'approved_at' => NULL,
                 'approved_by' => NULL,
-                'updated_at'  => date('Y-m-d H:i:s'),
-                'updated_by'  => loginId()
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId()
             ],
             'update',
             ['id' => $id]
         );
 
         $this->ForumModel->logAction([
-            'forum_id'    => $id,
+            'forum_id' => $id,
             'is_approved' => 2,
-            'remark'      => $reason,
-            'created_by'  => loginId(),
-            'created_at'  => date('Y-m-d H:i:s')
+            'remark' => $reason,
+            'created_by' => loginId(),
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
         $this->session->set_flashdata('error', 'Question Rejected Successfully!');
@@ -124,22 +124,22 @@ class Dashboard extends CI_Controller
             'tbl_forum_questions',
             [
                 'is_approved' => 0,
-                'remark'      => NULL,
+                'remark' => NULL,
                 'approved_at' => NULL,
                 'approved_by' => NULL,
-                'updated_at'  => date('Y-m-d H:i:s'),
-                'updated_by'  => loginId()
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => loginId()
             ],
             'update',
             ['id' => $id]
         );
 
         $this->ForumModel->logAction([
-            'forum_id'    => $id,
+            'forum_id' => $id,
             'is_approved' => 0,
-            'remark'      => 'Returned to Pending',
-            'created_by'  => loginId(),
-            'created_at'  => date('Y-m-d H:i:s')
+            'remark' => 'Returned to Pending',
+            'created_by' => loginId(),
+            'created_at' => date('Y-m-d H:i:s')
         ]);
 
         $this->session->set_flashdata('success', 'Question moved to Pending!');
@@ -160,7 +160,7 @@ class Dashboard extends CI_Controller
 
         foreach ($getdata as $key1 => $order) {
             //     $percentage=(((float)$order['total'])/( $totalOrder))*100;
-            $percentage = ((int)$order['total']);
+            $percentage = ((int) $order['total']);
             array_push($series1, round($percentage, 2));
             $labels1[$key1] = $order['title'];
             $color1[$key1] = "#" . $this->random_color();
@@ -178,5 +178,142 @@ class Dashboard extends CI_Controller
     function random_color()
     {
         return $this->random_color_part() . $this->random_color_part() . $this->random_color_part();
+    }
+
+
+    public function edit_profile()
+    {
+        $data['title'] = 'Edit';
+        $data['details'] = $this->CommonModel->getData(
+            'tbl_users',
+            array('id' => loginId()),
+            '*'
+        );
+
+        $this->load->view(ADMIN . 'auth/profile_page', $data);
+    }
+
+    public function update_profile($id)
+    {
+        
+        if ($this->input->is_ajax_request()) {
+
+            $user = $this->CommonModel->getData(
+                'tbl_users',
+                array('id' => $id),
+                '*',
+                '',
+                '',
+                1
+            );
+
+            // echo "<pre>";
+            // print_r($user);
+            // exit;
+
+            if (empty($user)) {
+                echo json_encode([
+                    'status' => 0,
+                    'message' => 'User not found'
+                ]);
+                exit;
+            }
+
+            $first_name = trim($this->input->post('first_name') ?? '');
+            $last_name = trim($this->input->post('last_name') ?? '');
+            $email = trim($this->input->post('email') ?? '');
+            $mobile_no = trim($this->input->post('mobile_no') ?? '');
+
+            $email_exist = $this->db
+                ->where('email', $email)
+                ->where('id !=', $id)
+                ->where('is_deleted', 0)
+                ->get('tbl_users')
+                ->row_array();
+
+            if (!empty($email_exist)) {
+                echo json_encode([
+                    'status' => 0,
+                    'message' => 'Email already exists'
+                ]);
+                exit;
+            }
+
+            $mobile_exist = $this->db
+                ->where('mobile_no', $mobile_no)
+                ->where('id !=', $id)
+                ->where('is_deleted', 0)
+                ->get('tbl_users')
+                ->row_array();
+
+            if (!empty($mobile_exist)) {
+                echo json_encode([
+                    'status' => 0,
+                    'message' => 'Mobile number already exists'
+                ]);
+                exit;
+            }
+
+            $updateData = [
+                'first_name' => $first_name,
+                'email' => $email,
+                'mobile_no' => $mobile_no
+            ];
+
+            if (!empty($this->input->post('password'))) {
+                $updateData['password'] = $this->input->post('password');
+            }
+
+            if (!empty($_FILES['image']['name'])) {
+
+                $_FILES['profile_file'] = [
+                    'name' => $_FILES['image']['name'],
+                    'type' => $_FILES['image']['type'],
+                    'tmp_name' => $_FILES['image']['tmp_name'],
+                    'error' => $_FILES['image']['error'],
+                    'size' => $_FILES['image']['size'],
+                ];
+
+                $upload = fileUpload(USER_PROFILE, 'profile_file', false);
+
+                if ($upload['status']) {
+
+                    // DELETE OLD IMAGE
+                    if (
+                        !empty($user[0]['image']) &&
+                        file_exists('./' . USER_PROFILE . $user[0]['image'])
+                    ) {
+
+                        unlink('./' . USER_PROFILE . $user[0]['image']);
+                    }
+
+                    $updateData['image'] = $upload['image_name'];
+
+                } else {
+
+                    ob_clean();
+                    header('Content-Type: application/json');
+
+                    echo json_encode([
+                        'status' => 0,
+                        'message' => strip_tags($upload['message'])
+                    ]);
+                    exit;
+                }
+            }
+
+            $this->CommonModel->iudAction(
+                'tbl_users',
+                $updateData,
+                'update',
+                array('id' => $id)
+            );
+
+            echo json_encode([
+                'status' => true,
+                'message' => 'Profile updated successfully'
+            ]);
+            exit;
+        }
     }
 }
