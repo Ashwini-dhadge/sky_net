@@ -113,18 +113,20 @@ class Authentication_model extends CI_Model
      */
     public function matchOTP($otp = 0, $mobileNumber = 0, $email = '')
     {
-        if ($mobileNumber || strlen($email)) {
+        // echo $otp."-".$mobileNumber."-".$email;
+        // die;
+        if ($mobileNumber || !empty($email)) {
             $this->db->select('*');
             $this->db->from('tbl_users r');
 
             $this->db->where('otp', $otp);
             // $this->db->where('is_block', IS_DELETE_NO);
             $this->db->where('is_deleted', 0);
-            if ($mobileNumber) {
+            if (!empty($mobileNumber)) {
                 $this->db->where('mobile_no', $mobileNumber);
             }
 
-            if (strlen($email)) {
+            if (!empty($email)) {
                 $this->db->where('email', $email);
             }
             $result = $this->db->get();

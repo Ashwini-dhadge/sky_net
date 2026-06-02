@@ -139,11 +139,20 @@ class Authentication extends CI_Controller
      */
     public function sendLoginOTP()
     {
-        $userMobile = trim($this->input->post('mobile')) ? trim($this->input->post('mobile')) : 0;
+            $loginInput  = trim($this->input->post('mobile')) ? trim($this->input->post('mobile')) : 0;
+            $userMobile = '';
+            $userEmail = '';
+
+            if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+                $userEmail = $loginInput;
+            } elseif (ctype_digit($loginInput)) {
+                $userMobile = $loginInput;
+            }
         $response = array();
         $registrationType = 3;
-        if ($userMobile && is_numeric($userMobile)) {
-            $checkExist = $this->Authentication_model->checkUserExist('', $userMobile, $registrationType);
+        // if ($userMobile && is_numeric($userMobile)) {
+        if (!empty($userMobile) || !empty($userEmail)) {
+            $checkExist = $this->Authentication_model->checkUserExist($userEmail, $userMobile, $registrationType);
 
             if (!empty($checkExist) && count($checkExist) && $checkExist > 0) {
                 if ($checkExist['status'] != 1) {
@@ -171,7 +180,7 @@ class Authentication extends CI_Controller
             } else {
                 $response['result'] = false;
                 $response['is_register'] = false;
-                $response['message'] = 'User not found the the entered mobile number';
+                $response['message'] = 'User not found with the entered mobile number or email address';
             }
         } else {
             $response['result'] = false;
@@ -185,7 +194,16 @@ class Authentication extends CI_Controller
      */
     public function userOTPVerification()
     {
-        $userMobile = trim($this->input->post('mobile')) ? trim($this->input->post('mobile')) : 0;
+        // $userMobile = trim($this->input->post('mobile') ?? '');
+        // $userEmail = trim($this->input->post('email') ?? '');
+        $userLogin = trim($this->input->post('mobile') ?? '');
+        $userMobile = '';
+        $userEmail = '';
+               if (filter_var($userLogin, FILTER_VALIDATE_EMAIL)) {
+                $userEmail = $userLogin;
+            } elseif (ctype_digit($userLogin)) {
+                $userMobile = $userLogin;
+            }
         $otpNumber = trim($this->input->post('otp_number')) ? trim($this->input->post('otp_number')) : 0;
         $notification_token = trim($this->input->post('notification_token')) ? trim($this->input->post('notification_token')) : 0;
         $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
@@ -195,9 +213,16 @@ class Authentication extends CI_Controller
         $new_password = trim($this->input->post('new_password'));
         $response = $userDetail = array();
 
-        // if ($userMobile && is_numeric($userMobile) && $otpNumber && $notification_token) {
-        if ($userMobile && is_numeric($userMobile) && $otpNumber && is_numeric($otpNumber) && $imei_no && $notification_token) {
-            $updArr = array();
+      
+             if (
+           (!empty($userMobile) || !empty($userEmail))
+            && !empty($otpNumber)
+            && is_numeric($otpNumber)
+            && !empty($imei_no)
+            && !empty($notification_token)
+        ){
+       
+        $updArr = array();
             if ($is_forgot == 1) {
                 if (strlen($password) == 0 || strlen($new_password) == 0 || $password != $new_password) {
                     $response['result'] = false;
@@ -208,7 +233,10 @@ class Authentication extends CI_Controller
                     $updArr['password'] = $new_password;
                 }
             }
-            $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
+            // $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
+            $userDetail = $this->Authentication_model->matchOTP($otpNumber,$userMobile,$userEmail);
+            // echo $this->db->last_query();
+            // die;
             // echo "<pre>";
             // print_r($userDetail);
             // die;
