@@ -40,7 +40,7 @@
              </div>
 
              <div class="modal-footer">
-                 <button class="btn btn-success" id="saveAnswer">
+                 <button class="btn btn-danger" id="saveAnswer">
                      Save Answer
                  </button>
 

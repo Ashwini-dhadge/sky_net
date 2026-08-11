@@ -39,21 +39,58 @@ function openAnswerModal(id, question, answer = '') {
 }
 
 function saveAnswer() {
-    $.post(
-        base_url + _admin + 'Course/save_course_answer',
-        {
+
+    $.ajax({
+
+        url: base_url + _admin + 'Course/save_course_answer',
+
+        type: 'POST',
+
+        dataType: 'json',
+
+        data: {
             qna_id: $('#qna_id').val(),
             answer: $('#answerText').val(),
-            answer_by: $('#answer_by').val() 
+            answer_by: $('#answer_by').val()
         },
-        function () {
-            $('#answerModal').modal('hide');
-            $('#courseQnaTable').DataTable().ajax.reload();
+
+        beforeSend: function () {
+            $('#saveAnswerBtn').prop('disabled', true);
         },
-        'json'
-    );
-}
-function loadCourseQna() {
+
+        success: function (response) {
+
+            if (response.status) {
+                alert(response.message);
+
+                $('#answerModal').modal('hide');
+
+                $('#answerText').val('');
+
+                $('#courseQnaTable')
+                    .DataTable()
+                    .ajax
+                    .reload(null, false);
+
+            } else {
+
+                toastr.error(response.message);
+            }
+        },
+
+        error: function (xhr) {
+
+            console.log(xhr.responseText);
+
+            toastr.error('Something went wrong');
+        },
+
+        complete: function () {
+
+            $('#saveAnswerBtn').prop('disabled', false);
+        }
+    });
+} function loadCourseQna() {
     $('#courseQnaTable').DataTable().ajax.reload();
 }
 
@@ -76,7 +113,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 //                 $('#qna_avg').text(res.avg_hours);
 //                 $('#qna_avg').closest('.card').show();
 //             } else {
-//                 $('#qna_avg').closest('.card').hide(); 
+//                 $('#qna_avg').closest('.card').hide();
 //             }
 //         },
 //         'json'

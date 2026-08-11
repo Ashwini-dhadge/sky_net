@@ -42,7 +42,7 @@
              </div>
              <div class="modal-body">
                  <div class="mb-3 text-right">
-                     <button class="btn btn-success" id="openAnswerEditor">
+                     <button class="btn btn-danger" id="openAnswerEditor">
                          <i class="fa fa-plus mr-1"></i>
                          Add Answer
                      </button>

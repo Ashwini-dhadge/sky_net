@@ -33,7 +33,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="saveAnswer()">Save</button>
+                <button class="btn btn-danger" onclick="saveAnswer()">Save</button>
             </div>
 
         </div>

@@ -29,7 +29,7 @@
     background: #f7f7f7;
 }
 
-.btn-outline-danger {
+.btn-danger {
     border-radius: 50%;
     line-height: 1;
 }
@@ -186,7 +186,7 @@
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h6 class="video-card-title mb-0">Video Details</h6>
                                                     <button type="button" data-repeater-delete
-                                                        class="btn btn-sm btn-outline-danger">✕</button>
+                                                        class="btn btn-sm btn-danger">✕</button>
                                                 </div>
 
                                                 <div class="row">
@@ -263,7 +263,7 @@
                                                 <div class="d-flex justify-content-between mb-2">
                                                     <h6 class="video-card-title mb-0">Video Details</h6>
                                                     <button type="button" data-repeater-delete
-                                                        class="btn btn-sm btn-outline-danger">✕</button>
+                                                        class="btn btn-sm btn-danger">✕</button>
                                                 </div>
 
                                                 <div class="row">

@@ -18,7 +18,7 @@ function listSections() {
         pageLength: 10,
         order: [[0, "desc"]],
         ajax: {
-            url: base_url + _admin + "Section/sectionList",
+            url: base_url + _admin + "Course/sectionList",
             type: "POST",
             dataSrc: "data",
             data: data,
@@ -43,3 +43,5 @@ function listSections() {
 $(document).ready(function () {
     listSections();
 });
+
+

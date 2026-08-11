@@ -301,10 +301,20 @@ class UserModel extends CI_Model
         return $this->db
             ->select("
             luv.*,
-            c.title as course_title
+            c.title AS course_title,
+            cs.title AS section_title,
+            cl.title AS lesson_title,
+            (
+                SELECT COUNT(id)
+                FROM tbl_lesson_mcq
+                WHERE lesson_id = luv.lesson_id
+                AND deleted_at IS NULL
+            ) AS total_questions_db
         ")
             ->from('tbl_lesson_user_video luv')
             ->join('tbl_courses c', 'c.id = luv.courses_id', 'left')
+            ->join('tbl_section cs', 'cs.id = luv.section_id', 'left')
+            ->join('tbl_lesson cl', 'cl.id = luv.lesson_id', 'left')
             ->where('luv.user_id', $user_id)
             ->where('luv.deleted_at IS NULL', null, false)
             ->order_by('luv.id', 'DESC')
@@ -320,6 +330,7 @@ class UserModel extends CI_Model
             ->get('tbl_lesson_mcq')
             ->result_array();
     }
+
 
     public function getLessonQuestionCount($lesson_id)
     {

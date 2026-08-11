@@ -4,90 +4,100 @@
  */
 class Category extends CI_Controller
 {
-	
+
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model(ADMIN.'CategoryModel');
+		$this->load->model(ADMIN . 'CategoryModel');
 		loginId();
 	}
 
-/*********************************************************************/
-//  QMR
+	/*********************************************************************/
+	//  QMR
 
 	public function index()
 	{
 		$data['title'] = 'Category Master';
 		$data['active'] = 'Category Master';
-		$this->load->view(ADMIN.CAT.'list-Category',$data);
-		 loginId();
+		$this->load->view(ADMIN . CAT . 'list-Category', $data);
+		loginId();
 	}
 
 	public function Category_list()
 	{
 
 		$data = $_POST;
-        $columns = [];
-        $page = $data['draw'];
-        $limit = $data['length'];
-        $offset = $data['start'];
-        $searchVal = $data['search']['value'];
-        $sortColIndex = $data['order'][0]['column'];
-        $sortBy = $data['order'][0]['dir'];
+		$columns = [];
+		$page = $data['draw'];
+		$limit = $data['length'];
+		$offset = $data['start'];
+		$searchVal = $data['search']['value'];
+		$sortColIndex = $data['order'][0]['column'];
+		$sortBy = $data['order'][0]['dir'];
 
-        $count = count($this->CategoryModel->getCategoryData($searchVal,0,0,0,0));
-        if($count){
-            $CategoryData = $this->CategoryModel->getCategoryData($searchVal, $sortColIndex, $sortBy, $limit, $offset);
+		$count = count($this->CategoryModel->getCategoryData($searchVal, 0, 0, 0, 0));
+		if ($count) {
+			$CategoryData = $this->CategoryModel->getCategoryData($searchVal, $sortColIndex, $sortBy, $limit, $offset);
 
-            foreach ($CategoryData as $key => $Category) {
-            
-                $row = []; 
+			foreach ($CategoryData as $key => $Category) {
 
-                array_push($row, $offset+($key + 1));   
-                array_push($row, $Category['category_name']);
-                if($Category['status']){
-                 $status = '<span class="badge badge-success ">Active</span>';
-                }else{
-                 $status = '<span class="badge badge-danger ">Not Active</span>';
+				$row = [];
 
-                }
-                array_push($row, $status);
-            	$confirm = "confirm('Do you want to delete this record?');";
-            	$action = '
-                <a href="javascript:void(0);" title="Edit" class="btn btn-primary waves-effect waves-light btn-sm categoryModal" onclick="categoryModal('.$Category['id'] .')" data-id="'.$Category['id'] .'" ><i class="fas fa-edit" aria-hidden="true"></i></a>';
-                array_push($row, $action);
+				array_push($row, $offset + ($key + 1));
+				array_push($row, $Category['category_name']);
+				if ($Category['status']) {
+					$status = '<span class="badge badge-success ">Active</span>';
+				} else {
+					$status = '<span class="badge badge-danger ">Not Active</span>';
+
+				}
+				array_push($row, $status);
+				$confirm = "confirm('Do you want to delete this record?');";
+				$action = '<a href="javascript:void(0);"
+   title="Edit"
+   class="btn btn-primary btn-sm categoryModal"
+   data-id="' . $Category['id'] . '">
+   <i class="fas fa-edit"></i>
+</a>';
+				array_push($row, $action);
 
 				// <a onclick="return '.$confirm.'" href="'.base_url() .ADMIN.'Category/delete/'.$Category['id'] .'" title="Delete" class="btn btn-danger btn-sm waves-effect waves-light" ><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
-                $columns[] = $row;
-            }
-        }
-        $response = [
-            'draw' => $page,
-            'data' => $columns,
-            'recordsTotal' => $count,
-            'recordsFiltered' => $count
-        ];
-        echo json_encode($response);
+				$columns[] = $row;
+			}
+		}
+		$response = [
+			'draw' => $page,
+			'data' => $columns,
+			'recordsTotal' => $count,
+			'recordsFiltered' => $count
+		];
+		echo json_encode($response);
 	}
 	public function categoryModal()
 	{
 		$id = $this->input->post('id');
 		$data['sub_title'] = 'Add Category';
 		$data['categories'] = $data['category'] = array();
+		$data['used_courses'] = [];
 		if ($id) {
-        	$category = $this->CategoryModel->getCategoryData('',0,0,0,0,$id);
+			$category = $this->CategoryModel->getCategoryData('', 0, 0, 0, 0, $id);
 			$data['sub_title'] = 'Edit Category';
 			$data['category'] = $category[0];
-        	$data['categories'] = $this->CategoryModel->getCategoryData();
+			$data['categories'] = $this->CategoryModel->getCategoryData();
+			$data['used_courses'] = $this->CategoryModel->getCategoryUsedCourses($id);
+
+			// echo "<pre>";
+			// print_r($data['used_courses']);
+			// die;
 		}
 
-		$html = $this->load->view(ADMIN.CAT.'modal_category', $data,true);
+		$html = $this->load->view(ADMIN . CAT . 'modal_category', $data, true);
 		if ($html) {
 			$response['html'] = $html;
 			$response['result'] = true;
 			$response['reason'] = 'Data Found';
-		}else{
-			$response['result'] = fasle;
+		} else {
+			$response['result'] = false;
 			$response['reason'] = 'Something went to wrong!';
 		}
 		echo json_encode($response);
@@ -98,17 +108,17 @@ class Category extends CI_Controller
 		$category_level = $this->input->get('category_level');
 
 		if ($category_level) {
-        	$categories = $this->CategoryModel->getCategoryData('',0,0,0,0,0,array('c.category_level' => $category_level - 1 ));
-        	if ($categories) {
+			$categories = $this->CategoryModel->getCategoryData('', 0, 0, 0, 0, 0, array('c.category_level' => $category_level - 1));
+			if ($categories) {
 				$response['categories'] = $categories;
 				$response['result'] = true;
 				$response['reason'] = 'Data Found';
-			}else{
-				$response['result'] = fasle;
+			} else {
+				$response['result'] = false;
 				$response['reason'] = 'Something went to wrong!';
 			}
-		}else{
-			$response['result'] = fasle;
+		} else {
+			$response['result'] = false;
 			$response['reason'] = 'Something went to wrong!';
 		}
 		echo json_encode($response);
@@ -152,8 +162,28 @@ class Category extends CI_Controller
 				} else {
 					$this->session->set_flashdata('error', 'Fail To Add Category!');
 				}
-			}
-			else {
+			} else {
+
+				if (
+					isset($post['status']) &&
+					$post['status'] == 0 &&
+					!empty($post['id'])
+				) {
+					$usedCourses = $this->CategoryModel->getCategoryUsedCourses($post['id']);
+
+					if (!empty($usedCourses)) {
+
+						$courseNames = array_column($usedCourses, 'title');
+
+						$this->session->set_flashdata(
+							'error',
+							'This category is already used in ' . count($usedCourses) . ' course(s): ' . implode(', ', $courseNames) . '. Please remove/change category from those courses before making it inactive.'
+						);
+
+						redirect(base_url(ADMIN . 'Category'));
+						return;
+					}
+				}
 
 				if ($this->CommonModel->iudAction('tbl_categories', $post, 'update', ['id' => $post['id']])) {
 					$this->session->set_flashdata('success', 'Category Updated Successfully!');
@@ -173,29 +203,29 @@ class Category extends CI_Controller
 	{
 		$where = array('id' => $id);
 
-		if ($this->CommonModel->iudAction('tbl_categories',array('is_deleted'=>1),'update',$where)) {
-			
-			$this->session->set_flashdata('success','Category deleted successfully');
-			redirect(ADMIN.'Category');
-		}else{
-			$this->session->set_flashdata('error','Error! fail to delete Site');
-			redirect(ADMIN.'Category');
+		if ($this->CommonModel->iudAction('tbl_categories', array('is_deleted' => 1), 'update', $where)) {
+
+			$this->session->set_flashdata('success', 'Category deleted successfully');
+			redirect(ADMIN . 'Category');
+		} else {
+			$this->session->set_flashdata('error', 'Error! fail to delete Site');
+			redirect(ADMIN . 'Category');
 		}
 	}
-    
-    public function viewCategory($id)
-    {  	
-    		if ($id) {
-				$data['Category'] = $this->CategoryModel->getCategoryDetail($id);
-				$data['title'] = 'Category';
-				$data['active'] = 'Category';
-				$this->load->view(ADMIN.CAT.'Category-detail-view', $data);
-			}else{
-				$this->session->set_flashdata('error','Error! Category not found');
-				redirect(ADMIN.'Category');
-			}
-    }
 
-    
+	public function viewCategory($id)
+	{
+		if ($id) {
+			$data['Category'] = $this->CategoryModel->getCategoryDetail($id);
+			$data['title'] = 'Category';
+			$data['active'] = 'Category';
+			$this->load->view(ADMIN . CAT . 'Category-detail-view', $data);
+		} else {
+			$this->session->set_flashdata('error', 'Error! Category not found');
+			redirect(ADMIN . 'Category');
+		}
+	}
+
+
 }
 ?>

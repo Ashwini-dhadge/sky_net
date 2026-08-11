@@ -23,91 +23,105 @@ class Forum extends CI_Controller
         $searchVal = $data['search']['value'];
         $sortColIndex = $data['order'][0]['column'];
         $sortBy = 'DESC';
+
         $where = [];
-        $status = isset($data['status']) ? (int)$data['status'] : 0;
-        // $ForumData = $this->ForumModel->getNonApprovedQuestions(
-        //     $status,
-        //     $searchVal,
-        //     $sortColIndex,
-        //     $sortBy,
-        //     $limit,
-        //     $offset
-        // );
-        if (isset($data['status']) && $data['status'] !== '') {
-            $where['q.is_approved'] = $data['status'];
+
+        $filterStatus = isset($data['status']) ? $data['status'] : '';
+
+        if ($filterStatus !== '') {
+            $where['q.is_approved'] = (int) $filterStatus;
         }
+
         $columns = [];
-        $count = count($this->ForumModel
-            ->getNonApprovedQuestions($searchVal, 0, 0, 0, 0, '', $where));
+
+        $count = count(
+            $this->ForumModel->getNonApprovedQuestions(
+                $searchVal,
+                0,
+                0,
+                0,
+                0,
+                '',
+                $where
+            )
+        );
+
         if ($count) {
-            $result = $this->ForumModel
-                ->getNonApprovedQuestions($searchVal, $sortColIndex, $sortBy, $limit, $offset, '', $where);
+
+            $result = $this->ForumModel->getNonApprovedQuestions(
+                $searchVal,
+                $sortColIndex,
+                $sortBy,
+                $limit,
+                $offset,
+                '',
+                $where
+            );
+
             foreach ($result as $key => $forum) {
 
                 $row = [];
 
-                array_push($row, $offset + ($key + 1));
-                $title = wordwrap($forum['title'], 40, "<br>", true);
-                array_push($row, $title);
-                array_push($row, $forum['asked_by']);
+                $row[] = $offset + ($key + 1);
 
-                switch ($status) {
+                $row[] = wordwrap($forum['title'], 40, "<br>", true);
 
-                    case 1:
-                        $is_approved = '
-                        <span class="badge badge-success px-3 py-2">
-                            <i class="fa fa-check mr-1"></i> Approved
-                        </span>';
-                        break;
+                $row[] = $forum['asked_by'];
 
-                    case 2:
-                        $is_approved = '
-                        <span class="badge badge-danger px-3 py-2">
-                            <i class="fa fa-times mr-1"></i> Rejected
-                        </span>';
-                        break;
+                $actualStatus = (int) $forum['is_approved'];
 
-                    default:
-                        $is_approved = '
-                        <span class="badge badge-warning px-3 py-2">
-                            <i class="fa fa-clock mr-1"></i> Pending
-                        </span>';
+                if ($actualStatus == 1) {
+                    $is_approved = '
+                    <span class="text-success px-3 py-2">
+                        <i class="fa fa-check mr-1"></i> <strong>Approved</strong>
+                    </span>';
+                } elseif ($actualStatus == 2) {
+                    $is_approved = '
+                    <span class="text-danger px-3 py-2">
+                        <i class="fa fa-times mr-1"></i> <strong>Rejected</strong>
+                    </span>';
+                } else {
+                    $is_approved = '
+                    <span class="text-warning px-3 py-2">
+                        <i class="fa fa-clock mr-1"></i> <strong>Pending</strong>
+                    </span>';
                 }
 
-                array_push($row, $is_approved);
+                $row[] = $is_approved;
+
                 $action = '';
 
                 if ($this->session->userdata('role') == 1) {
 
-                    if ($status == 0) {
+                    if ($actualStatus == 0) {
                         $action = '
-                        <div class="btn-group shadow-sm">
+                    <div class="btn-group shadow-sm">
 
-                            <button class="btn btn-success btn-sm approve"
-                                data-id="' . $forum['id'] . '"
-                                title="Approve">
-                                <i class="fa fa-check"></i>
-                            </button>
-
-                            <button class="btn btn-danger btn-sm reject"
-                                data-id="' . $forum['id'] . '"
-                                title="Reject">
-                                <i class="fa fa-times"></i>
-                            </button>
-
-                        </div>';
-                    } elseif ($status == 2) {
-                        $action = '
-                        <button class="btn btn-warning btn-sm returnPending"
+                        <button class="btn btn-success btn-sm approve"
                             data-id="' . $forum['id'] . '"
-                            title="Return to Pending">
-                            <i class="fa fa-undo"></i> Return
-                        </button>';
+                            title="Approve">
+                            <i class="fa fa-check"></i>
+                        </button>
+
+                        <button class="btn btn-danger btn-sm reject"
+                            data-id="' . $forum['id'] . '"
+                            title="Reject">
+                            <i class="fa fa-times"></i>
+                        </button>
+
+                    </div>';
+                    } elseif ($actualStatus == 2) {
+                        $action = '
+                    <button class="btn btn-warning btn-sm returnPending"
+                        data-id="' . $forum['id'] . '"
+                        title="Return to Pending">
+                        <i class="fa fa-undo"></i>
+                    </button>';
                     }
                 }
 
+                $row[] = $action;
 
-                array_push($row, $action);
                 $columns[] = $row;
             }
         }

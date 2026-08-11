@@ -147,7 +147,7 @@ $(document).ready(function () {
                                     <div class="q-footer">
                                         <div class="q-tags"> ${tagsHTML} </div>
                                         <div class="q-actions">
-                                            <a class="btn btn-success btn-sm openAnswers editbtn"
+                                            <a class="btn btn-danger btn-sm openAnswers editbtn"
                                                 data-id="${id}" data-title="${title}" data-user="${user}">
                                                 <i class="fa fa-edit"></i>
                                             </a>

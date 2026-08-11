@@ -16,69 +16,214 @@
   #_parent_cate {
     display: none;
   }
+
+  .category-warning {
+    border-left: 4px solid #f39c12;
+    background: #fff8e6;
+    border-radius: 8px;
+  }
+
+  .category-warning ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+  }
+
+  .category-usage-box {
+    background: #fcf8f8;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .usage-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .usage-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #ff4747;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 18px;
+  }
+
+  .usage-header h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .usage-header small {
+    color: #6b7280;
+  }
+
+  .usage-courses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .course-badge {
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    color: #ff4747;
+    border-radius: 30px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
 </style>
-<?php
-//print_r($product);die;
-?>
-<!-- Inventory modal content -->
-<div id="categoryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+
+<div id="categoryModal"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
+
       <div class="modal-header">
-        <h5 class="modal-title mt-0" id="myModalLabel"><?= $sub_title; ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+        <h5 class="modal-title" id="myModalLabel">
+          <?= $sub_title; ?>
+        </h5>
+
+        <button type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-hidden="true">
+          ×
+        </button>
+
       </div>
-      <form method="post" action="<?= base_url(ADMIN . 'Category/add') ?>" id="categoryFrm" enctype="multipart/form-data">
+
+      <form method="post"
+        action="<?= base_url(ADMIN . 'Category/add') ?>"
+        id="categoryFrm"
+        enctype="multipart/form-data">
+
+        <input type="hidden"
+          name="id"
+          id="id"
+          value="<?= ($category) ? $category['id'] : '' ?>">
+
         <div class="modal-body">
-          <input type="hidden" name="id" id="id" value="<?= ($category) ? $category['id'] : '' ?>">
-          <div class="form-group col-md-12">
-            <label>Category Name</label>
-            <div>
-              <input type="text" class="form-control" required placeholder=" Category Name" name="category_name" value="<?= ($category) ? $category['category_name'] : ''; ?>">
-            </div>
+
+          <div class="form-group">
+
+            <label>
+              Category Name
+            </label>
+
+            <input type="text"
+              class="form-control"
+              required
+              placeholder="Enter Category Name"
+              name="category_name"
+              value="<?= ($category) ? $category['category_name'] : ''; ?>">
+
           </div>
 
-          <!--  <div class="form-group col-md-12" >
-                <label>Category Level</label>
+          <?php if (!empty($used_courses)) { ?>
+
+            <div class="category-usage-box">
+
+              <div class="usage-header">
+
                 <div>
-                  <select id="category_level" name="category_level" required class="form-control select2">
-                    <option value="">Category Level</option>
-                    <option value="1" <?= ($category && $category['category_level'] == 1) ? 'selected' : ''; ?>> Parent Category</option>
-                    <option value="2" <?= ($category && $category['category_level'] == 2) ? 'selected' : ''; ?>> Sub Category</option>
-                    <option value="3" <?= ($category && $category['category_level'] == 3) ? 'selected' : ''; ?>> Sub Sub Category</option>
-                  </select>
+                  <h6 class="mb-1"><i class="fas fa-book"></i> Used In Courses</h6>
+                  <small>
+                    This category is currently assigned to
+                    <?= count($used_courses); ?> course(s)
+                  </small>
                 </div>
-              </div>-->
-          <input type="hidden" value="1" name="category_level">
-          <!-- <div class="form-group col-md-12">
-            <label>Category Image </label>
+              </div>
+
+              <div class="usage-courses">
+
+                <?php foreach ($used_courses as $course) { ?>
+
+                  <div class="course-badge">
+                    <i class="fas fa-graduation-cap mr-1"></i>
+                    <?= $course['title']; ?>
+                  </div>
+
+                <?php } ?>
+
+              </div>
+
+            </div>
+
+          <?php } ?>
+
+          <div class="form-group">
+
+            <label>
+              Status
+            </label>
+
             <div>
-              <input type="file" class="form-control" name="category_icon" id="category_icon">
+
+              <label class="mr-4">
+
+                <input type="radio"
+                  name="status"
+                  value="1"
+                  <?= ($category && $category['status'] == 1) ? 'checked' : ''; ?>
+                  <?= (!$category) ? 'checked' : ''; ?>>
+
+                Active
+
+              </label>
+
+              <label>
+
+                <input type="radio"
+                  name="status"
+                  value="0"
+                  <?= ($category && $category['status'] == 0) ? 'checked' : ''; ?>>
+
+                In-Active
+
+              </label>
+
             </div>
+
           </div>
-          <?php if ($category && $category['category_icon'] != ''): ?>
-            <div class="form-group col-md-12">
-              <img src="<?= base_url(CATEGORY_IMAGES . $category['category_icon']); ?>" alt="" style="width: 80px;height: 80px;">
-            </div>
-          <?php endif ?> -->
-          <div class="form-group col-md-12">
-            <label>Status</label>
-            <div>
-              <input type="radio" required value="1" name="status" <?= ($category && $category['status'] == 1) ? 'checked' : ''; ?> checked>
-              &nbsp;&nbsp;Active&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <input type="radio" required value="0" name="status" <?= ($category && $category['status'] == 0) ? 'checked' : ''; ?>>
-              &nbsp;&nbsp;In-Active
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary waves-effect waves-light">Add</button>
-          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Close
+          </button>
+
+          <button type="submit"
+            class="btn btn-primary">
+
+            <?= !empty($category['id']) ? 'Update Category' : 'Add Category'; ?>
+
+          </button>
+
+        </div>
+
       </form>
+
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
+
 </div>
-<!-- /.modal -->
-<script src="<?= base_url(); ?>assets/js/custom-js/category.js?v=1.0.0"></script>

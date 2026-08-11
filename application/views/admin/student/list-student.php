@@ -12,8 +12,20 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
+                    <div class="col-12 d-flex justify-content-between ">
+                        <h4 class="my-3 px-3">Students</h4>
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent">
+                                <li class="breadcrumb-item"><a href="<?= base_url('admin/Student/') ?>">Students</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Listing</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-lg-12">
-                        <div class="card  mb-4 mt-4">
+                        <div class="card  mb-4">
                             <div class="card-body">
 
                                 <a href="<?= base_url(ADMIN . 'Student/add_student'); ?>"

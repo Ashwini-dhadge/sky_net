@@ -16,10 +16,20 @@
     <div class="content-page">
         <div class="content">
             <div class="container-fluid">
-                <!-- TABLE -->
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-between ">
+                        <h4 class="my-3 px-3">Q & A</h4>
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent">
+                                <li class="breadcrumb-item"><a href="<?= base_url('admin/QuestionAnswer') ?>">Q & A</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Listing</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card mt-4">
+                        <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title"><?= $title ?></h4>
                                 <div class="row">

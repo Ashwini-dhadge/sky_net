@@ -35,7 +35,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-success" onclick="saveAnswer()">
+                <button class="btn btn-danger" onclick="saveAnswer()">
                     <i class="fas fa-save mr-1"></i> Save Answer
                 </button>
                 <button class="btn btn-secondary" data-dismiss="modal">Close</button>

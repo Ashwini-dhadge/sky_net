@@ -37,8 +37,8 @@
     }
 
     .question-tags span {
-        background: #eef2ff;
-        color: #4c6ef5;
+        background: #ffeeee87;
+        color: #f54c4c;
         font-size: 12px;
         padding: 6px 12px;
         border-radius: 20px;
@@ -78,7 +78,7 @@
     }
 
     .vote-box div:hover {
-        color: #4c6ef5;
+        color: #f54c4c;
         transform: scale(1.2);
     }
 
@@ -118,8 +118,8 @@
     }
 
     .badge-owner {
-        background: #e7f5ff;
-        color: #1971c2;
+        background: #ffeeee87;
+        color: #f54c4c;
         font-size: 11px;
         padding: 3px 7px;
         border-radius: 20px;
@@ -137,7 +137,7 @@
     }
 
     .op-highlight .thread-content {
-        border-left: 4px solid #1971c2;
+        border-left: 4px solid #f54c4c;
     }
 
     .thread-text {
@@ -222,19 +222,18 @@
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-
-                    <!-- Back Button -->
-                    <div class="col-12 text-right p-3">
-                        <a href="<?= base_url(ADMIN . FORUM . 'listing'); ?>"
-                            class="btn btn-outline-primary back-btn">
-                            ← Back to Listing
-                        </a>
+                    <div class="col-12 d-flex justify-content-between ">
+                        <h4 class="my-3 px-3">Forum</h4>
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent">
+                                <li class="breadcrumb-item"><a href="<?= base_url('admin/Forum/listing/') ?>">Forum</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Details</li>
+                            </ol>
+                        </nav>
                     </div>
-
-                    <!-- LEFT SIDE -->
+                </div>
+                <div class="row">
                     <div class="col-lg-8 mt-3">
-
-                        <!-- Question -->
                         <div class="question-card">
 
                             <div class="question-meta">

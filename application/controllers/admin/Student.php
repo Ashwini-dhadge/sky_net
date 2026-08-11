@@ -14,6 +14,9 @@ class Student extends CI_Controller
         $this->load->model(ADMIN . 'ForumModel');
         $this->load->model(ADMIN . 'QuestionModel');
         loginId();
+        if ($this->session->userdata('role') != 1) {
+            show_error('You do not have permission to access this page.', 403, 'Access Denied');
+        }
     }
 
     public function index()
@@ -559,12 +562,11 @@ class Student extends CI_Controller
                 $data['qna_list'] = $this->QuestionModel->getUserCourseQna($_id);
                 $data['lesson_progress'] = $this->UserModel->getUserLessonProgress($_id);
 
-                foreach ($data['lesson_progress'] as $key => $row) {
+                $data['lesson_progress'] = $this->UserModel->getUserLessonProgress($_id);
 
-                    $questions = $this->UserModel->getLessonQuestions($row['lesson_id']);
-                    $data['lesson_progress'][$key]['questions'] = $questions;
-                    $data['lesson_progress'][$key]['total_questions_db'] =
-                        $this->UserModel->getLessonQuestionCount($row['lesson_id']);
+                foreach ($data['lesson_progress'] as $key => $row) {
+                    $data['lesson_progress'][$key]['questions'] =
+                        $this->UserModel->getLessonQuestions($row['lesson_id']);
                 }
 
                 $data['certificates'] = $this->CommonModel->getData(

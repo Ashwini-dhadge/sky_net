@@ -40,9 +40,9 @@ class Course extends CI_Controller
 			$where['c.course_type'] = $course_type;
 		}
 
-		$count = count($this->CourseModel->getCourseData($searchVal, 0, 0, 0, 0,0, $where));
+		$count = count($this->CourseModel->getCourseData($searchVal, 0, 0, 0, 0, 0, $where));
 		if ($count) {
-			$CourseData = $this->CourseModel->getCourseData($searchVal, $sortColIndex, $sortBy, $limit, $offset,0, $where);
+			$CourseData = $this->CourseModel->getCourseData($searchVal, $sortColIndex, $sortBy, $limit, $offset, 0, $where);
 
 			foreach ($CourseData as $key => $Course) {
 
@@ -94,9 +94,9 @@ class Course extends CI_Controller
 
 	public function course_qna($course_id)
 	{
-		$data['title']     = 'Course Q&A';
+		$data['title'] = 'Course Q&A';
 		$data['course_id'] = $course_id;
-		$data['active']    = 'Course';
+		$data['active'] = 'Course';
 		$this->load->view(ADMIN . COURSE . 'course_qna', $data);
 	}
 	public function course_qna_list()
@@ -105,8 +105,8 @@ class Course extends CI_Controller
 
 		$course_id = $post['course_id'] ?? 0;
 
-		$draw   = intval($post['draw'] ?? 1);
-		$start  = intval($post['start'] ?? 0);
+		$draw = intval($post['draw'] ?? 1);
+		$start = intval($post['start'] ?? 0);
 		$length = intval($post['length'] ?? 10);
 		$search = $post['search']['value'] ?? '';
 
@@ -161,7 +161,7 @@ class Course extends CI_Controller
 
 			if ($row['course_status'] == 1) {
 				$btnClass = $isAnswered ? 'btn-warning' : 'btn-primary';
-				$btnText  = $isAnswered ? 'Update' : 'Answer';
+				$btnText = $isAnswered ? '<i class="fas fa-reply"></i>' : '<i class="fas fa-edit"></i>';
 
 				$action = '<button class="btn btn-sm ' . $btnClass . '"
                 onclick=\'openAnswerModal(' .
@@ -182,10 +182,10 @@ class Course extends CI_Controller
 		}
 
 		echo json_encode([
-			'draw'            => $draw,
-			'recordsTotal'    => $total,
+			'draw' => $draw,
+			'recordsTotal' => $total,
 			'recordsFiltered' => $filtered,
-			'data'            => $data
+			'data' => $data
 		]);
 		exit;
 	}
@@ -196,28 +196,31 @@ class Course extends CI_Controller
 
 	public function save_course_answer()
 	{
-		$qna_id     = $this->input->post('qna_id');
-		$answer     = $this->input->post('answer');
-		$answer_by  = $this->input->post('answer_by');
+		$qna_id = $this->input->post('qna_id');
+		$answer = $this->input->post('answer');
+		$answer_by = $this->input->post('answer_by');
 		$main_instructor_id = loginId();
 
 		$this->CommonModel->iudAction(
 			'tbl_course_qna',
 			[
-				'main_instructor_id'            => $main_instructor_id,
-				'answer'            			=> $answer,
-				'ans_created_at'    			=> date('Y-m-d H:i:s'),
-				'ans_created_by'    			=> $answer_by,
-				'ans_updated_at'    			=> date('Y-m-d H:i:s'),
-				'ans_updated_by'    			=> $answer_by,
-				'updated_at'        			=> date('Y-m-d H:i:s'),
-				'updated_by'        			=> loginId()
+				'main_instructor_id' => $main_instructor_id,
+				'answer' => $answer,
+				'ans_created_at' => date('Y-m-d H:i:s'),
+				'ans_created_by' => $answer_by,
+				'ans_updated_at' => date('Y-m-d H:i:s'),
+				'ans_updated_by' => $answer_by,
+				'updated_at' => date('Y-m-d H:i:s'),
+				'updated_by' => loginId()
 			],
 			'update',
 			['id' => $qna_id]
 		);
 
-		echo json_encode(['status' => true]);
+		echo json_encode([
+			'status' => true,
+			'message' => 'Answer saved successfully'
+		]);
 	}
 
 	public function course_qna_analytics($course_id)
@@ -239,9 +242,9 @@ class Course extends CI_Controller
 			->avg_time;
 
 		echo json_encode([
-			'total'     => $total,
-			'answered'  => $answered,
-			'pending'   => $pending,
+			'total' => $total,
+			'answered' => $answered,
+			'pending' => $pending,
 			'avg_hours' => ($avg && $avg > 0) ? round($avg, 1) : 0
 		]);
 	}
@@ -315,8 +318,8 @@ class Course extends CI_Controller
 	{
 		$data = $_POST;
 
-		$draw   = $data['draw'];
-		$limit  = $data['length'];
+		$draw = $data['draw'];
+		$limit = $data['length'];
 		$offset = $data['start'];
 		$search = $data['search']['value'];
 		$orderCol = $data['order'][0]['column'];
@@ -350,39 +353,38 @@ class Course extends CI_Controller
 
 				$action = '
 					<a href="javascript:void(0);"
-					class="btn btn-sm btn-outline-secondary text-warning mr-1"
+					class="btn btn-sm btn-danger  mr-1"
 					title="Add Videos"
 					onclick="openLessonModel(' . $lesson['course_id'] . ',' . $lesson['section_id'] . ',' . $lesson['id'] . ')">
 						<i class="fa fa-book"></i>
 					</a>
 
-					<a class="btn btn-success btn-sm mr-1"
-					href="' . base_url() . 'admin/Lesson/edit/' . $lesson['id'] . '">
+					<a class="btn btn-danger  btn-sm mr-1 editLessonBtn" data-id="' . $lesson['id'] . '">
 						<i class="fas fa-edit"></i>
 					</a>
 
 					<a href="' . base_url(ADMIN . 'Lesson/mcq/' . $lesson['id']) . '"
-					class="btn btn-sm btn-info mr-1">
-						MCQ
+					class="btn btn-sm btn-danger  mr-1">
+						<i class="fa fa-question-circle"></i>
 					</a>
 
 					';
 
-					// <a class="btn btn-danger btn-sm"
-					// href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
-					// onclick="return confirm(\'Delete this lesson?\')">
-					// 	<i class="fas fa-trash-alt"></i>
-					// </a>
+				// <a class="btn btn-danger btn-sm"
+				// href="' . base_url() . 'admin/Course/CourseDelete/' . $lesson['course_id'] . '/' . $lesson['id'] . '"
+				// onclick="return confirm(\'Delete this lesson?\')">
+				// 	<i class="fas fa-trash-alt"></i>
+				// </a>
 				$row[] = $action;
 				$rows[] = $row;
 			}
 		}
 
 		echo json_encode([
-			'draw'            => $draw,
-			'recordsTotal'    => $total,
+			'draw' => $draw,
+			'recordsTotal' => $total,
 			'recordsFiltered' => $total,
-			'data'            => $rows
+			'data' => $rows
 		]);
 	}
 
@@ -409,7 +411,7 @@ class Course extends CI_Controller
 		if (!$this->input->post()) {
 
 			if ($id) {
-				$data['title']  = 'Edit Course';
+				$data['title'] = 'Edit Course';
 				$data['course'] = $this->CommonModel->getData(
 					'tbl_courses',
 					['id' => $id, 'deleted_at' => NULL],
@@ -427,7 +429,7 @@ class Course extends CI_Controller
 					->from('tbl_courses_duration')
 					->where('courses_id', $id)
 					->where('deleted_at', NULL)
-					->order_by('id', 'DESC')        
+					->order_by('id', 'DESC')
 					->limit(1)
 					->get()
 					->row_array();
@@ -435,7 +437,7 @@ class Course extends CI_Controller
 				$data['title'] = 'Add Course';
 			}
 
-			$data['active']   = 'Course';
+			$data['active'] = 'Course';
 			$data['category'] = $this->CommonModel->getData('tbl_categories', ['status' => 1, 'is_deleted' => 0]);
 			$data['duration'] = $this->CommonModel->getData('tbl_duration_master');
 			$data['certificate_details'] = $this->CourseModel->getCertificateData($id);
@@ -452,21 +454,21 @@ class Course extends CI_Controller
 		$post = $this->input->post();
 
 		$courseData = [
-			'title'         => $post['title'],
+			'title' => $post['title'],
 			'instructor_id' => $post['instructor_id'],
-			'category_id'   => $post['category_id'],
-			'course_type'   => $post['course_type'] ?? 0,
+			'category_id' => $post['category_id'],
+			'course_type' => $post['course_type'] ?? 0,
 			'skill' => !empty($post['skill'])
 				? implode(',', array_map('trim', $post['skill']))
 				: null,
 
-			'language'      => $post['language'] ?? 1,
-			'certificate'   => $post['certificate'] ?? 0,
-			'assessment'    => $post['assessment'] ?? 0,
-			'benefits'      => $post['benefits'] ?? null,
-			'notes'         => $post['notes'],
-			'status'        => $post['status'] ?? 1,
-			'is_free'       => $post['is_free'] ?? 0,
+			'language' => $post['language'] ?? 1,
+			'certificate' => $post['certificate'] ?? 0,
+			'assessment' => $post['assessment'] ?? 0,
+			'benefits' => $post['benefits'] ?? null,
+			'notes' => $post['notes'],
+			'status' => $post['status'] ?? 1,
+			'is_free' => $post['is_free'] ?? 0,
 		];
 
 		if (!empty($_FILES['image']['name'])) {
@@ -566,18 +568,18 @@ class Course extends CI_Controller
 				$resourceId = $resource['resource_id'] ?? null;
 
 				$data = [
-					'course_id'  => $courseId,
+					'course_id' => $courseId,
 					'file_notes' => $resource['file_notes'],
 				];
 
 				if (!empty($_FILES['resources']['tmp_name'][$index]['file'])) {
 
 					$_FILES['resource_file'] = [
-						'name'     => $_FILES['resources']['name'][$index]['file'],
-						'type'     => $_FILES['resources']['type'][$index]['file'],
+						'name' => $_FILES['resources']['name'][$index]['file'],
+						'type' => $_FILES['resources']['type'][$index]['file'],
 						'tmp_name' => $_FILES['resources']['tmp_name'][$index]['file'],
-						'error'    => $_FILES['resources']['error'][$index]['file'],
-						'size'     => $_FILES['resources']['size'][$index]['file'],
+						'error' => $_FILES['resources']['error'][$index]['file'],
+						'size' => $_FILES['resources']['size'][$index]['file'],
 					];
 
 					$this->load->library('upload');
@@ -678,8 +680,8 @@ class Course extends CI_Controller
 
 		$durationId = 5; // DEFAULT FROM MASTER
 
-		$strike = (float)$post['strike_thr_price'];
-		$offer  = (float)$post['offer_amount'];
+		$strike = (float) $post['strike_thr_price'];
+		$offer = (float) $post['offer_amount'];
 
 		if ($post['offer_type'] == 1) {
 			$price = max(0, $strike - $offer);
@@ -688,13 +690,13 @@ class Course extends CI_Controller
 		}
 
 		$courseDurationData = [
-			'courses_id'       => $courseId,
-			'duration_id'      => $durationId,
-			'offer_type'       => $post['offer_type'],
-			'offer_amount'     => $offer,
+			'courses_id' => $courseId,
+			'duration_id' => $durationId,
+			'offer_type' => $post['offer_type'],
+			'offer_amount' => $offer,
 			'strike_thr_price' => $strike,
-			'price'            => $price,
-			'status'           => 1
+			'price' => $price,
+			'status' => 1
 		];
 
 		$existingDuration = $this->CommonModel->getData(
@@ -757,41 +759,51 @@ class Course extends CI_Controller
 
 	public function updateResources($course_id)
 	{
-		if (empty($_POST['resources'])) {
-			$this->session->set_flashdata('error', 'No resources submitted');
-			redirect(base_url(ADMIN . 'Course/view/' . $course_id));
-			return;
+		$resources = $this->input->post('resources');
+
+		if (empty($resources)) {
+
+			echo json_encode([
+				'status' => false,
+				'message' => 'No resources found'
+			]);
+			exit;
 		}
 
-		$notesArray = $_POST['resources'];
-		$files      = $_FILES['resources'];
+		foreach ($resources as $i => $resource) {
 
-		foreach ($notesArray as $i => $res) {
+			$title = $resource['resource_title'] ?? '';
 
-			// Extract nested file data properly
-			if (empty($files['name'][$i]['file'])) {
+			if (empty($_FILES['resources']['name'][$i]['resource_file'])) {
 				continue;
 			}
 
 			$_FILES['temp_upload'] = [
-				'name'     => $files['name'][$i]['file'],
-				'type'     => $files['type'][$i]['file'],
-				'tmp_name' => $files['tmp_name'][$i]['file'],
-				'error'    => $files['error'][$i]['file'],
-				'size'     => $files['size'][$i]['file']
+				'name' => $_FILES['resources']['name'][$i]['resource_file'],
+				'type' => $_FILES['resources']['type'][$i]['resource_file'],
+				'tmp_name' => $_FILES['resources']['tmp_name'][$i]['resource_file'],
+				'error' => $_FILES['resources']['error'][$i]['resource_file'],
+				'size' => $_FILES['resources']['size'][$i]['resource_file']
 			];
 
-			$upload = fileUpload('assets/uploads/course_resources', 'temp_upload');
+			$upload = fileUpload(
+				'assets/uploads/course_resources',
+				'temp_upload'
+			);
 
 			if (!$upload['status']) {
-				print_r($upload);
-				die('UPLOAD FAILED');
+
+				echo json_encode([
+					'status' => false,
+					'message' => 'File upload failed'
+				]);
+				exit;
 			}
 
 			$insert = [
-				'course_id'  => $course_id,
-				'file_notes' => $res['file_notes'] ?? '',
-				'file'       => $upload['image_name'],
+				'course_id' => $course_id,
+				'file_notes' => $title,
+				'file' => $upload['image_name'],
 				'created_at' => date('Y-m-d H:i:s'),
 				'created_by' => loginId(),
 				'updated_at' => date('Y-m-d H:i:s'),
@@ -805,15 +817,18 @@ class Course extends CI_Controller
 			);
 		}
 
-		$this->session->set_flashdata('success', 'Resources uploaded successfully');
-		redirect(base_url(ADMIN . 'Course/view/' . $course_id));
+		echo json_encode([
+			'status' => true,
+			'message' => 'Resources Added Successfully'
+		]);
+		exit;
 	}
 
 
 	public function CourseResource()
 	{
-		$draw   = intval($this->input->post('draw'));
-		$start  = intval($this->input->post('start'));
+		$draw = intval($this->input->post('draw'));
+		$start = intval($this->input->post('start'));
 		$length = intval($this->input->post('length'));
 
 		$total = $this->CourseModel->countCourseResources();
@@ -830,7 +845,7 @@ class Course extends CI_Controller
 			$deleteBtn = '
             <button class="btn btn-sm btn-danger deleteResource"
                 data-id="' . $row['id'] . '">
-                Delete
+                <i class="fa fa-trash"></i>
             </button>';
 
 			$data[] = [
@@ -839,8 +854,8 @@ class Course extends CI_Controller
 				'<a href="' . $fileUrl . '" target="_blank">View</a>',
 				$row['created_by'],
 				!empty($row['created_at'])
-					? date('d M Y', strtotime($row['created_at']))
-					: '-',
+				? date('d M Y', strtotime($row['created_at']))
+				: '-',
 				$deleteBtn
 			];
 		}
@@ -1082,7 +1097,10 @@ class Course extends CI_Controller
 			$data['course'] = $course[0];
 			$this->load->model('admin/CourseModel');
 			$data['instructors'] = $this->CourseModel->getInstructors();
+			$data['sections'] = $this->CommonModel->getData('tbl_section', array('course_id' => $_id, 'deleted_by' => NULL));
 			$this->load->view(ADMIN . COURSE . 'course-view', $data);
+		} else {
+			redirect(base_url(ADMIN . 'Course'));
 		}
 	}
 
@@ -1273,4 +1291,186 @@ class Course extends CI_Controller
 		}
 		echo json_encode($reaponse);
 	}
+
+	public function sectionList()
+	{
+
+		$data = $_POST;
+		// echo "<pre>";
+		// print_r($data);
+		// die();
+		$columns = [];
+		$page = $data['draw'];
+		$limit = $data['length'];
+		$offset = $data['start'];
+		$searchVal = $data['search']['value'];
+		$sortColIndex = $data['order'][0]['column'];
+		$sortBy = $data['order'][0]['dir'];
+
+		$course_id = isset($data['course_id']) ? $data['course_id'] : 0;
+		$course_view_type = isset($data['course_view_type']) ? $data['course_view_type'] : 0;
+
+
+		$count = count($this->CourseModel->getSectionList($searchVal, 0, 0, 0, 0, $course_id));
+		// print_r($count);die;
+		if ($count) {
+			$sectionData = $this->CourseModel->getSectionList($searchVal, $sortColIndex, $sortBy, $limit, $offset, $course_id);
+
+			foreach ($sectionData as $key => $lesson) {
+
+				$row = [];
+
+				array_push($row, $offset + ($key + 1));
+				array_push($row, $lesson['course_name']);
+				$title = $lesson['title'];
+				array_push($row, $title);
+				$description = substr($lesson['description'], 0, 200);
+				array_push($row, $description . (strlen($lesson['description']) > 200 ? '...' : ''));
+
+				$alert = "confirm('Do you want to delete this record?');";
+				$action = '
+				<a href="javascript:void(0)"
+				class="btn btn-danger btn-sm editSectionBtn"
+				data-id="' . $lesson['id'] . '">
+				<i class="fas fa-edit"></i>
+				</a>';
+				// <a class="btn btn-danger btn-sm waves-effect waves-light" onclick="return confirm(\'Do you want to delete this record?\')" href="' . base_url() . 'admin/Section/CourseSectionDelete/' . $lesson['id']  . '"><i class="fas fa-trash"></i></a>
+				array_push($row, $action);
+				$columns[] = $row;
+			}
+		}
+		$response = [
+			'draw' => $page,
+			'data' => $columns,
+			'recordsTotal' => $count,
+			'recordsFiltered' => $count
+		];
+		echo json_encode($response);
+	}
+
+	public function getSectionById()
+	{
+		$id = $this->input->post('id');
+
+		$section = $this->db
+			->where('id', $id)
+			->get('tbl_section')
+			->row_array();
+
+		echo json_encode($section);
+	}
+
+	public function updateSectionAjax()
+	{
+		$id = $this->input->post('id');
+
+		$data = [
+			'course_id' => $this->input->post('course_id'),
+			'title' => $this->input->post('title'),
+			'description' => $this->input->post('description'),
+			'updated_at' => date('Y-m-d H:i:s')
+		];
+
+		$this->db->where('id', $id);
+		$this->db->update('tbl_section', $data);
+
+		echo json_encode([
+			'status' => true,
+			'message' => 'Section Updated Successfully'
+		]);
+	}
+
+	public function addSectionAjax()
+	{
+		$data = [
+			'course_id' => $this->input->post('course_id'),
+			'title' => $this->input->post('title'),
+			'description' => $this->input->post('description'),
+			'created_at' => date('Y-m-d H:i:s')
+		];
+
+		$this->db->insert('tbl_section', $data);
+
+		echo json_encode([
+			'status' => true,
+			'message' => 'Section Added Successfully'
+		]);
+	}
+
+	public function getLessonById()
+	{
+		$id = $this->input->post('id');
+
+		$lesson = $this->db
+			->where('id', $id)
+			->get('tbl_lesson')
+			->row_array();
+
+		echo json_encode($lesson);
+	}
+
+
+	public function saveLessonAjax()
+	{
+		$id = $this->input->post('id');
+		// echo "<pre>";
+		// print_r($id);
+		// die;
+		$course_id = $this->input->post('course_id');
+		$section_id = $this->input->post('section_id');
+		$title = $this->input->post('title');
+		$description = $this->input->post('description');
+		$sequence = $this->input->post('sequence');
+		$no_of_question = $this->input->post('no_of_question');
+		$exam_duration = $this->input->post('exam_duration');
+		$is_final_lesson = $this->input->post('is_final_lesson');
+
+		$lessonData = [
+			"course_id" => $course_id,
+			"section_id" => $section_id,
+			"title" => $title,
+			"description" => $description,
+			"sequence" => $sequence,
+			"no_of_question" => $no_of_question,
+			"exam_duration" => $exam_duration,
+			"is_final_lesson" => $is_final_lesson,
+			"updated_at" => date("Y-m-d H:i:s"),
+			"updated_by" => 1
+		];
+
+		if (!empty($id)) {
+
+			$this->CommonModel->iudAction(
+				'tbl_lesson',
+				$lessonData,
+				'update',
+				['id' => $id]
+			);
+
+			echo json_encode([
+				'status' => true,
+				'message' => 'Lesson Updated Successfully'
+			]);
+		} else {
+
+			$lessonData['created_at'] = date("Y-m-d H:i:s");
+			$lessonData['created_by'] = 1;
+
+			$lesson_id = $this->CommonModel->iudAction(
+				'tbl_lesson',
+				$lessonData,
+				'insert'
+			);
+
+			echo json_encode([
+				'status' => true,
+				'message' => 'Lesson Added Successfully',
+				'lesson_id' => $lesson_id
+			]);
+		}
+	}
+
+
 }
+
+

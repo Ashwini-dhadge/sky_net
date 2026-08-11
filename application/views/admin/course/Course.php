@@ -1,22 +1,30 @@
 <?php init_header(); ?>
 
 <style>
-.select2-selection--multiple .select2-selection__choice {
-    background-color: #CA151C !important;
-    border: 1px solid #ec4561 !important;
-    color: #fff !important;
-}
+    .select2-selection--multiple .select2-selection__choice {
+        background-color: #CA151C !important;
+        border: 1px solid #ec4561 !important;
+        color: #fff !important;
+    }
 </style>
 
 <div class="main-content">
     <div class="content-page">
         <div class="content">
             <div class="container-fluid">
-
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-between ">
+                        <h4 class="my-3 px-3">Courses</h4>
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent">
+                                <li class="breadcrumb-item"><a href="<?= base_url('admin/Course/') ?>">Courses</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Create / Edit</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="mt-0 header-title m-b-20"><?= $title; ?></h4>
-                        <hr>
                         <form class="repeater" action="<?= base_url(ADMIN . 'Course/Course'); ?>" method="post"
                             enctype="multipart/form-data">
                             <input type="hidden" name="id" id="id"
@@ -40,9 +48,9 @@
                                             <?php foreach ($category as $key => $value) {
                                                 $selected = (isset($course['category_id']) && $course['category_id'] == $value['id']) ? "selected" : "";
                                             ?>
-                                            <option value="<?= $value['id'] ?>" <?= $selected; ?>>
-                                                <?= $value['category_name'] ?>
-                                            </option>
+                                                <option value="<?= $value['id'] ?>" <?= $selected; ?>>
+                                                    <?= $value['category_name'] ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -54,10 +62,10 @@
                                             <option value="">Select Instructor</option>
 
                                             <?php foreach ($instructors as $instructor): ?>
-                                            <option value="<?= $instructor['id']; ?>"
-                                                <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
-                                                <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
-                                            </option>
+                                                <option value="<?= $instructor['id']; ?>"
+                                                    <?= (isset($course['instructor_id']) && $course['instructor_id'] == $instructor['id']) ? 'selected' : ''; ?>>
+                                                    <?= $instructor['first_name'] . ' ' . $instructor['last_name']; ?>
+                                                </option>
                                             <?php endforeach; ?>
 
                                         </select>
@@ -93,9 +101,9 @@
 
                                         <select class="custom-select" id="skill" name="skill[]" multiple>
                                             <?php foreach ($selectedSkills as $skillValue): ?>
-                                            <option value="<?= $skillValue ?>" selected>
-                                                <?= $skillValue ?>
-                                            </option>
+                                                <option value="<?= $skillValue ?>" selected>
+                                                    <?= $skillValue ?>
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -132,32 +140,32 @@
                                     </div>
                                 </div>
                                 <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2) { ?>
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex gap-2">
-                                        <div class="mr-5">
-                                            <div class="form-group">
-                                                <label>Assessment</label><br>
-                                                <input type="radio" value="1" name="assessment"
-                                                    <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>>
-                                                YES
-                                                <input type="radio" value="0" name="assessment"
-                                                    <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>>
-                                                NO
+                                    <div class="col-12 col-md-6">
+                                        <div class="d-flex gap-2">
+                                            <div class="mr-5">
+                                                <div class="form-group">
+                                                    <label>Assessment</label><br>
+                                                    <input type="radio" value="1" name="assessment"
+                                                        <?= (isset($course) && $course['assessment'] == 1) ? 'checked' : ''; ?>>
+                                                    YES
+                                                    <input type="radio" value="0" name="assessment"
+                                                        <?= (isset($course) && $course['assessment'] == 0) ? 'checked' : ''; ?>>
+                                                    NO
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <div class="form-group">
-                                                <label>Status</label><br>
-                                                <input type="radio" value="1" name="status"
-                                                    <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>>
-                                                Active
-                                                <input type="radio" value="0" name="status"
-                                                    <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
-                                                In-Active
+                                            <div>
+                                                <div class="form-group">
+                                                    <label>Status</label><br>
+                                                    <input type="radio" value="1" name="status"
+                                                        <?= (isset($course['status']) && $course['status'] == 1) ? 'checked' : ''; ?>>
+                                                    Active
+                                                    <input type="radio" value="0" name="status"
+                                                        <?= (isset($course['status']) && $course['status'] == 0) ? 'checked' : ''; ?>>
+                                                    In-Active
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 <?php } ?>
                             </div>
                             <hr>
@@ -248,79 +256,79 @@
                                 <div data-repeater-list="resources">
 
                                     <?php if (!empty($resources)): foreach ($resources as $res): ?>
-                                    <div data-repeater-item class="card mb-3">
-                                        <div class="card-body">
+                                            <div data-repeater-item class="card mb-3">
+                                                <div class="card-body">
 
-                                            <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
+                                                    <input type="hidden" name="resource_id" value="<?= $res['id'] ?>">
 
-                                            <div class="row">
-                                                <div class="col-md-5">
-                                                    <label>File Title</label>
-                                                    <input type="text" name="file_notes" class="form-control"
-                                                        value="<?= $res['file_notes'] ?>" required>
-                                                </div>
+                                                    <div class="row">
+                                                        <div class="col-md-5">
+                                                            <label>File Title</label>
+                                                            <input type="text" name="file_notes" class="form-control"
+                                                                value="<?= $res['file_notes'] ?>" required>
+                                                        </div>
 
-                                                <div class="col-md-5">
-                                                    <label>File</label>
-                                                    <input type="file" name="file" class="form-control file_resource"
-                                                        onchange="updatePreviewButton(this)">
+                                                        <div class="col-md-5">
+                                                            <label>File</label>
+                                                            <input type="file" name="file" class="form-control file_resource"
+                                                                onchange="updatePreviewButton(this)">
 
-                                                    <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>" class=""
-                                                        target="_blank">
-                                                        Open File
-                                                    </a>
-                                                </div>
+                                                            <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>" class=""
+                                                                target="_blank">
+                                                                Open File
+                                                            </a>
+                                                        </div>
 
-                                                <div class="col-md-2">
-                                                    <label>&nbsp;</label><br>
-                                                    <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
-                                                        class="btn btn-info preview-btn" target="_blank">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
+                                                        <div class="col-md-2">
+                                                            <label>&nbsp;</label><br>
+                                                            <a href="<?= base_url(COURSE_RESOURCES . $res['file']) ?>"
+                                                                class="btn btn-info preview-btn" target="_blank">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
 
-                                                    <button data-repeater-delete type="button"
-                                                        class="btn btn-danger ml-1">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                            <button data-repeater-delete type="button"
+                                                                class="btn btn-danger ml-1">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-
-                                        </div>
-                                    </div>
-                                    <?php endforeach;
+                                        <?php endforeach;
                                     else: ?>
 
-                                    <div data-repeater-item class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="row">
+                                        <div data-repeater-item class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="row">
 
-                                                <div class="col-md-5">
-                                                    <label>File Title</label>
-                                                    <input type="text" name="file_notes" class="form-control" required>
+                                                    <div class="col-md-5">
+                                                        <label>File Title</label>
+                                                        <input type="text" name="file_notes" class="form-control" required>
+                                                    </div>
+
+                                                    <div class="col-md-5">
+                                                        <label>File</label>
+                                                        <input type="file" name="file" class="form-control file_resource"
+                                                            onchange="updatePreviewButton(this)">
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <label>&nbsp;</label><br>
+                                                        <button type="button" class="btn btn-secondary preview-btn"
+                                                            onclick="previewFile(this)">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+
+                                                        <button data-repeater-delete type="button"
+                                                            class="btn btn-danger ml-1">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+
                                                 </div>
-
-                                                <div class="col-md-5">
-                                                    <label>File</label>
-                                                    <input type="file" name="file" class="form-control file_resource"
-                                                        onchange="updatePreviewButton(this)">
-                                                </div>
-
-                                                <div class="col-md-2">
-                                                    <label>&nbsp;</label><br>
-                                                    <button type="button" class="btn btn-secondary preview-btn"
-                                                        onclick="previewFile(this)">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-
-                                                    <button data-repeater-delete type="button"
-                                                        class="btn btn-danger ml-1">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-
                                             </div>
                                         </div>
-                                    </div>
 
                                     <?php endif; ?>
 
@@ -353,223 +361,223 @@
 <script src="<?= base_url() ?>assets/plugins/jquery-repeater/jquery.repeater.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.15.0/full-all/ckeditor.js"></script>
 <script>
-let nameValid = false;
+    let nameValid = false;
 
-function checkSubmit() {
+    function checkSubmit() {
 
-    if (nameValid) {
-        $("#submit_btn").prop("disabled", false);
-    } else {
-        $("#submit_btn").prop("disabled", true);
-    }
-
-}
-
-$("#title").keyup(function() {
-
-    let title = $(this).val().trim();
-    let id = $("#course_id").val();
-
-    let nameRegex = /^[A-Za-z ]+$/;
-
-    if (title.length < 3) {
-
-        $("#name_msg").html("Title must be at least 3 characters").css("color", "red");
-        nameValid = false;
-        checkSubmit();
-        return;
+        if (nameValid) {
+            $("#submit_btn").prop("disabled", false);
+        } else {
+            $("#submit_btn").prop("disabled", true);
+        }
 
     }
 
-    // if (!nameRegex.test(title)) {
+    $("#title").keyup(function() {
 
-    //     $("#name_msg").html("Only letters allowed").css("color", "red");
-    //     nameValid = false;
-    //     checkSubmit();
-    //     return;
+        let title = $(this).val().trim();
+        let id = $("#course_id").val();
 
-    // }
+        let nameRegex = /^[A-Za-z ]+$/;
 
-    $.ajax({
-        url: "<?= base_url('admin/Course/check_course_title') ?>",
-        type: "POST",
-        data: {
-            title: title,
-            id: id
-        },
-        success: function(res) {
-            if (res === "exists") {
-                $("#name_msg").html("Course name already exists").css("color", "red");
-                nameValid = false;
-            } else {
-                $("#name_msg").html("Course name available").css("color", "green");
-                nameValid = true;
-            }
+        if (title.length < 3) {
 
+            $("#name_msg").html("Title must be at least 3 characters").css("color", "red");
+            nameValid = false;
             checkSubmit();
+            return;
 
         }
-    });
 
-});
+        // if (!nameRegex.test(title)) {
 
+        //     $("#name_msg").html("Only letters allowed").css("color", "red");
+        //     nameValid = false;
+        //     checkSubmit();
+        //     return;
 
-$('#course_image').on('change', function() {
-    var file = this.files[0];
-    if (!file) return;
-    var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if ($.inArray(file.type, allowedTypes) === -1) {
-        alert('Only JPG, JPEG and PNG files are allowed.');
-        $(this).val('');
-    }
-});
+        // }
 
-$(document).on('change', '.file_resource', function() {
+        $.ajax({
+            url: "<?= base_url('admin/Course/check_course_title') ?>",
+            type: "POST",
+            data: {
+                title: title,
+                id: id
+            },
+            success: function(res) {
+                if (res === "exists") {
+                    $("#name_msg").html("Course name already exists").css("color", "red");
+                    nameValid = false;
+                } else {
+                    $("#name_msg").html("Course name available").css("color", "green");
+                    nameValid = true;
+                }
 
-    var file = this.files[0];
-    if (!file) return;
+                checkSubmit();
 
-    // Allowed extensions
-    var allowedExtensions = [
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg',
-        'pdf',
-        'txt',
-        'csv',
-        'xls',
-        'xlsx',
-        'ppt',
-        'pptx'
-    ];
-
-    // Get file extension
-    var fileName = file.name.toLowerCase();
-    var extension = fileName.split('.').pop();
-
-    // Check extension
-    if ($.inArray(extension, allowedExtensions) === -1) {
-        alert('Only Images, PDF, TXT, CSV, Excel, and PowerPoint files are allowed.');
-        $(this).val('');
-        return false;
-    }
-
-});
-
-$('#barcode_logo').on('change', function() {
-    var file = this.files[0];
-    if (!file) return;
-    var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if ($.inArray(file.type, allowedTypes) === -1) {
-        alert('Only JPG, JPEG and PNG files are allowed.');
-        $(this).val('');
-    }
-});
-
-$("#skill").select2({
-    tags: true,
-    tokenSeparators: [','],
-    placeholder: "Type and press Enter to add skill",
-    width: '100%'
-});
-</script>
-
-<script>
-$(document).ready(function() {
-
-    $('.resource-repeater').repeater({
-        initEmpty: false,
-        show: function() {
-            $(this).slideDown();
-        },
-        hide: function(deleteElement) {
-            if (confirm('Remove this resource?')) {
-                $(this).slideUp(deleteElement);
             }
+        });
+
+    });
+
+
+    $('#course_image').on('change', function() {
+        var file = this.files[0];
+        if (!file) return;
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if ($.inArray(file.type, allowedTypes) === -1) {
+            alert('Only JPG, JPEG and PNG files are allowed.');
+            $(this).val('');
         }
     });
 
-});
+    $(document).on('change', '.file_resource', function() {
+
+        var file = this.files[0];
+        if (!file) return;
+
+        // Allowed extensions
+        var allowedExtensions = [
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg',
+            'pdf',
+            'txt',
+            'csv',
+            'xls',
+            'xlsx',
+            'ppt',
+            'pptx'
+        ];
+
+        // Get file extension
+        var fileName = file.name.toLowerCase();
+        var extension = fileName.split('.').pop();
+
+        // Check extension
+        if ($.inArray(extension, allowedExtensions) === -1) {
+            alert('Only Images, PDF, TXT, CSV, Excel, and PowerPoint files are allowed.');
+            $(this).val('');
+            return false;
+        }
+
+    });
+
+    $('#barcode_logo').on('change', function() {
+        var file = this.files[0];
+        if (!file) return;
+        var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if ($.inArray(file.type, allowedTypes) === -1) {
+            alert('Only JPG, JPEG and PNG files are allowed.');
+            $(this).val('');
+        }
+    });
+
+    $("#skill").select2({
+        tags: true,
+        tokenSeparators: [','],
+        placeholder: "Type and press Enter to add skill",
+        width: '100%'
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+
+        $('.resource-repeater').repeater({
+            initEmpty: false,
+            show: function() {
+                $(this).slideDown();
+            },
+            hide: function(deleteElement) {
+                if (confirm('Remove this resource?')) {
+                    $(this).slideUp(deleteElement);
+                }
+            }
+        });
+
+    });
 </script>
 <script>
-function updatePreviewButton(input) {
-    const row = input.closest('[data-repeater-item]');
-    const btn = row.querySelector('.preview-btn');
-    if (!input.files.length) return;
-    btn.className = 'btn btn-info preview-btn';
-}
+    function updatePreviewButton(input) {
+        const row = input.closest('[data-repeater-item]');
+        const btn = row.querySelector('.preview-btn');
+        if (!input.files.length) return;
+        btn.className = 'btn btn-info preview-btn';
+    }
 
-function previewFile(btn) {
-    const file = btn.closest('[data-repeater-item]')
-        .querySelector('input[type=file]').files[0];
-    if (!file) return alert('Select file');
-    window.open(URL.createObjectURL(file));
-}
+    function previewFile(btn) {
+        const file = btn.closest('[data-repeater-item]')
+            .querySelector('input[type=file]').files[0];
+        if (!file) return alert('Select file');
+        window.open(URL.createObjectURL(file));
+    }
 </script>
 
 <script type="text/javascript">
-CKEDITOR.replace('benefits', {
-    height: '150px'
-});
-CKEDITOR.replace('notes', {
-    height: '380px'
-});
+    CKEDITOR.replace('benefits', {
+        height: '150px'
+    });
+    CKEDITOR.replace('notes', {
+        height: '380px'
+    });
 </script>
 <script>
-$(document).ready(function() {
+    $(document).ready(function() {
 
-    function calculateFinalPrice() {
+        function calculateFinalPrice() {
 
-        const offerType = $('#offer_type').val();
-        let offerAmount = parseFloat($('#offer_amount').val());
-        let originalPrice = parseFloat($('#strike_thr_price').val());
+            const offerType = $('#offer_type').val();
+            let offerAmount = parseFloat($('#offer_amount').val());
+            let originalPrice = parseFloat($('#strike_thr_price').val());
 
-        if (isNaN(originalPrice)) originalPrice = 0;
-        if (isNaN(offerAmount)) offerAmount = 0;
+            if (isNaN(originalPrice)) originalPrice = 0;
+            if (isNaN(offerAmount)) offerAmount = 0;
 
-        let finalPrice = originalPrice;
+            let finalPrice = originalPrice;
 
-        if (offerType === '1') {
-            if (offerAmount > originalPrice) {
-                offerAmount = originalPrice;
-                $('#offer_amount').val(offerAmount);
+            if (offerType === '1') {
+                if (offerAmount > originalPrice) {
+                    offerAmount = originalPrice;
+                    $('#offer_amount').val(offerAmount);
+                }
+                finalPrice = originalPrice - offerAmount;
+
+            } else if (offerType === '2') {
+                if (offerAmount > 100) {
+                    offerAmount = 100;
+                    $('#offer_amount').val(offerAmount);
+                }
+                finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
             }
-            finalPrice = originalPrice - offerAmount;
 
-        } else if (offerType === '2') {
-            if (offerAmount > 100) {
-                offerAmount = 100;
-                $('#offer_amount').val(offerAmount);
-            }
-            finalPrice = originalPrice - ((originalPrice * offerAmount) / 100);
+            if (finalPrice < 0) finalPrice = 0;
+
+            $('#price').val(finalPrice.toFixed(2));
         }
 
-        if (finalPrice < 0) finalPrice = 0;
+        // When offer type changes, reset offer amount
+        $('#offer_type').on('change', function() {
+            $('#offer_amount').val('');
+            calculateFinalPrice();
+        });
 
-        $('#price').val(finalPrice.toFixed(2));
-    }
+        // Recalculate on typing
+        $('#offer_amount, #strike_thr_price').on('keyup change', function() {
+            calculateFinalPrice();
+        });
 
-    // When offer type changes, reset offer amount
-    $('#offer_type').on('change', function() {
-        $('#offer_amount').val('');
-        calculateFinalPrice();
     });
 
-    // Recalculate on typing
-    $('#offer_amount, #strike_thr_price').on('keyup change', function() {
-        calculateFinalPrice();
+    $('form').on('submit', function(e) {
+
+        let original = $('#strike_thr_price').val();
+        let offer = $('#offer_amount').val();
+        let type = $('#offer_type').val();
+
+        if (original === '' || offer === '' || type === '') {
+            alert('Please fill all price fields');
+            e.preventDefault();
+        }
+
     });
-
-});
-
-$('form').on('submit', function(e) {
-
-    let original = $('#strike_thr_price').val();
-    let offer = $('#offer_amount').val();
-    let type = $('#offer_type').val();
-
-    if (original === '' || offer === '' || type === '') {
-        alert('Please fill all price fields');
-        e.preventDefault();
-    }
-
-});
 </script>

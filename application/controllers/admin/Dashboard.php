@@ -35,7 +35,7 @@ class Dashboard extends CI_Controller
 
         $data['online_courses'] = $this->DashboardModel->getOnlineCourses();
         $data['offline_courses'] = $this->DashboardModel->getOfflineCourses();
-
+        $data['course_wise_sale'] = $this->DashboardModel->getCourseWiseSale();
         $data['enroll_online_student_online_course'] = $this->DashboardModel->enrollOnlineStudentOnlineCourse();
         $data['enroll_offline_student_offline_course'] = $this->DashboardModel->enrollOfflineStudentOfflineCourse();
         $data['enroll_online_student_offline_course'] = $this->DashboardModel->enrollOnlineStudentOfflineCourse();

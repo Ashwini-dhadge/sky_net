@@ -61,7 +61,7 @@
 
     body[data-sidebar="dark"] .mm-active .active {
         color: #ffffff !important;
-        background-color: #e3a6a8;
+        background-color: #ff0008b0;
         border-left-color: #fff;
         border-left-style: solid;
     }

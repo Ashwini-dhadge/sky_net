@@ -1,337 +1,514 @@
 <?php init_header(); ?>
 
 <style>
-    /* .page-content {
-        background: #f4f6f9;
+    /* .main-content {
+        padding: 10px;
     } */
 
-    .dashboard-title h4 {
+    .page-dashboard {
+        background: #f5f7fb;
+        padding-bottom: 30px;
+    }
+
+    .welcome-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px 25px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .05);
+
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .welcome-left h5 {
+        margin: 0;
+        font-size: 20px;
         font-weight: 600;
-        color: #333;
+        color: #111827;
+    }
+
+    .welcome-left span {
+        font-size: 13px;
+        color: #de3f3f;
+    }
+
+    #liveTime {
+        color: #de3f3f;
+    }
+
+    .welcome-center,
+    .welcome-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .welcome-right {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .welcome-divider {
+        width: 1px;
+        height: 35px;
+        background: #e5e7eb;
     }
 
     .stat-card {
-        background: #ffffff;
-        border-radius: 14px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-        padding: 18px 20px;
-        transition: 0.3s ease;
-        border-left: 4px solid;
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, .05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        transition: .2s;
     }
 
     .stat-card:hover {
-        box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+        transform: translateY(-3px);
     }
 
     .stat-value {
-        font-size: 22px;
+        font-size: 26px;
         font-weight: 700;
-        margin-bottom: 3px;
+        color: #111827;
+        margin-bottom: 4px;
     }
 
     .stat-title {
         font-size: 13px;
-        color: #888;
+        color: #6b7280;
+        font-weight: 500;
     }
 
     .stat-icon {
-        font-size: 20px;
-        opacity: 0.8;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
     }
 
-    .border-red {
-        border-color: #e74c3c;
+    .icon-blue {
+        background: #eef2ff;
+        color: #4f46e5;
     }
 
-    .border-cyan {
-        border-color: #1abc9c;
+    .icon-green {
+        background: #ecfdf5;
+        color: #10b981;
     }
 
-    .border-blue {
-        border-color: #3498db;
+    .icon-orange {
+        background: #fff7ed;
+        color: #f97316;
     }
 
-    .border-yellow {
-        border-color: #f1c40f;
+    .icon-red {
+        background: #fef2f2;
+        color: #ef4444;
     }
 
     .dashboard-card {
         background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, .05);
         padding: 20px;
-        margin-bottom: 25px;
+        margin-bottom: 24px;
     }
 
     .dashboard-card h5 {
-        font-weight: 600;
-        font-size: 15px;
-        margin-bottom: 15px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 4px;
     }
 
-    .dashboard-table thead {
-        background: #f8f9fb;
+    .card-subtitle {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 18px;
     }
 
-    .dashboard-table th {
+    .mini-box {
+        background: #f9fafb;
+        border-radius: 14px;
+        padding: 15px;
+        border: 1px solid #eef0f4;
+        margin-bottom: 14px;
+    }
+
+    .mini-box h4 {
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .mini-box span {
+        font-size: 12px;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .alert-stat {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, .05);
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .alert-stat h3 {
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .alert-stat span {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .filter-box {
+        background: #f9fafb;
+        border: 1px solid #eef0f4;
+        padding: 16px;
+        border-radius: 14px;
+        margin-bottom: 16px;
+    }
+
+    .table thead th {
+        background: #f9fafb;
         font-size: 12px;
         text-transform: uppercase;
-        font-weight: 600;
-        color: #666;
+        color: #6b7280;
+        font-weight: 700;
     }
 
-    .dashboard-table td {
+    .table td {
         font-size: 13px;
+        vertical-align: middle;
     }
 
-    .dashboard-table tbody tr:hover {
-        background: #f5f7fa;
+    #enrollmentTypeChart,
+    #courseStudentChart,
+    #studentCourseTypeChart,
+    #pie_chart {
+        min-height: 310px;
     }
-
-    .badge-pending {
-        background: #ffc107;
-        font-size: 11px;
-        padding: 4px 8px;
-    }
-
-    .badge-unanswered {
-        background: #17a2b8;
-        font-size: 11px;
-        padding: 4px 8px;
-        color: #fff;
-    }
-
-    .section-space {
-        margin-top: 30px;
-    }
-
-    .btn-group .btn {
-        border-radius: 4px !important;
-        margin-right: 3px;
-    }
-
-    .badge {
-        font-size: 12px;
-        letter-spacing: .4px;
-    }
-
-    .table-hover tbody tr:hover {
-        background: #f7fbff;
-    }
-    
 </style>
 
-<div class="main-content">
+<div class="main-content page-dashboard">
     <div class="content-page">
         <div class="content">
             <div class="container-fluid">
-
-                <div class="row mb-4 dashboard-title">
-                    <div class="col-sm-6">
-                        <h4>Dashboard</h4>
-                        <p class="text-muted mb-0">Welcome to Dashboard</p>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-between">
+                        <div>
+                            <h4 class="my-3 px-3">Dashboard</h4>
+                        </div>
+                        <div>
+                            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb bg-transparent">
+                                    <li class="breadcrumb-item"><a href="<?= base_url(); ?>">Dashboard</a></li>
+                                    <!-- <li class="breadcrumb-item active" aria-current="page">Library</li> -->
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
-
                 <div class="row">
+                    <div class="col-lg-12 col-md-12 mb-3">
+                        <div class="welcome-card">
+
+                            <div class="welcome-left">
+                                <h5>Welcome <?= $this->session->userdata('name') ?></h5>
+                                <span>LMS Dashboard</span>
+                            </div>
+
+                            <div class="welcome-divider"></div>
+
+                            <div class="welcome-center">
+                                <i class="mdi mdi-calendar-month-outline"></i>
+                                <span id="liveDate"></span>
+                            </div>
+
+                            <div class="welcome-divider"></div>
+
+                            <!-- <div class="welcome-right">
+                                <i class="mdi mdi-clock-outline"></i>
+                                <span id="liveTime"></span>
+                            </div> -->
+
+                        </div>
+                    </div>
                     <div class="col-lg-3 col-md-6 mb-3">
-                        <div class="stat-card border-red d-flex justify-content-between align-items-center">
+                        <div class="stat-card">
                             <div>
                                 <div class="stat-value"><?= $total_users ?? 0 ?></div>
                                 <div class="stat-title">Total Users</div>
                             </div>
-                            <i class="fas fa-users stat-icon text-danger"></i>
+                            <div class="stat-icon icon-blue">
+                                <i class="fas fa-users"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-6 mb-3">
-                        <div class="stat-card border-cyan d-flex justify-content-between align-items-center">
+                        <div class="stat-card">
                             <div>
                                 <div class="stat-value"><?= $total_students ?? 0 ?></div>
                                 <div class="stat-title">Active Students</div>
                             </div>
-                            <i class="fas fa-user-graduate stat-icon text-info"></i>
+                            <div class="stat-icon icon-green">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-6 mb-3">
-                        <div class="stat-card border-blue d-flex justify-content-between align-items-center">
+                        <div class="stat-card">
                             <div>
                                 <div class="stat-value"><?= $total_instructors ?? 0 ?></div>
                                 <div class="stat-title">Instructors</div>
                             </div>
-                            <i class="fas fa-chalkboard-teacher stat-icon text-primary"></i>
+                            <div class="stat-icon icon-orange">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-lg-3 col-md-6 mb-3">
-                        <div class="stat-card border-yellow d-flex justify-content-between align-items-center">
+                        <div class="stat-card">
                             <div>
                                 <div class="stat-value"><?= $total_courses ?? 0 ?></div>
                                 <div class="stat-title">Active Courses</div>
                             </div>
-                            <i class="fas fa-book-open stat-icon text-warning"></i>
+                            <div class="stat-icon icon-red">
+                                <i class="fas fa-book-open"></i>
+                            </div>
                         </div>
                     </div>
+
                 </div>
-                <div class="row section-space">
+
+                <div class="row mt-2">
+
                     <div class="col-lg-4">
-                        <div class="dashboard-card" style="height: stretch;">
-                            <h5>Online / Offline Summary</h5>
+                        <div class="dashboard-card" style="height: 436px;">
+                            <h5 class="text-danger py-1">Online / Offline Summary</h5>
+                            <div class="card-subtitle">Student and course mode overview</div>
 
                             <div class="row">
-                                <div class="col-6 mb-3">
-                                    <div class="stat-card border-blue d-flex justify-content-between align-items-center" style="padding:12px 14px;">
-                                        <div>
-                                            <div class="stat-value"><?= $online_students ?? 0 ?></div>
-                                            <div class="stat-title">Online Students</div>
-                                        </div>
-                                        <i class="fas fa-wifi stat-icon text-primary"></i>
-                                    </div>
-                                </div>
-
-                                <div class="col-6 mb-3">
-                                    <div class="stat-card border-yellow d-flex justify-content-between align-items-center" style="padding:12px 14px;">
-                                        <div>
-                                            <div class="stat-value"><?= $offline_students ?? 0 ?></div>
-                                            <div class="stat-title">Offline Students</div>
-                                        </div>
-                                        <i class="fas fa-user stat-icon text-warning"></i>
+                                <div class="col-6">
+                                    <div class="mini-box">
+                                        <h4 class="text-primary"><?= $online_students ?? 0 ?></h4>
+                                        <span>Online Students</span>
                                     </div>
                                 </div>
 
                                 <div class="col-6">
-                                    <div class="stat-card border-cyan d-flex justify-content-between align-items-center" style="padding:12px 14px;">
-                                        <div>
-                                            <div class="stat-value"><?= $online_courses ?? 0 ?></div>
-                                            <div class="stat-title">Online Courses</div>
-                                        </div>
-                                        <i class="fas fa-laptop stat-icon text-info"></i>
+                                    <div class="mini-box">
+                                        <h4 class="text-warning"><?= $offline_students ?? 0 ?></h4>
+                                        <span>Offline Students</span>
                                     </div>
                                 </div>
 
                                 <div class="col-6">
-                                    <div class="stat-card border-red d-flex justify-content-between align-items-center" style="padding:12px 14px;">
-                                        <div>
-                                            <div class="stat-value"><?= $offline_courses ?? 0 ?></div>
-                                            <div class="stat-title">Offline Courses</div>
-                                        </div>
-                                        <i class="fas fa-building stat-icon text-danger"></i>
+                                    <div class="mini-box">
+                                        <h4 class="text-info"><?= $online_courses ?? 0 ?></h4>
+                                        <span>Online Courses</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="mini-box">
+                                        <h4 class="text-danger"><?= $offline_courses ?? 0 ?></h4>
+                                        <span>Offline Courses</span>
                                     </div>
                                 </div>
                             </div>
+
 
                         </div>
                     </div>
 
                     <div class="col-lg-8">
                         <div class="dashboard-card">
-                            <h5>Enrollment by Student Type & Course Type</h5>
-                            <div id="enrollmentTypeChart" style="height:320px;"></div>
+                            <h5 class="text-danger py-1">Enrollment Type Analytics</h5>
+                            <div class="card-subtitle">
+                                Online/offline students enrolled in online/offline courses
+                            </div>
+                            <div id="enrollmentTypeChart"></div>
                         </div>
                     </div>
+
                 </div>
 
-                <div class="row section-space">
+                <div class="row">
 
                     <div class="col-lg-6">
                         <div class="dashboard-card">
-                            <h5>Courses Wise Sale Count %</h5>
-                            <div id="pie_chart" class="apex-charts"></div>
+                            <h5 class="text-danger py-1">Courses Wise Sale Count %</h5>
+                            <div class="card-subtitle">Course sale distribution</div>
+                            <div id="studentCourseTypeChart"></div>
                         </div>
                     </div>
+
                     <div class="col-lg-6">
                         <div class="dashboard-card">
-                            <h5>Course vs Enrolled Students</h5>
+                            <h5 class="text-danger py-1">Course vs Enrolled Students</h5>
+                            <div class="card-subtitle">Top enrolled courses</div>
                             <div id="courseStudentChart"></div>
                         </div>
                     </div>
+
                 </div>
 
+                <div class="row">
 
+                    <div class="col-md-4 mb-3">
+                        <div class="alert-stat">
+                            <div>
+                                <h3 class="text-warning">
+                                    <?= !empty($pending_forum) ? count($pending_forum) : 0 ?>
+                                </h3>
+                                <span>Pending Forum</span>
+                            </div>
+                            <i class="fas fa-hourglass-half fa-2x text-warning"></i>
+                        </div>
+                    </div>
 
-                <div class="row section-space">
-                    <div class="col-lg-12">
-                        <div class="dashboard-card">
-                            <h5 class="text-warning">Forum Questions</h5>
-                            <div class="row">
-                                <div class="col-md-6 from-group">
-                                    <select id="statusFilter" class="form-control w-50">
-                                        <option value="0" selected>Pending</option>
-                                        <option value="1">Approved</option>
-                                        <option value="2">Rejected</option>
-                                    </select>
+                    <div class="col-md-4 mb-3">
+                        <div class="alert-stat">
+                            <div>
+                                <h3 class="text-danger">
+                                    <?= !empty($rejected_forum) ? count($rejected_forum) : 0 ?>
+                                </h3>
+                                <span>Rejected Forum</span>
+                            </div>
+                            <i class="fas fa-ban fa-2x text-danger"></i>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="alert-stat">
+                            <div>
+                                <h3 class="text-info">
+                                    <?= !empty($unanswered_qna) ? count($unanswered_qna) : 0 ?>
+                                </h3>
+                                <span>Unanswered QnA</span>
+                            </div>
+                            <i class="fas fa-question-circle fa-2x text-info"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="dashboard-card">
+                    <h5 class="text-danger py-1">Forum Questions</h5>
+                    <div class="card-subtitle">Review pending, approved and rejected forum questions</div>
+
+                    <div class="filter-box">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="font-weight-bold mb-1">Status</label>
+                                <select id="statusFilter" class="form-control">
+                                    <option value="0" selected>Pending</option>
+                                    <option value="1">Approved</option>
+                                    <option value="2">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="pendingTable"
+                            class="table table-hover table-striped table-bordered dt-responsive nowrap"
+                            style="width:100%">
+                        </table>
+                    </div>
+
+                    <div class="modal fade" id="rejectModal" tabindex="-1">
+                        <div class="modal-dialog modal-md">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Reject Question</h5>
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        &times;
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="mb-3 text-muted small">
-                                (Pending questions require Super Admin approval)
-                            </div>
-                            <div class="table-responsive">
-                                <table id="pendingTable"
-                                    class="table table-hover table-striped table-bordered dt-responsive nowrap"
-                                    style="width:100%">
-                                </table>
-                            </div>
-                            <div class="modal fade" id="rejectModal" tabindex="-1">
-                                <div class="modal-dialog modal-md">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Reject Question</h5>
-                                            <button type="button" class="close" data-dismiss="modal">
-                                                &times;
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" id="reject_forum_id">
 
-                                            <label>Reason for rejection</label>
-                                            <textarea id="reject_reason" class="form-control" rows="4" placeholder="Enter reason..." required></textarea>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-secondary" data-dismiss="modal">
-                                                Cancel
-                                            </button>
+                                <div class="modal-body">
+                                    <input type="hidden" id="reject_forum_id">
 
-                                            <button class="btn btn-danger" id="confirmReject">
-                                                Reject
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <label>Reason for rejection</label>
+                                    <textarea id="reject_reason" class="form-control" rows="4"
+                                        placeholder="Enter reason..." required></textarea>
                                 </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-dismiss="modal">
+                                        Cancel
+                                    </button>
+
+                                    <button class="btn btn-danger" id="confirmReject">
+                                        Reject
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row section-space">
-                    <div class="col-lg-12">
-                        <div class="dashboard-card">
-                            <h5 class="text-info">Course QnA</h5>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <select id="filter_course" class="form-control select2">
-                                        <option value="">All Courses</option>
-                                        <?php foreach ($courses as $c) { ?>
-                                            <option value="<?= $c['id']; ?>">
-                                                <?= $c['title']; ?>
-                                            </option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 d-flex align-items-end">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="filter_unanswered">
-                                        <label class="form-check-label" for="filter_unanswered">
-                                            Unanswered First
-                                        </label>
-                                    </div>
+                <div class="dashboard-card">
+                    <h5 class="text-danger py-1">Course QnA</h5>
+                    <div class="card-subtitle">Filter course questions and unanswered queries</div>
+
+                    <div class="filter-box">
+                        <div class="row align-items-end">
+
+                            <div class="col-md-4 mb-2">
+                                <label class="font-weight-bold mb-1">Course</label>
+                                <select id="filter_course" class="form-control select2">
+                                    <option value="">All Courses</option>
+                                    <?php foreach ($courses as $c) { ?>
+                                        <option value="<?= $c['id']; ?>">
+                                            <?= $c['title']; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="filter_unanswered">
+                                    <label class="form-check-label" for="filter_unanswered">
+                                        Unanswered First
+                                    </label>
                                 </div>
                             </div>
-                            <?php $this->load->view(ADMIN . QUESTION . 'table-question'); ?>
+
                         </div>
                     </div>
-                    <?php $this->load->view(ADMIN . QUESTION . 'qnamodal'); ?>
+
+                    <?php $this->load->view(ADMIN . QUESTION . 'table-question'); ?>
                 </div>
+
+                <?php $this->load->view(ADMIN . QUESTION . 'qnamodal'); ?>
+
             </div>
         </div>
     </div>
@@ -339,87 +516,55 @@
 
 <?php init_footer(); ?>
 <script>
+    function updateDashboardClock() {
+
+        const now = new Date();
+
+        document.getElementById('liveDate').innerHTML =
+            now.toLocaleDateString('en-IN', {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+        document.getElementById('liveTime').innerHTML =
+            now.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+    }
+
+    updateDashboardClock();
+
+    setInterval(updateDashboardClock, 1000);
+</script>
+
+<script>
     function openRejectModal(id) {
-        document.getElementById('rejectId').value = id;
+        $('#reject_forum_id').val(id);
         $('#rejectModal').modal('show');
     }
 </script>
+
 <script src="<?= base_url(); ?>assets/js/custom-js/forum.js"></script>
 <script src="<?= base_url(); ?>assets/libs/apexcharts/apexcharts.min.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/dashboard.js"></script>
 <script src="<?= base_url(); ?>assets/js/custom-js/question.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        var enrollOO = <?= (int)($enroll_online_student_online_course ?? 0) ?>;
-        var enrollFF = <?= (int)($enroll_offline_student_offline_course ?? 0) ?>; 
-        var enrollOF = <?= (int)($enroll_online_student_offline_course ?? 0) ?>;
-        var enrollFO = <?= (int)($enroll_offline_student_online_course ?? 0) ?>; 
+        var onlineStudents = <?= (int) ($online_students ?? 0) ?>;
+        var offlineStudents = <?= (int) ($offline_students ?? 0) ?>;
+        var onlineCourses = <?= (int) ($online_courses ?? 0) ?>;
+        var offlineCourses = <?= (int) ($offline_courses ?? 0) ?>;
 
-        var optionsEnroll = {
-            chart: {
-                type: 'area',
-                height: 320,
-                stacked: true,
-                toolbar: {
-                    show: false
-                },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 900
-                }
-            },
-            series: [{
-                    name: 'Online Students',
-                    data: [enrollOO, enrollOF]
-                },
-                {
-                    name: 'Offline Students',
-                    data: [enrollFO, enrollFF]
-                }
-            ],
-            xaxis: {
-                categories: ['Online Courses', 'Offline Courses']
-            },
-            plotOptions: {
-                bar: {
-                    borderRadius: 10,
-                    columnWidth: '20%'
-                }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'light',
-                    type: "vertical",
-                    opacityFrom: 0.95,
-                    opacityTo: 0.85,
-                    stops: [0, 100]
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                style: {
-                    fontSize: '12px',
-                    fontWeight: 600
-                }
-            },
-            grid: {
-                borderColor: '#f1f1f1',
-                strokeDashArray: 4
-            },
-            legend: {
-                position: 'top'
-            }
-        };
-
-        var enrollChart = new ApexCharts(document.querySelector("#enrollmentTypeChart"), optionsEnroll);
-        enrollChart.render();
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
+        var enrollOO = <?= (int) ($enroll_online_student_online_course ?? 0) ?>;
+        var enrollFF = <?= (int) ($enroll_offline_student_offline_course ?? 0) ?>;
+        var enrollOF = <?= (int) ($enroll_online_student_offline_course ?? 0) ?>;
+        var enrollFO = <?= (int) ($enroll_offline_student_online_course ?? 0) ?>;
 
         var courseNames = [
             <?php foreach ($course_student_chart as $c) {
@@ -429,69 +574,208 @@
 
         var studentCounts = [
             <?php foreach ($course_student_chart as $c) {
-                echo (int)$c->total_students . ",";
+                echo (int) $c->total_students . ",";
             } ?>
         ];
 
-        if (courseNames.length === 0) return;
-
-        var options = {
-            chart: {
-                type: 'area',
-                height: 315,
-                toolbar: {
-                    show: false
+        if (document.querySelector("#studentCourseTypeChart")) {
+            new ApexCharts(document.querySelector("#studentCourseTypeChart"), {
+                chart: {
+                    type: 'pie',
+                    height: 370,
+                    toolbar: {
+                        show: false
+                    }
                 },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
+                series: [
+                    onlineStudents,
+                    offlineStudents,
+                    onlineCourses,
+                    offlineCourses
+                ],
+                labels: [
+                    'Online Students',
+                    'Offline Students',
+                    'Online Courses',
+                    'Offline Courses'
+                ],
+                colors: [
+                    '#4f46e5',
+                    '#f59e0b',
+                    '#06b6d4',
+                    '#ef4444'
+                ],
+                legend: {
+                    position: 'bottom'
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '68%'
+                        }
+                    }
                 }
-            },
+            }).render();
+        }
 
-            series: [{
-                name: 'Students',
-                data: studentCounts
-            }],
-
-            xaxis: {
-                categories: courseNames
-            },
-
-            dataLabels: {
-                enabled: true
-            },
-
-            stroke: {
-                curve: 'smooth'
-                // curve: 'straight'
-                // curve: 'stepline'
-            },
-
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.7,
-                    opacityTo: 0.3,
-                    stops: [0, 100]
+        if (document.querySelector("#enrollmentTypeChart")) {
+            new ApexCharts(document.querySelector("#enrollmentTypeChart"), {
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                series: [{
+                        name: 'Online Students',
+                        data: [enrollOO, enrollOF]
+                    },
+                    {
+                        name: 'Offline Students',
+                        data: [enrollFO, enrollFF]
+                    }
+                ],
+                xaxis: {
+                    categories: [
+                        'Online Courses',
+                        'Offline Courses'
+                    ]
+                },
+                colors: [
+                    '#e54646',
+                    '#f59e0b'
+                ],
+                plotOptions: {
+                    bar: {
+                        borderRadius: 8,
+                        columnWidth: '42%'
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                grid: {
+                    borderColor: '#eef0f4',
+                    strokeDashArray: 4
+                },
+                legend: {
+                    position: 'top'
                 }
-            },
+            }).render();
+        }
 
-            colors: ['#db9834'],
+        if (document.querySelector("#courseStudentChart") && courseNames.length > 0) {
+            new ApexCharts(document.querySelector("#courseStudentChart"), {
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                series: [{
+                    name: 'Students',
+                    data: studentCounts
+                }],
+                xaxis: {
+                    categories: courseNames
+                },
+                colors: [
+                    '#e54a4a'
+                ],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        borderRadius: 8
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                grid: {
+                    borderColor: '#eef0f4',
+                    strokeDashArray: 4
+                }
+            }).render();
+        }
 
-            grid: {
-                borderColor: '#f1f1f1',
-                strokeDashArray: 4
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        var saleLabels = [
+            <?php
+            if (!empty($course_wise_sale)) {
+                foreach ($course_wise_sale as $row) {
+                    echo "'" . addslashes($row['title']) . "',";
+                }
             }
-        };
+            ?>
+        ];
 
-        var chart = new ApexCharts(
-            document.querySelector("#courseStudentChart"),
-            options
-        );
+        var saleData = [
+            <?php
+            if (!empty($course_wise_sale)) {
+                foreach ($course_wise_sale as $row) {
+                    echo (int) $row['total'] . ",";
+                }
+            }
+            ?>
+        ];
 
-        chart.render();
+        if (
+            document.querySelector("#pie_chart") &&
+            saleData.length > 0
+        ) {
+
+            var pieChart = new ApexCharts(
+                document.querySelector("#pie_chart"), {
+
+                    chart: {
+                        type: 'donut',
+                        height: 320
+                    },
+
+                    series: saleData,
+
+                    labels: saleLabels,
+
+                    legend: {
+                        position: 'bottom'
+                    },
+
+                    dataLabels: {
+                        enabled: true
+                    },
+
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '70%'
+                            }
+                        }
+                    },
+
+                    colors: [
+                        '#4f46e5',
+                        '#06b6d4',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#14b8a6'
+                    ]
+                }
+            );
+
+            pieChart.render();
+        }
 
     });
 </script>

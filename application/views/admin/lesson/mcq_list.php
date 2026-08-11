@@ -12,16 +12,16 @@
                                     <h4 class="mb-3">MCQs – <?= $title ?></h4>
                                     <div class=" d-flex justify-content-between ">
                                         <div class=" mb-3">
-                                            <span class="badge p-2 badge-primary" style="font-size: 12px;">
-                                                Course: <?= $lesson['course_name']; ?>
-                                            </span>
+                                            <span class="" style="font-size: 12px;">
+                                                <b>Course: </b> <?= $lesson['course_name']; ?>
+                                            </span> &nbsp;<i class="fa fa-arrow-right text-danger"></i>
 
-                                            <span class="badge p-2 badge-info ml-1" style="font-size: 12px;">
-                                                Section: <?= $lesson['section_title']; ?>
-                                            </span>
+                                            <span class=" ml-1" style="font-size: 12px;">
+                                                <b>Section: </b><?= $lesson['section_title']; ?>
+                                            </span> &nbsp;<i class="fa fa-arrow-right text-danger"></i>
 
-                                            <span class="badge p-2 badge-success ml-1" style="font-size: 12px;">
-                                                Lesson: <?= $lesson['lesson_title']; ?>
+                                            <span class=" ml-1" style="font-size: 12px;">
+                                                <b>Lesson: </b><?= $lesson['lesson_title']; ?>
                                             </span>
                                         </div>
 
@@ -31,12 +31,12 @@
                                                 <i class="fa fa-file-excel"></i> Sample Template
                                             </a>
 
-                                            <button class="btn btn-success btn-sm" data-toggle="modal"
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
                                                 data-target="#uploadCsvModal">
                                                 <i class="fa fa-upload"></i> Upload File
                                             </button>
 
-                                            <button class="btn btn-primary btn-sm" onclick="openAddMcqModal()">
+                                            <button class="btn btn-danger btn-sm" onclick="openAddMcqModal()">
                                                 <i class="fa fa-plus"></i> Add MCQ
                                             </button>
 
@@ -66,7 +66,7 @@
                                                         <td><?= $i++; ?></td>
                                                         <td><?= htmlspecialchars($mcq['question']); ?></td>
                                                         <td>
-                                                            <span class="badge badge-success">
+                                                            <span class="badge badge-danger">
                                                                 Option <?= $mcq['correct_option']; ?>
                                                             </span>
                                                         </td>
@@ -114,14 +114,14 @@
 
                                             <div id="mcqRepeater"></div>
 
-                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                            <button type="button" class="btn btn-danger btn-sm"
                                                 id="addMoreMcq">
                                                 <i class="fa fa-plus"></i> Add Another MCQ
                                             </button>
                                         </div>
 
                                         <div class="modal-footer">
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-danger">
                                                 <i class="fa fa-save"></i> Save
                                             </button>
                                         </div>
@@ -233,7 +233,7 @@
                                         </div>
 
                                         <div class="modal-footer">
-                                            <button class="btn btn-success">Update</button>
+                                            <button class="btn btn-danger">Update</button>
                                         </div>
 
                                     </form>
@@ -323,7 +323,7 @@
 
                                                     </div>
 
-                                                    <button type="submit" class="btn btn-success mt-3" id="previewBtn">
+                                                    <button type="submit" class="btn btn-danger mt-3" id="previewBtn">
                                                         <i class="fa fa-upload"></i> Upload & Preview
                                                     </button>
 
@@ -381,7 +381,7 @@
                                                             Cancel
                                                         </button>
 
-                                                        <button class="btn btn-success" id="revalidateBtn">
+                                                        <button class="btn btn-danger" id="revalidateBtn">
                                                             Revalidate
                                                         </button>
 
@@ -445,7 +445,7 @@
         $('#uploadProgressWrapper').show();
 
         $('#uploadProgressBar')
-            .removeClass('bg-success bg-danger')
+            .removeClass('bg-danger bg-danger')
             .addClass('progress-bar-animated progress-bar-striped')
             .css('width', '0%')
             .text('0%');
@@ -483,7 +483,7 @@
 
             },
 
-            success: function (res) {
+            danger: function (res) {
 
                 let data = typeof res === 'object' ? res : JSON.parse(res);
 
@@ -502,7 +502,7 @@
 
                 $('#uploadProgressBar')
                     .removeClass('progress-bar-animated')
-                    .addClass('bg-success')
+                    .addClass('bg-danger')
                     .css('width', '100%')
                     .text('Upload Complete');
 
@@ -537,7 +537,7 @@
     function renderSummary(summary) {
 
         let html = `
-<div class="alert alert-success">
+<div class="alert alert-danger">
 <b>Total Rows:</b> ${summary.total}
 &nbsp; | &nbsp;
 <b>Valid:</b> ${summary.valid}
@@ -619,7 +619,7 @@
                 valid++;
             }
 
-            let badge = errors.length ? 'danger' : 'success';
+            let badge = errors.length ? 'danger' : 'danger';
             let status = errors.length ? errors.join(', ') : 'Valid';
 
 
@@ -715,7 +715,7 @@
 
             $('#confirmUploadBtn')
                 .prop('disabled', true)
-                .removeClass('btn-primary btn-success')
+                .removeClass('btn-primary btn-danger')
                 .addClass('btn-secondary')
                 .text('Fix Errors Before Upload');
 
@@ -955,7 +955,7 @@
                 rows: JSON.stringify(rows)
             },
 
-            success: function (res) {
+            danger: function (res) {
 
                 if (res.status) {
 
@@ -1155,7 +1155,7 @@
                 id: id
             },
             dataType: "json",
-            success: function (res) {
+            danger: function (res) {
                 if (res.status) {
                     location.href = "<?= base_url(ADMIN . 'Lesson/mcq/'); ?>" + lessonId;
                 } else {

@@ -10,17 +10,15 @@
         <!-- Start content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="page-title-box">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6">
-                            <h4 class="page-title"></h4>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="float-right d-none d-md-block">
-                                <button type="button" class="btn btn-secondary waves-effect waves-light mb-0"
-                                    onclick="window.history.back()">Back</button>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-between ">
+                        <h4 class="my-3 px-3">Users</h4>
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent">
+                                <li class="breadcrumb-item"><a href="#">Users</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Create / Edit</li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
                 <div class="row">

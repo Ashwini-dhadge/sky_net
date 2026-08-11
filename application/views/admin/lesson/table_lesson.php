@@ -46,7 +46,7 @@
                                 <div class="d-flex justify-content-between mb-2">
                                     <h6 class="video-card-title mb-0">Video Details</h6>
                                     <button data-repeater-delete type="button"
-                                        class="btn btn-sm btn-outline-danger">✕</button>
+                                        class="btn btn-sm btn-danger">✕</button>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-3 text-center">

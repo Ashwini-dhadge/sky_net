@@ -11,11 +11,12 @@ class User extends CI_Controller
         parent::__construct();
         $this->load->model(ADMIN . 'UserModel');
         loginId();
+        if ($this->session->userdata('role') != 1) {
+            show_error('You do not have permission to access this page.', 403, 'Access Denied');
+        }
     }
 
-    /*********************************************************************/
-    // 
-
+   
     public function index()
     {
         $data['title'] = 'Users';
