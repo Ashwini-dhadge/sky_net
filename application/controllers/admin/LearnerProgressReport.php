@@ -34,6 +34,9 @@ class LearnerProgressReport extends CI_Controller
         $sortBy = $data['order'][0]['dir'];
 
         $where = [];
+        if (isset($data['batch_id']) && !empty($data['batch_id'])) {
+            $where['u.batch_id'] = $data['batch_id'];
+        }
         if (isset($data['course_id']) && !empty($data['course_id'])) {
             $where['tocs.course_id'] = $data['course_id'];
         }
@@ -285,5 +288,27 @@ class LearnerProgressReport extends CI_Controller
         // print_r($result);
         // die;
         echo json_encode($result);
+    }
+
+    public function list_batch()
+    {
+        $get = $this->input->get();
+        $searchTerm = !empty($get['searchTerm']) ? $get['searchTerm'] : '';
+
+        $where = ['deleted_by' => null];
+
+        if (!empty($searchTerm)) {
+            $where['batch_name LIKE'] = '%' . $searchTerm . '%';
+        }
+
+        $list_batch = $this->CommonModel->getData(
+            'tbl_batches',
+            $where,
+            'id, batch_name as text',
+            '',
+            'result_array'
+        );
+
+        echo json_encode($list_batch);
     }
 }

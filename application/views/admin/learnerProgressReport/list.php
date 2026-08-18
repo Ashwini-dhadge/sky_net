@@ -220,7 +220,16 @@
                                     action="<?= base_url() . 'admin/SaleReport/downloadSaleReport' ?>"
                                     method="post">
                                     <div class="row">
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2 col-sm-6">
+                                            <div>
+                                                <label for="">Select Batch</label>
+                                                <select id="batch_id" name="batch_id"
+                                                    class="form-control select2" onchange="filter_order()">
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2 col-sm-6">
                                             <div>
                                                 <label for="">Select Course</label>
                                                 <select id="course_id" name="course_id"
@@ -230,7 +239,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2 col-sm-6">
                                             <div>
                                                 <label for="">Select Section</label>
                                                 <select id="section_id" name="section_id"
@@ -240,7 +249,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2 col-sm-6">
                                             <div>
                                                 <label for="">Select Lesson</label>
                                                 <select id="lesson_id" name="lesson_id"
@@ -250,7 +259,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-2 col-sm-6">
                                             <div>
                                                 <label for="">Select Student</label>
                                                 <select id="user_id" name="user_id"
@@ -261,12 +270,13 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group col-md-1">
-
-                                            <button type="button" class="btn btn-danger btn-block"
-                                                onclick="resetFilters()">
-                                                Reset
-                                            </button>
+                                        <div class="form-group col-md-2 col-sm-6">
+                                            <div class="mt-4">
+                                                <button type="button" class="btn btn-danger btn-block"
+                                                    onclick="resetFilters()">
+                                                    Reset
+                                                </button>
+                                            </div>
                                         </div>
 
                                     </div>

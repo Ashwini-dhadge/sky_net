@@ -31,11 +31,27 @@
                                 <a href="<?= base_url(ADMIN . 'Student/add_student'); ?>"
                                     class="btn btn-primary waves-effect waves-light float-right">Add Offline Student</a>
                                 <h4 class="card-title"><?= $title ?></h4>
-                                <select id="student_type_filter" class="form-control" style="width:20%;">
-                                    <option value="">All Students</option>
-                                    <option value="1">Online Students</option>
-                                    <option value="0">Offline Students</option>
-                                </select>
+                                <div class="form-row mb-3 mt-3">
+                                    <div class="form-group col-md-3 col-sm-6 mb-2">
+                                        <label for="student_type_filter" class="d-block font-weight-bold mb-1">Student Type Filter</label>
+                                        <select id="student_type_filter" class="form-control select2" style="width: 100%;">
+                                            <option value="">All Student Types</option>
+                                            <option value="1">Online Students</option>
+                                            <option value="0">Offline Students</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-3 col-sm-6 mb-2" id="batch_filter_wrapper" style="display: none;">
+                                        <label for="batch_filter" class="d-block font-weight-bold mb-1">Batch Filter</label>
+                                        <select id="batch_filter" class="form-control select2" style="width: 100%;">
+                                            <option value="">All Batches</option>
+                                            <?php if (!empty($batches)) { ?>
+                                                <?php foreach ($batches as $b) { ?>
+                                                    <option value="<?= $b['id']; ?>"><?= html_escape($b['batch_name']); ?></option>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
                                 <?php $this->load->view(ADMIN . STUDENT . 'table-student'); ?>
                             </div>
                         </div>

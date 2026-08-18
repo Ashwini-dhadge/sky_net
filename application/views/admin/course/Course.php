@@ -213,7 +213,7 @@
                             </div>
 
 
-                            <hr>
+                            <!-- <hr>
                             <h4 class="header-title mt-4">Add Certification Details</h4>
                             <hr>
 
@@ -246,7 +246,45 @@
                                 </div>
                             </div>
 
+                            <hr> -->
                             <hr>
+                            <h4 class="header-title mt-4">Select Certificate Template</h4>
+                            <hr>
+
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label class="col-form-label">Select Certificate Template <span class="text-danger">*</span></label>
+                                    <select class="custom-select form-control" id="certificate_id" name="certificate_id" required>
+                                        <option value="">Select Certificate Template</option>
+
+                                        <option value="<?= CERT_LINUX_ADMIN; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_LINUX_ADMIN) ? 'selected' : ''; ?>>
+                                            Linux System Administrator Certificate
+                                        </option>
+
+                                        <option value="<?= CERT_AWS_SOLUTIONS_ARCHITECT; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_AWS_SOLUTIONS_ARCHITECT) ? 'selected' : ''; ?>>
+                                            AWS Solutions Architect Certificate
+                                        </option>
+
+                                        <option value="<?= CERT_ANSIBLE_AUTOMATION; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_ANSIBLE_AUTOMATION) ? 'selected' : ''; ?>>
+                                            Ansible Automation Platform Certificate
+                                        </option>
+
+                                        <option value="<?= CERT_LINUX_SERVER_CONFIG; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_LINUX_SERVER_CONFIG) ? 'selected' : ''; ?>>
+                                            Linux Server Configuration Certificate
+                                        </option>
+
+                                        <option value="<?= CERT_REDHAT_RH104; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_REDHAT_RH104) ? 'selected' : ''; ?>>
+                                            Red Hat Fundamentals Certificate (RH104)
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <h4 class="header-title mt-4">Add Download File Resources</h4>
                             <hr>

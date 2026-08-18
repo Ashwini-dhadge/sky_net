@@ -23,9 +23,11 @@ class MCQVideo extends CI_Controller
         $response = array();
         $userId   = $this->regId;
 
+        $user_details = $this->CommonModel->getData('tbl_users', array('id' => $userId), 'first_name,notification_token', '', 'row_array');
         // $userId = trim($this->input->post('user_id')) ? trim($this->input->post('user_id')) : '';
         $lesson_id = trim($this->input->post('lesson_id')) ? trim($this->input->post('lesson_id')) : '';
         //get question 
+
         $solved_mcq = ($this->input->post('solved_mcq')) ? ($this->input->post('solved_mcq')) : '';
         $solved_duration = ($this->input->post('solved_duration')) ? ($this->input->post('solved_duration')) : '';
         // print_r($solved_mcq);
@@ -46,6 +48,7 @@ class MCQVideo extends CI_Controller
 
             // $getlesson = $this->Common_model->getData('tbl_lesson', array('id' => $lesson_id), 'courses_id,section_id,is_this_video_final', '', 'row_array');
             $getlesson = $this->Common_model->getData('tbl_lesson', array('id' => $lesson_id), 'course_id,section_id,is_final_lesson', '', 'row_array');
+            $course_details = $this->CommonModel->getData('tbl_courses', array('id' => $getlesson['course_id']), 'title', '', 'row_array');
             // print_r($getlesson);
             // die;
             if ($getlesson) {
@@ -211,7 +214,15 @@ class MCQVideo extends CI_Controller
 
 
                     if (isset($getlesson['is_final_lesson']) && $getlesson['is_final_lesson'] == 1) {
-                        save_final_exam_certificate($lesson_id, $userId);
+                        // this save_final_examp_certifcation not used bcz we not store certifcate.
+                        // save_final_exam_certificate($lesson_id, $userId);
+                        if (!empty($user_details['notification_token'])) {
+
+                            $title = 'Certificate Generated';
+                            $message = 'Your certificate for "' . $course_details['title'] . '" has been generated. You can download it from this app.';
+
+                            sendMobileNotification($user_details['notification_token'], $title, $message);
+                        }
                     }
                 } else {
                     $response['result'] = false;

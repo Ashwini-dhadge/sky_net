@@ -126,12 +126,14 @@ define('USER_IMAGES', 'assets/uploads/user_image/');
 define('COURSE_IMAGES', 'assets/uploads/thumbnails/course_thumbnails/');
 define('VIDEO_IMAGES', 'assets/uploads/thumbnails/video_thumbnails/');
 define('USER_PROFILE', 'assets/uploads/user_image/');
-define('USER_PROFILE_PATH', FCPATH . 'assets/uploads/user_image/');define('CERTIFICATE_FILES', 'assets/uploads/certificates/');
+define('USER_PROFILE_PATH', FCPATH . 'assets/uploads/user_image/');
+define('CERTIFICATE_FILES', 'assets/uploads/certificates/');
 define('CERTIFICATE_IMAGES', 'assets/certificate_image/');
 define('COMMISION_PERCENTAGE', '5');
 
 define('ACTIVE', '1');
 define('CAT', 'category' . DS);
+define('BATCH', 'batch' . DS);
 define('CATEGORY_IMAGES', 'assets/uploads/category_thumbnails/');
 
 define('COURSE_RESOURCES', 'assets/uploads/course_resources/');
@@ -149,3 +151,12 @@ define('VIDEO_QUESTION_CORRECT_PER_MARK', '2');
 # Razorpay Devlopment Key
 define('RAZORPAY_KEY_ID', 'rzp_test_SYFfY2lzTuKFHI');
 define('RAZORPAY_KEY_SECRET', 'Nu5TmKXn869w1gZ5NppDuFzg');
+
+
+
+/**************** Certificate Master Types *****************/
+define('CERT_LINUX_ADMIN', 1);             // 1 = Linux System Administrator
+define('CERT_AWS_SOLUTIONS_ARCHITECT', 2); // 2 = AWS Certified Solutions Architect
+define('CERT_ANSIBLE_AUTOMATION', 3);      // 3 = Ansible Automation Platform
+define('CERT_LINUX_SERVER_CONFIG', 4);     // 4 = Linux Server Configuration
+define('CERT_REDHAT_RH104', 5);            // 5 = Red Hat Fundamentals (RH104)

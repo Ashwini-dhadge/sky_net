@@ -24,6 +24,8 @@ class Student extends CI_Controller
         $data['title'] = 'Student';
         $data['active'] = 'Student';
         $data['role'] = 3;
+        $this->load->model(ADMIN . 'BatchModel');
+        $data['batches'] = $this->BatchModel->getBatchData('', 0, 'asc', 0, 0, 0, ['b.status' => 1]);
         $this->load->view(ADMIN . STUDENT . 'list-student', $data);
     }
 
@@ -40,10 +42,11 @@ class Student extends CI_Controller
         $role_id = $this->input->post('role');
         //print_r($role_id);die;
         $student_type = $this->input->post('student_type');
-        $count = count($this->UserModel->getUserData($searchVal, 0, 0, 0, 0, 0, $role_id, $student_type));
+        $batch_id = $this->input->post('batch_id');
+        $count = count($this->UserModel->getUserData($searchVal, 0, 0, 0, 0, 0, $role_id, $student_type, $batch_id));
         // print_r($count);die;
         if ($count) {
-            $userData = $this->UserModel->getUserData($searchVal, $sortColIndex, $sortBy, $limit, $offset, 0, $role_id, $student_type);
+            $userData = $this->UserModel->getUserData($searchVal, $sortColIndex, $sortBy, $limit, $offset, 0, $role_id, $student_type, $batch_id);
 
             foreach ($userData as $key => $user) {
                 $row = [];
@@ -83,6 +86,8 @@ class Student extends CI_Controller
                     $user_type = '<span class="badge badge-warning ">Online</span>';
                 }
                 array_push($row, $user_type);
+                $batch_name = !empty($user['batch_name']) ? html_escape($user['batch_name']) : '-';
+                array_push($row, $batch_name);
                 if ($user['status']) {
                     $status = '<span class="badge badge-success ">Active</span>';
                 } else {
@@ -438,9 +443,7 @@ class Student extends CI_Controller
 
     public function add_student()
     {
-        $data['title'] = 'Add Student';
-        $data['role'] = 3;
-        $this->load->view(ADMIN . STUDENT . 'add-student', $data);
+        $this->add();
     }
 
     public function check_email()
@@ -505,8 +508,11 @@ class Student extends CI_Controller
             $student['self_code'] = "LMS" . $student['mobile_no'];
             $student['otp'] = create6NumRandom();
             $student['user_from'] = 1;
-            if(isset($post['user_type'])){
-                $student['user_type'] = $post['user_type'];
+            if (isset($post['user_type'])) {
+                // $student['user_type'] = $post['user_type'];
+            }
+            if (isset($post['batch_id'])) {
+                $student['batch_id'] = !empty($post['batch_id']) ? $post['batch_id'] : null;
             }
             $student['is_otp_verified'] = 0;
 
@@ -519,7 +525,7 @@ class Student extends CI_Controller
                     ['id' => $post['id']]
                 );
             } else {
-
+                $student['user_type'] = 0;
                 $this->CommonModel->iudAction(
                     'tbl_users',
                     $student,
@@ -543,6 +549,9 @@ class Student extends CI_Controller
             $data = $student;
             $data['title'] = 'Edit Student';
         }
+
+        $this->load->model(ADMIN . 'BatchModel');
+        $data['batches'] = $this->BatchModel->getBatchData('', 0, 'asc', 0, 0, 0, ['b.status' => 1]);
 
         $this->load->view(ADMIN . STUDENT . 'add-student', $data);
     }

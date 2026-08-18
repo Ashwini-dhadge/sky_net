@@ -9,17 +9,21 @@ $("#on_date").on("change", function () {
 	}
 });
 
+var isResetting = false;
+
 function filter_order() {
+	if (isResetting) return;
+	var batch_id = $("#batch_id").val();
 	var course_id = $("#course_id").val();
 	var section_id = $("#section_id").val();
 	var lesson_id = $("#lesson_id").val();
 	var user_id = $("#user_id").val();
 	var on_date = $("#on_date").val();
-	var on_date = $("#on_date").val();
 	var from_date = $("#from_date").val();
 	var to_date = $("#to_date").val();
 
 	var data = {
+		batch_id: batch_id,
 		course_id: course_id,
 		section_id: section_id,
 		lesson_id: lesson_id,
@@ -32,24 +36,16 @@ function filter_order() {
 	listOrders(data);
 }
 
-// function resetFilter() {
-// 	$("#on_date").val("");
-// 	$("#from_date").val("");
-// 	$("#to_date").val("");
-
-// 	var data = {};
-
-// 	listOrders(data);
-// }
 function resetFilters() {
-	// Clear all select2 dropdowns
-	$("#course_id").val(null).trigger("change.select2");
-	$("#section_id").val(null).trigger("change.select2");
-	$("#lesson_id").val(null).trigger("change.select2");
-	$("#user_id").val(null).trigger("change.select2");
+	isResetting = true;
+	$("#batch_id").val(null).trigger("change");
+	$("#course_id").val(null).trigger("change");
+	$("#section_id").val(null).trigger("change");
+	$("#lesson_id").val(null).trigger("change");
+	$("#user_id").val(null).trigger("change");
+	isResetting = false;
 
-	// Call main listing function again
-	listOrders();
+	listOrders({});
 }
 var report_sales = "";
 function listOrders(data = "") {
@@ -209,6 +205,38 @@ $("#user_id").select2({
 		cache: true,
 	},
 });
+
+function initBatchSelect2() {
+	if ($.fn.select2) {
+		$("#batch_id").select2({
+			placeholder: "Search Batch...",
+			allowClear: true,
+			width: "100%",
+			ajax: {
+				url: base_url + "admin/LearnerProgressReport/list_batch",
+				type: "get",
+				dataType: "json",
+				delay: 250,
+
+				data: function (params) {
+					return {
+						searchTerm: params.term,
+					};
+				},
+
+				processResults: function (response) {
+					return {
+						results: response,
+					};
+				},
+
+				cache: true,
+			},
+		});
+	}
+}
+
+initBatchSelect2();
 
 function viewSectionResult(courseId, sectionId, userId) {
 	console.log("Course:", courseId);

@@ -212,6 +212,12 @@
                                     Categories
                                 </a>
                             </li>
+                            <li>
+                                <a href="<?= base_url('admin/Batch/') ?>">
+                                    <i class="fas fa-layer-group"></i>
+                                    Batch Master
+                                </a>
+                            </li>
                         </ul>
                     </li>
 

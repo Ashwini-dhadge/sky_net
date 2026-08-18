@@ -4,14 +4,15 @@ class UserModel extends CI_Model
 
     protected $order_Column = array(
         'u.id',
+        'u.id',
         'u.first_name',
-        'u.last_name',
-        'u.mobile_no',
         'u.email',
+        'u.mobile_no',
+        'u.password',
+        'u.user_type',
+        'b.batch_name',
         'u.status',
         ''
-
-
     );
     protected $user_Column = array(
         'cr.id',
@@ -21,21 +22,23 @@ class UserModel extends CI_Model
 
     );
 
-    public function getUserData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0, $role_id = 0, $student_type = '')
+    public function getUserData($searchVal = '', $sortColIndex = 0, $sortBy = 'desc', $limit = 0, $offset = 0, $id = 0, $role_id = 0, $student_type = '', $batch_id = '')
     {
 
-        $this->db->select('u.*');
+        $this->db->select('u.*, b.batch_name');
         if ($id) {
             $this->db->where('u.id', $id);
         }
 
         if (strlen($searchVal)) {
+            $searchVal = $this->db->escape_like_str($searchVal);
             $searchCondition = "(     
              
                 u.first_name like '%$searchVal%' or 
                 u.last_name like '%$searchVal%' or 
                 u.mobile_no like '%$searchVal%' or   
-                u.email like '%$searchVal%'             
+                u.email like '%$searchVal%' or
+                b.batch_name like '%$searchVal%'            
                
             )";
             $this->db->where($searchCondition);
@@ -45,16 +48,24 @@ class UserModel extends CI_Model
             $this->db->where('u.role', $role_id);
         }
         if ($student_type !== '' && $student_type !== null) {
-            $this->db->where('user_type', $student_type);
+            $this->db->where('u.user_type', $student_type);
+        }
+        if ($batch_id !== '' && $batch_id !== null) {
+            $this->db->where('u.batch_id', $batch_id);
         }
         $this->db->where('u.is_deleted', 0);
 
         $this->db->from('tbl_users u');
+        $this->db->join('tbl_batches b', 'b.id = u.batch_id', 'left');
 
         if ($limit) {
             $this->db->limit($limit, $offset);
         }
-        $this->db->order_by($this->order_Column[$sortColIndex], $sortBy);
+        if (isset($this->order_Column[$sortColIndex]) && !empty($this->order_Column[$sortColIndex])) {
+            $this->db->order_by($this->order_Column[$sortColIndex], $sortBy);
+        } else {
+            $this->db->order_by('u.id', 'desc');
+        }
 
         $query = $this->db->get();
         //echo $this->db->last_query();die();

@@ -1,23 +1,31 @@
+var isResetting = false;
+
 function filter_order() {
+	if (isResetting) return;
 	var course_id = $("#course_id").val();
 	var user_id = $("#user_id").val();
 	var course_type = $("#course_type").val();
+	var batch_id = $("#batch_id").val();
 	var data = {
 		course_id: course_id,
 		user_id: user_id,
 		course_type: course_type,
+		batch_id: batch_id,
 	};
 
 	listOrders(data);
 }
 
 function resetFilter() {
+	isResetting = true;
 	$("#course_type").val(null).trigger("change");
 	$("#course_id").val(null).trigger("change");
 	$("#user_id").val(null).trigger("change");
-	var data = {};
+	$("#batch_id").val(null).trigger("change");
+	$("#batch_wrapper").hide();
+	isResetting = false;
 
-	listOrders(data);
+	listOrders({});
 }
 var report_sales = "";
 function listOrders(data = "") {
@@ -114,13 +122,56 @@ $("#user_id").select2({
 		cache: true,
 	},
 });
+function initBatchSelect2() {
+	if ($.fn.select2) {
+		$("#batch_id").select2({
+			placeholder: "Search Batch...",
+			allowClear: true,
+			width: "100%",
+			ajax: {
+				url: base_url + "admin/FinalExamReport/list_batch",
+				type: "get",
+				dataType: "json",
+				delay: 250,
+
+				data: function (params) {
+					return {
+						searchTerm: params.term,
+					};
+				},
+
+				processResults: function (response) {
+					return {
+						results: response,
+					};
+				},
+
+				cache: true,
+			},
+		});
+	}
+}
+
+initBatchSelect2();
+
 $("#course_type").select2({
 	placeholder: "Search Course Type",
 	allowClear: true,
 	width: "100%",
 });
 $("#course_type").on("change", function () {
-	// clear selected values
-	$("#course_id").val(null).trigger("change");
-	$("#user_id").val(null).trigger("change");
+	if (!isResetting) {
+		// clear selected values
+		$("#course_id").val(null).trigger("change");
+		$("#user_id").val(null).trigger("change");
+		$("#batch_id").val(null).trigger("change");
+	}
+
+	var courseType = $(this).val();
+	if (courseType === "0") {
+		$("#batch_wrapper").show();
+		initBatchSelect2();
+	} else {
+		$("#batch_wrapper").hide();
+	}
 });

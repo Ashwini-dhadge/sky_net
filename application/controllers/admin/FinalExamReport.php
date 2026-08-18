@@ -52,6 +52,9 @@ class FinalExamReport extends CI_Controller
         if (isset($data['user_id']) && !empty($data['user_id'])) {
             $where['luv.user_id'] = $data['user_id'];
         }
+        if (isset($data['batch_id']) && !empty($data['batch_id'])) {
+            $where['tu.batch_id'] = $data['batch_id'];
+        }
         if ($data['course_type'] != '') {
             $where['tc.course_type'] = $data['course_type'];
         }
@@ -157,5 +160,27 @@ class FinalExamReport extends CI_Controller
 
 
         echo json_encode($list_course);
+    }
+
+    public function list_batch()
+    {
+        $get = $this->input->get();
+        $searchTerm = !empty($get['searchTerm']) ? $get['searchTerm'] : '';
+
+        $where = ['deleted_by' => null];
+
+        if (!empty($searchTerm)) {
+            $where['batch_name LIKE'] = '%' . $searchTerm . '%';
+        }
+
+        $list_batch = $this->CommonModel->getData(
+            'tbl_batches',
+            $where,
+            'id, batch_name as text',
+            '',
+            'result_array'
+        );
+
+        echo json_encode($list_batch);
     }
 }

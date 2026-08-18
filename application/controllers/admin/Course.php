@@ -469,6 +469,7 @@ class Course extends CI_Controller
 			'notes' => $post['notes'],
 			'status' => $post['status'] ?? 1,
 			'is_free' => $post['is_free'] ?? 0,
+			'certificate_id' => $this->input->post('certificate_id') ? $this->input->post('certificate_id') : CERT_LINUX_ADMIN,
 		];
 
 		if (!empty($_FILES['image']['name'])) {
@@ -854,8 +855,8 @@ class Course extends CI_Controller
 				'<a href="' . $fileUrl . '" target="_blank">View</a>',
 				$row['created_by'],
 				!empty($row['created_at'])
-				? date('d M Y', strtotime($row['created_at']))
-				: '-',
+					? date('d M Y', strtotime($row['created_at']))
+					: '-',
 				$deleteBtn
 			];
 		}
@@ -1469,8 +1470,4 @@ class Course extends CI_Controller
 			]);
 		}
 	}
-
-
 }
-
-

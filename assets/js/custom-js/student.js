@@ -37,6 +37,7 @@ function listUsers(data = '') {
             data: function (d) {
                 d.role = $('#role').val();
                 d.student_type = $('#student_type_filter').val();
+                d.batch_id = $('#batch_filter').val();
             },
         },
         columnDefs: [{ responsivePriority: 1, targets: 2 }],
@@ -49,6 +50,7 @@ function listUsers(data = '') {
             { "width": "50px", title: "Mobile" },
             { "width": "50px", title: "Password" },
             { "width": "50px", title: "Student Type" },
+            { "width": "80px", title: "Batch" },
             { "width": "50px", title: "Status" },
             { "width": "100px", title: "Action", orderable: false, "className": "text-right" },
         ],
@@ -58,6 +60,20 @@ function listUsers(data = '') {
 }
 
 $(document).on('change', '#student_type_filter', function () {
+    var studentType = $(this).val();
+    if (studentType === '0') {
+        $('#batch_filter_wrapper').show();
+        if ($.fn.select2) {
+            $('#batch_filter').select2({ width: '100%' });
+        }
+    } else {
+        $('#batch_filter_wrapper').hide();
+        $('#batch_filter').val('').trigger('change.select2');
+    }
+    $('#student_datatable').DataTable().ajax.reload();
+});
+
+$(document).on('change', '#batch_filter', function () {
     $('#student_datatable').DataTable().ajax.reload();
 });
 

@@ -19,3 +19,13 @@ ALTER TABLE `tbl_lesson` ADD `exam_duration` TIME NULL AFTER `no_of_question`;
 
 14-04-2026
 ALTER TABLE `tbl_users` ADD `is_forgot` INT NULL AFTER `is_otp_verified`;
+
+
+17-08-2026
+ALTER TABLE `tbl_users` 
+ADD COLUMN `batch_id` INT(11) NULL DEFAULT NULL AFTER `user_type`;
+
+ALTER TABLE `tbl_courses` 
+ADD COLUMN `certificate_id` INT(11) NULL DEFAULT 1 
+COMMENT 'References tbl_certificate_master.id (1=Linux Admin, 2=AWS, 3=Ansible, 4=Linux Server, 5=Red Hat)' 
+AFTER `course_type`;

@@ -93,6 +93,21 @@
                                                 <?php } ?>
                                             </div>
                                         </div>
+                                        <?php if (!isset($user_type) || (isset($user_type) && $user_type == 0)) { ?>
+                                            <div class="form-group col-md-6">
+                                                <label>Batch</label>
+                                                <select class="form-control select2" name="batch_id" id="batch_id">
+                                                    <option value="">Select Batch</option>
+                                                    <?php if (!empty($batches)) { ?>
+                                                        <?php foreach ($batches as $b) { ?>
+                                                            <option value="<?= $b['id']; ?>" <?= (isset($batch_id) && $batch_id == $b['id']) ? 'selected' : ''; ?>>
+                                                                <?= html_escape($b['batch_name']); ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        <?php } ?>
                                         <div class="form-group col-md-12">
                                             <label>Status</label>
                                             <div>

@@ -692,13 +692,9 @@ function save_final_exam_certificate($lesson_id, $user_id)
         ? $certificate_details['certification_id']
         : 'N/A';
 
-    // print_r($data);
-    // die;
-    // Load HTML view
+
     $html = $CI->load->view('app/final_certificate_bkp', $data, true);
-    // echo $html;
-    // die;
-    // File name
+
     $file_name = 'certificate_' . $user_id . '_' . time();
     $user_course_certificate_data = [
         'user_id' => $user_id,

@@ -966,6 +966,41 @@ class Courses extends CI_Controller
             foreach ($courseDetailsList as $key => $value) {
                 $where2['cd.courses_id'] = $courseId;
                 $courseDetailsList[$key]['duration'] = $this->Courses_model->getCoursesDurationData($where2, '', 0, 0);
+                // Check if course has a final lesson (is_final_lesson = 1) and user has completed it
+                $is_certificate = false;
+                $final_lesson = $this->CommonModel->getData(
+                    'tbl_lesson',
+                    [
+                        'course_id'       => $courseId,
+                        'is_final_lesson' => 1,
+                        'deleted_by'      => NULL
+                    ],
+                    'id',
+                    '',
+                    'row_array'
+                );
+
+                if (!empty($final_lesson) && !empty($user_id)) {
+                    $final_view = $this->Common_model->getData(
+                        'tbl_lesson_user_video',
+                        [
+                            'user_id'    => $user_id,
+                            'view_video' => 1,
+                            'lesson_id'  => $final_lesson['id'],
+                            'status'     => 1
+                        ],
+                        'id, solved_mcq, result',
+                        '',
+                        'row_array',
+                        'id',
+                        'desc'
+                    );
+
+                    if (!empty($final_view) && (!is_null($final_view['solved_mcq']) || !is_null($final_view['result']))) {
+                        $is_certificate = true;
+                    }
+                }
+
                 $courseDetailsList[$key]['features'] = [
                     'section_count' => (int) $this->CommonModel->getData(
                         'tbl_section',
@@ -990,7 +1025,7 @@ class Courses extends CI_Controller
                         '',
                         'row_array'
                     )['lesson_video_count'] ?? 0,
-                    'is_certificate' => true
+                    'is_certificate' => $is_certificate
                 ];
                 // print_r($courseDetailsList[$key]['duration']);
                 // die;
@@ -1561,7 +1596,7 @@ class Courses extends CI_Controller
         echo json_encode($response);
         return;
     }
-    public function courseCertificateDownload()
+    public function courseCertificateDownloadold()
     {
         authenticateUser();
         $login_user_id = $this->regId;
@@ -1593,6 +1628,130 @@ class Courses extends CI_Controller
         ];
         echo json_encode($response);
         return;
+    }
+
+    public function courseCertificateDownload()
+    {
+        authenticateUser();
+        $login_user_id = $this->regId;
+        $course_id = trim($this->input->post('course_id')) ? trim($this->input->post('course_id')) : trim($this->input->get('course_id'));
+
+        if (empty($course_id)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Course Id is required'
+            ]);
+            return;
+        }
+
+        // 1️⃣ Step 1: Check if course has a final lesson (is_final_lesson = 1)
+        $final_lesson = $this->CommonModel->getData(
+            'tbl_lesson',
+            [
+                'course_id'       => $course_id,
+                'is_final_lesson' => 1,
+                'deleted_by'      => NULL
+            ],
+            'id',
+            '',
+            'row_array'
+        );
+
+        if (empty($final_lesson)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'No final completion lesson configured for this course.'
+            ]);
+            return;
+        }
+
+        // 2️⃣ Step 2: Check if user watched and completed the final lesson
+        $final_view = $this->Common_model->getData(
+            'tbl_lesson_user_video',
+            [
+                'user_id'    => $login_user_id,
+                'view_video' => 1,
+                'lesson_id'  => $final_lesson['id'],
+                'status'     => 1
+            ],
+            'id, solved_mcq, result, created_at',
+            '',
+            'row_array',
+            'id',
+            'desc'
+        );
+
+        if (empty($final_view) || (is_null($final_view['solved_mcq']) && is_null($final_view['result']))) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Please watch and complete the final lesson to generate your certificate.'
+            ]);
+            return;
+        }
+
+        // 3️⃣ Step 3: Get Logged-in User details
+        $user = $this->CommonModel->getData(
+            'tbl_users',
+            ['id' => $login_user_id],
+            'first_name, last_name, email',
+            '',
+            'row_array'
+        );
+        $student_name = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+        if (empty($student_name)) {
+            $student_name = 'Student';
+        }
+
+        // 4️⃣ Step 4: Get Course Details
+        $course = $this->CommonModel->getData(
+            'tbl_courses',
+            ['id' => $course_id],
+            '*',
+            '',
+            'row_array'
+        );
+
+        if (empty($course)) {
+            echo json_encode([
+                'result'  => false,
+                'message' => 'Course not found'
+            ]);
+            return;
+        }
+
+        // 5️⃣ Step 5: Check Certificate ID (1, 2, 3, 4, 5)
+        $cert_id = (int) ($course['certificate_id'] ?? CERT_LINUX_ADMIN);
+        $completion_date = !empty($final_view['created_at']) ? date('d F Y', strtotime($final_view['created_at'])) : date('d F Y');
+
+        $certData = [
+            'student_name'  => strtoupper($student_name),
+            'course_title'  => $course['title'],
+            'date'          => $completion_date,
+            'director_name' => 'KISHOR AHIRE'
+        ];
+
+        switch ($cert_id) {
+            case CERT_AWS_SOLUTIONS_ARCHITECT: // ID: 2
+                $certData['certificate_id'] = 'SKYNET-AWS-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->awsCertificate($certData, 'D');
+
+            case CERT_ANSIBLE_AUTOMATION:      // ID: 3
+                $certData['certificate_id'] = 'SKYNET-ANS-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->ansibleCertificate($certData, 'D');
+
+            case CERT_LINUX_SERVER_CONFIG:     // ID: 4
+                $certData['certificate_id'] = 'SKYNET-LSC-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->linuxServerCertificate($certData, 'D');
+
+            case CERT_REDHAT_RH104:            // ID: 5
+                $certData['certificate_id'] = 'SKYNET-RH-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->redhatCertificate($certData, 'D');
+
+            case CERT_LINUX_ADMIN:             // ID: 1 (Default)
+            default:
+                $certData['certificate_id'] = 'SKYNET-LNX-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->linuxCertificate($certData, 'D');
+        }
     }
 
     public function addCourseReview()
@@ -2189,5 +2348,409 @@ class Courses extends CI_Controller
             'course_rating'   => 0,
             'no_of_review' => 0
         ];
+    }
+
+    // public function linuxCertificateTest()
+    // {
+    //     $data = [
+    //         'student_name'    => 'PRASHANT DATTATRAY NEHARE',
+    //         'course_title'    => 'Linux System Administrator Training',
+    //         'date'            => '05 AUGUST 2026',
+    //         'certificate_id'  => 'SKYNET-2026-00001',
+    //         'director_name'   => 'KISHOR AHIRE',
+    //         'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+    //         'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+    //     ];
+
+    //     if ($this->input->get('html') == 1) {
+    //         $this->load->view('app/linux_certificate', $data);
+    //         return;
+    //     }
+
+    //     $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+    //     $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+    //     $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+    //     $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+    //     $html = $this->load->view('app/linux_certificate', $data, true);
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'mode'          => 'utf-8',
+    //         'format'        => 'A4-L',
+    //         'margin_left'   => 0,
+    //         'margin_right'  => 0,
+    //         'margin_top'    => 0,
+    //         'margin_bottom' => 0
+    //     ]);
+    //     $mpdf->autoPageBreak = false;
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output('Certificate_Test.pdf', 'I');
+    // }
+
+    // public function awsCertificateTest()
+    // {
+    //     $data = [
+    //         'student_name'    => 'NAYAN VIKAS POTDAR',
+    //         'course_title'    => 'AWS CERTIFIED SOLUTIONS ARCHITECT ASSOCIATE TRAINING',
+    //         'date'            => '14/07/2026',
+    //         'certificate_id'  => 'SKYNET-AWS-2026-00001',
+    //         'director_name'   => 'KISHOR AHIRE',
+    //         'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+    //         'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+    //     ];
+
+    //     if ($this->input->get('html') == 1) {
+    //         $this->load->view('app/aws_certificate', $data);
+    //         return;
+    //     }
+
+    //     $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+    //     $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+    //     $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+    //     $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+    //     $html = $this->load->view('app/aws_certificate', $data, true);
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'mode'          => 'utf-8',
+    //         'format'        => 'A4-L',
+    //         'margin_left'   => 0,
+    //         'margin_right'  => 0,
+    //         'margin_top'    => 0,
+    //         'margin_bottom' => 0
+    //     ]);
+    //     $mpdf->autoPageBreak = false;
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output('AWS_Certificate.pdf', 'I');
+    // }
+
+    // public function ansibleCertificateTest()
+    // {
+    //     $data = [
+    //         'student_name'    => 'Harsh Pawar',
+    //         'course_title'    => 'Ansible Automation Platform Training',
+    //         'date'            => '16 July 2026',
+    //         'certificate_id'  => 'SKYNET-ANS-2026-00001',
+    //         'director_name'   => 'Kishor Ahire',
+    //         'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+    //         'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+    //     ];
+
+    //     if ($this->input->get('html') == 1) {
+    //         $this->load->view('app/ansible_certificate', $data);
+    //         return;
+    //     }
+
+    //     $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+    //     $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+    //     $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+    //     $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+    //     $html = $this->load->view('app/ansible_certificate', $data, true);
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'mode'          => 'utf-8',
+    //         'format'        => 'A4-L',
+    //         'margin_left'   => 0,
+    //         'margin_right'  => 0,
+    //         'margin_top'    => 0,
+    //         'margin_bottom' => 0
+    //     ]);
+    //     $mpdf->autoPageBreak = false;
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output('Ansible_Certificate.pdf', 'I');
+    // }
+
+    // public function linuxServerCertificateTest()
+    // {
+    //     $data = [
+    //         'student_name'    => 'Vrushali Nilesh Ugale',
+    //         'course_title'    => 'Linux Server Configuration',
+    //         'date'            => '30 MAY 2026',
+    //         'certificate_id'  => 'SKYNET-LSC-2026-00001',
+    //         'director_name'   => 'KISHOR AHIRE',
+    //         'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+    //         'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+    //     ];
+
+    //     if ($this->input->get('html') == 1) {
+    //         $this->load->view('app/linux_server_certificate', $data);
+    //         return;
+    //     }
+
+    //     $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+    //     $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+    //     $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+    //     $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+    //     $html = $this->load->view('app/linux_server_certificate', $data, true);
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'mode'          => 'utf-8',
+    //         'format'        => 'A4-L',
+    //         'margin_left'   => 0,
+    //         'margin_right'  => 0,
+    //         'margin_top'    => 0,
+    //         'margin_bottom' => 0
+    //     ]);
+    //     $mpdf->autoPageBreak = false;
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output('Linux_Server_Certificate.pdf', 'I');
+    // }
+
+    // public function redhatCertificateTest()
+    // {
+    //     $data = [
+    //         'student_name'           => 'Rahul Rajesh',
+    //         'course_title'           => 'Getting Started with Linux Fundamentals (RH104)',
+    //         'date'                   => 'May 17, 2026',
+    //         'certificate_id'         => 'SKYNET-RH-2026-00001',
+    //         'director_name'          => 'KISHOR AHIRE',
+    //         'logo_image'             => base_url('assets/images/sky_net_logo_clean.jpg'),
+    //         'redhat_watermark_image' => base_url('assets/images/red_hat_watermark.jpg'),
+    //         'signature_image'        => base_url('assets/images/signature_final_clean.jpg')
+    //     ];
+
+    //     if ($this->input->get('html') == 1) {
+    //         $this->load->view('app/redhat_certificate', $data);
+    //         return;
+    //     }
+
+    //     $logoPath        = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+    //     $redhatWatermark = FCPATH . 'assets/images/red_hat_watermark.jpg';
+    //     $sigPath         = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+    //     $data['logo_image']             = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+    //     $data['redhat_watermark_image'] = file_exists($redhatWatermark) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($redhatWatermark)) : '';
+    //     $data['signature_image']        = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+    //     $html = $this->load->view('app/redhat_certificate', $data, true);
+
+    //     $mpdf = new \Mpdf\Mpdf([
+    //         'mode'          => 'utf-8',
+    //         'format'        => 'A4-L',
+    //         'margin_left'   => 0,
+    //         'margin_right'  => 0,
+    //         'margin_top'    => 0,
+    //         'margin_bottom' => 0
+    //     ]);
+    //     $mpdf->autoPageBreak = false;
+
+    //     $mpdf->WriteHTML($html);
+    //     $mpdf->Output('RedHat_Certificate.pdf', 'I');
+    // }
+
+    public function linuxCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'    => 'PRASHANT DATTATRAY NEHARE',
+            'course_title'    => 'Linux System Administrator Training',
+            'date'            => '05 AUGUST 2026',
+            'certificate_id'  => 'SKYNET-2026-00001',
+            'director_name'   => 'KISHOR AHIRE',
+            'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/linux_certificate', $data);
+            return;
+        }
+
+        $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/linux_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
+    }
+
+    public function awsCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'    => 'NAYAN VIKAS POTDAR',
+            'course_title'    => 'AWS CERTIFIED SOLUTIONS ARCHITECT ASSOCIATE TRAINING',
+            'date'            => '14/07/2026',
+            'certificate_id'  => 'SKYNET-AWS-2026-00001',
+            'director_name'   => 'KISHOR AHIRE',
+            'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/aws_certificate', $data);
+            return;
+        }
+
+        $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/aws_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
+    }
+    public function ansibleCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'    => 'Harsh Pawar',
+            'course_title'    => 'Ansible Automation Platform Training',
+            'date'            => '16 July 2026',
+            'certificate_id'  => 'SKYNET-ANS-2026-00001',
+            'director_name'   => 'Kishor Ahire',
+            'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/ansible_certificate', $data);
+            return;
+        }
+
+        $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/ansible_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
+    }
+
+    public function linuxServerCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'    => 'Vrushali Nilesh Ugale',
+            'course_title'    => 'Linux Server Configuration',
+            'date'            => '30 MAY 2026',
+            'certificate_id'  => 'SKYNET-LSC-2026-00001',
+            'director_name'   => 'KISHOR AHIRE',
+            'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/linux_server_certificate', $data);
+            return;
+        }
+
+        $logoPath    = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $sigPath     = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/linux_server_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
+    }
+    public function redhatCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'           => 'Rahul Rajesh',
+            'course_title'           => 'Getting Started with Linux Fundamentals (RH104)',
+            'date'                   => 'May 17, 2026',
+            'certificate_id'         => 'SKYNET-RH-2026-00001',
+            'director_name'          => 'KISHOR AHIRE',
+            'logo_image'             => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'redhat_watermark_image' => base_url('assets/images/red_hat_watermark.jpg'),
+            'signature_image'        => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/redhat_certificate', $data);
+            return;
+        }
+
+        $logoPath        = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $redhatWatermark = FCPATH . 'assets/images/red_hat_watermark.jpg';
+        $sigPath         = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']             = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['redhat_watermark_image'] = file_exists($redhatWatermark) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($redhatWatermark)) : '';
+        $data['signature_image']        = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/redhat_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
     }
 }

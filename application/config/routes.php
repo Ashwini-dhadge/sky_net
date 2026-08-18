@@ -128,3 +128,11 @@ $route['update_payment_status'] = "app/Orders/updateOrderPaymentStatus";
 
 // Terms and Conditions
 $route['app_terms_conditions'] = 'Welcome/terms_condtions';
+
+
+// for testing purpose endpoints
+$route['linux_certificate'] = 'app/Courses/linuxCertificate';
+$route['aws_certificate'] = 'app/Courses/awsCertificate';
+$route['ansible_certificate'] = 'app/Courses/ansibleCertificate';
+$route['linux_server_certificate'] = 'app/Courses/linuxServerCertificate';
+$route['redhat_certificate'] = 'app/Courses/redhatCertificate';

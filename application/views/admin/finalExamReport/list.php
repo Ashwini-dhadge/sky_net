@@ -76,7 +76,7 @@
                             <div class="card-body">
 
                                 <div class="row">
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-2 col-sm-6">
                                         <div>
                                             <label for="">Select Course Type</label>
                                             <select id="course_type" name="course_type"
@@ -87,7 +87,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-3 col-sm-6">
                                         <div>
                                             <label for="">Select Course</label>
                                             <select id="course_id" name="course_id"
@@ -96,7 +96,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-3 col-sm-6">
                                         <div>
                                             <label for="">Select Student</label>
                                             <select id="user_id" name="user_id"
@@ -105,8 +105,17 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-3 col-sm-6" id="batch_wrapper" style="display: none;">
+                                        <div>
+                                            <label for="">Select Batch</label>
+                                            <select id="batch_id" name="batch_id"
+                                                class="form-control select2" onchange="filter_order()">
 
-                                    <div class="form-group col-md-3 ">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-2 col-sm-6">
                                         <div class="mt-4">
                                             <button class="btn btn-danger mt-1" onclick="resetFilter()">
                                                 Reset

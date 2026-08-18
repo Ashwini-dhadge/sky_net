@@ -139,15 +139,15 @@ class Authentication extends CI_Controller
      */
     public function sendLoginOTP()
     {
-            $loginInput  = trim($this->input->post('mobile')) ? trim($this->input->post('mobile')) : 0;
-            $userMobile = '';
-            $userEmail = '';
+        $loginInput  = trim($this->input->post('mobile')) ? trim($this->input->post('mobile')) : 0;
+        $userMobile = '';
+        $userEmail = '';
 
-            if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
-                $userEmail = $loginInput;
-            } elseif (ctype_digit($loginInput)) {
-                $userMobile = $loginInput;
-            }
+        if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+            $userEmail = $loginInput;
+        } elseif (ctype_digit($loginInput)) {
+            $userMobile = $loginInput;
+        }
         $response = array();
         $registrationType = 3;
         // if ($userMobile && is_numeric($userMobile)) {
@@ -199,11 +199,11 @@ class Authentication extends CI_Controller
         $userLogin = trim($this->input->post('mobile') ?? '');
         $userMobile = '';
         $userEmail = '';
-               if (filter_var($userLogin, FILTER_VALIDATE_EMAIL)) {
-                $userEmail = $userLogin;
-            } elseif (ctype_digit($userLogin)) {
-                $userMobile = $userLogin;
-            }
+        if (filter_var($userLogin, FILTER_VALIDATE_EMAIL)) {
+            $userEmail = $userLogin;
+        } elseif (ctype_digit($userLogin)) {
+            $userMobile = $userLogin;
+        }
         $otpNumber = trim($this->input->post('otp_number')) ? trim($this->input->post('otp_number')) : 0;
         $notification_token = trim($this->input->post('notification_token')) ? trim($this->input->post('notification_token')) : 0;
         $imei_no = $this->input->post('imei_no') ? $this->input->post('imei_no') : "";
@@ -213,16 +213,16 @@ class Authentication extends CI_Controller
         $new_password = trim($this->input->post('new_password'));
         $response = $userDetail = array();
 
-      
-             if (
-           (!empty($userMobile) || !empty($userEmail))
+
+        if (
+            (!empty($userMobile) || !empty($userEmail))
             && !empty($otpNumber)
             && is_numeric($otpNumber)
             && !empty($imei_no)
             && !empty($notification_token)
-        ){
-       
-        $updArr = array();
+        ) {
+
+            $updArr = array();
             if ($is_forgot == 1) {
                 if (strlen($password) == 0 || strlen($new_password) == 0 || $password != $new_password) {
                     $response['result'] = false;
@@ -234,7 +234,7 @@ class Authentication extends CI_Controller
                 }
             }
             // $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile);
-            $userDetail = $this->Authentication_model->matchOTP($otpNumber,$userMobile,$userEmail);
+            $userDetail = $this->Authentication_model->matchOTP($otpNumber, $userMobile, $userEmail);
             // echo $this->db->last_query();
             // die;
             // echo "<pre>";
