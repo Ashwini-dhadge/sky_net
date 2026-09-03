@@ -2,25 +2,26 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Red Hat Certificate of Attendance</title>
+    <title>DevOps Certificate of Completion</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Helvetica', 'Arial', sans-serif;
             background-color: #ffffff;
-            color: #222222;
+            color: #232f3e;
         }
 
+        /* Outer Frame with DevOps Orange & Slate Theme */
         .cert-outer-frame {
             position: absolute;
             top: 8mm;
             left: 10mm;
             width: 277mm;
             height: 194mm;
-            border: 3.5px solid #cc0000;
+            border: 3.5px solid #ff6a13;
             box-sizing: border-box;
-            background-color: #fdfcf9;
+            background-color: #fafbfc;
         }
 
         /* Absolutely positioned blocks inside 297x210 landscape */
@@ -82,7 +83,7 @@
             font-size: 14px;
             font-weight: 900;
             letter-spacing: 1.5px;
-            color: #cc0000;
+            color: #232f3e;
             text-transform: uppercase;
         }
 
@@ -95,8 +96,8 @@
 
         .brand-line {
             width: 300px;
-            height: 2px;
-            background-color: #cc0000;
+            height: 2.5px;
+            background-color: #ff6a13;
             margin-top: 4px;
         }
 
@@ -104,7 +105,7 @@
             font-size: 46px;
             font-weight: 900;
             letter-spacing: 12px;
-            color: #cc0000;
+            color: #232f3e;
             text-transform: uppercase;
             line-height: 1;
         }
@@ -113,14 +114,14 @@
             font-size: 19px;
             font-weight: 800;
             letter-spacing: 7px;
-            color: #1a1a1a;
+            color: #ff6a13;
             text-transform: uppercase;
             margin-top: 6px;
         }
 
-        .red-stars {
+        .devops-stars {
             font-size: 14px;
-            color: #cc0000;
+            color: #ff6a13;
             letter-spacing: 12px;
             margin-top: 5px;
         }
@@ -135,30 +136,30 @@
 
         .candidate-name {
             font-family: 'Georgia', 'Times New Roman', serif;
-            font-size: 38px;
+            font-size: 36px;
             font-weight: 900;
             letter-spacing: 2px;
-            color: #1a1a1a;
+            color: #ff6a13;
             text-transform: uppercase;
         }
 
         .name-accent-line {
             width: 580px;
             height: 2px;
-            background-color: #cc0000;
+            background-color: #232f3e;
             margin: 8px auto 0 auto;
         }
 
         .desc-text {
-            font-size: 14.5px;
+            font-size: 14px;
             font-style: italic;
             color: #444444;
         }
 
         .course-highlight {
-            font-size: 26px;
+            font-size: 25px;
             font-weight: 900;
-            color: #cc0000;
+            color: #232f3e;
             letter-spacing: 0.5px;
             margin-top: 8px;
         }
@@ -166,15 +167,15 @@
         .institute-tag {
             font-size: 14.5px;
             font-weight: 700;
-            color: #222222;
+            color: #ff6a13;
             margin-top: 6px;
         }
 
         /* Footer Metadata */
         .meta-line {
             width: 160px;
-            height: 1px;
-            background-color: #cc0000;
+            height: 1.5px;
+            background-color: #ff6a13;
             margin: 0 auto 5px auto;
         }
 
@@ -189,7 +190,7 @@
         .meta-value {
             font-size: 13.5px;
             font-weight: 800;
-            color: #1a1a1a;
+            color: #232f3e;
             margin-top: 3px;
         }
 
@@ -200,10 +201,10 @@
         }
 
         .bottom-divider {
-            border-top: 1px solid #dcdcdc;
+            border-top: 1px solid #e2e5e9;
             padding-top: 6px;
             font-size: 9px;
-            color: #777777;
+            color: #666666;
         }
     </style>
 </head>
@@ -219,7 +220,7 @@
                 <td style="width: 60%; vertical-align: top;">
                     <div class="brand-title">SKYNET LINUX SOLUTIONS & TRAINING CENTRE</div>
                     <div class="brand-line"></div>
-                    <div class="brand-sub">Red Hat Enterprise Linux & Open Source Technical Academy</div>
+                    <div class="brand-sub">DevOps Engineering, CI/CD & Cloud Automation Technical Academy</div>
                 </td>
                 <td style="width: 40%; text-align: right; vertical-align: top;">
                     <?php if (!empty($logo_image)) { ?>
@@ -233,13 +234,13 @@
     <!-- Titles Block -->
     <div class="pos-titles">
         <div class="cert-heading-main">CERTIFICATE</div>
-        <div class="cert-heading-sub">OF ATTENDANCE</div>
-        <div class="red-stars">★ &nbsp; ★ &nbsp; ★</div>
+        <div class="cert-heading-sub">OF COMPLETION</div>
+        <div class="devops-stars">★ &nbsp; ★ &nbsp; ★</div>
     </div>
 
     <!-- Award Banner -->
     <div class="pos-award">
-        <div class="award-label">THIS IS TO CERTIFY THAT</div>
+        <div class="award-label">THIS CERTIFICATE IS PROUDLY AWARDED TO</div>
     </div>
 
     <!-- Student Name Block -->
@@ -250,7 +251,7 @@
 
     <!-- Course Info Block -->
     <div class="pos-course">
-        <div class="desc-text">has successfully attended and completed the course curriculum in</div>
+        <div class="desc-text">for successfully completing the comprehensive training course and practical curriculum in</div>
         <div class="course-highlight">“<?= htmlspecialchars($course_title, ENT_QUOTES, 'UTF-8') ?>”</div>
         <div class="institute-tag">at Skynet Linux Solutions & Training Centre</div>
     </div>
@@ -271,7 +272,7 @@
                     <div class="meta-line" style="width: 190px;"></div>
                     <div class="meta-title">CERTIFICATE ID</div>
                     <div class="meta-value"><?= htmlspecialchars($certificate_id, ENT_QUOTES, 'UTF-8') ?></div>
-                    <div class="meta-subtext">Verified Credential</div>
+                    <div class="meta-subtext">Verified DevOps Credential</div>
                 </td>
 
                 <!-- Authorized Signature Column -->
@@ -295,8 +296,8 @@
                 <td style="width: 70%; vertical-align: middle;">
                     Copyright <?= date('Y') ?> Skynet Linux Solution & Training Center, All rights reserved.
                 </td>
-                <td style="width: 30%; text-align: right; font-weight: 800; color: #cc0000; letter-spacing: 0.5px; vertical-align: middle;">
-                    RED HAT TRAINING CERTIFICATION
+                <td style="width: 30%; text-align: right; font-weight: 800; color: #ff6a13; letter-spacing: 0.5px; vertical-align: middle;">
+                    DEVOPS CERTIFICATION
                 </td>
             </tr>
         </table>

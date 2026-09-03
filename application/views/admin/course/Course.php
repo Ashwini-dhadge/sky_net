@@ -281,6 +281,11 @@
                                             <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_REDHAT_RH104) ? 'selected' : ''; ?>>
                                             Red Hat Fundamentals Certificate (RH104)
                                         </option>
+                                        <option value="<?= CERT_DEVOPS; ?>"
+                                            <?= (isset($course['certificate_id']) && $course['certificate_id'] == CERT_DEVOPS) ? 'selected' : ''; ?>>
+                                            DevOps Certificate
+                                        </option>
+
                                     </select>
                                 </div>
                             </div>

@@ -160,3 +160,4 @@ define('CERT_AWS_SOLUTIONS_ARCHITECT', 2); // 2 = AWS Certified Solutions Archit
 define('CERT_ANSIBLE_AUTOMATION', 3);      // 3 = Ansible Automation Platform
 define('CERT_LINUX_SERVER_CONFIG', 4);     // 4 = Linux Server Configuration
 define('CERT_REDHAT_RH104', 5);            // 5 = Red Hat Fundamentals (RH104)
+define('CERT_DEVOPS', 6); // 6 = DevOps Certificate

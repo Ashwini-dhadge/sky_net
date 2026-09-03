@@ -353,14 +353,12 @@ class Authentication extends CI_Controller
                             echo json_encode($response);
                             die;
                         }
-                        if ($isUserExist['imei_no'] != $imei_no) {
-                            // print_r($isUserExist['id']);
-
-                            $response['message'] = "imei number did not match with Login";
-                            $response['result'] = false;
-                            echo json_encode($response);
-                            die;
-                        }
+                        // if ($isUserExist['imei_no'] != $imei_no) {
+                        //     $response['message'] = "imei number did not match with Login";
+                        //     $response['result'] = false;
+                        //     echo json_encode($response);
+                        //     die;
+                        // }
                         $data = array(
                             'reg_type' => $isUserExist['role'],
                             'user_type' => $isUserExist['user_type'],
@@ -395,12 +393,12 @@ class Authentication extends CI_Controller
                         // $message = $otpNumber . " is the one time password (OTP) for Login. Thanks, Team Skynet";
                         // sendMobileNotification($isUserExist['notification_token'], $message, $title);
                         $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0, 'id !='   => $isUserExist['id']), '', '', 'row_array');
-                        if (!empty($imei_no_exists['imei_no'])) {
-                            $response['result'] = false;
-                            $response['message'] = "This device is already linked to another account.";
-                            echo json_encode($response);
-                            die;
-                        }
+                        // if (!empty($imei_no_exists['imei_no'])) {
+                        //     $response['result'] = false;
+                        //     $response['message'] = "This device is already linked to another account.";
+                        //     echo json_encode($response);
+                        //     die;
+                        // }
                         $otpNumber = create6NumRandom();
                         $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
                         $response['result'] = true;
@@ -456,15 +454,12 @@ class Authentication extends CI_Controller
                     }
 
                     if ($isUserExist['is_otp_verified'] == 1) {
-                        if ($isUserExist['imei_no'] != $imei_no) {
-                            // print_r($isUserExist['imei_no']);
-                            // die;
-                            //  print_r($imei_no);
-                            $response['reason'] = "imei number did not match with Login";
-                            $response['result'] = false;
-                            echo json_encode($response);
-                            die;
-                        }
+                        // if ($isUserExist['imei_no'] != $imei_no) {
+                        //     $response['reason'] = "imei number did not match with Login";
+                        //     $response['result'] = false;
+                        //     echo json_encode($response);
+                        //     die;
+                        // }
                         $data = array(
                             'reg_type' => $isUserExist['role'],
                             'user_type' => $isUserExist['user_type'],
@@ -493,42 +488,14 @@ class Authentication extends CI_Controller
                         $response['result'] = true;
                         $response['mobile_verified'] = true;
                         $response['message'] = "Login Success";
-
-
-                        // }else{
-
-                        // 	$response['result'] = true;
-                        // 	$response['mobile_verified'] = false;
-                        // 	$response['reason'] = "OTP sent to registerd mobile number, please verify";
-                        // }
                     } else {
-                        // $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0), '', '', 'row_array');
+                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0, 'id !='   => $isUserExist['id']), '', '', 'row_array');
                         // if (!empty($imei_no_exists['imei_no'])) {
                         //     $response['result'] = false;
-                        //     $response['reason'] = "imei number already exist";
+                        //     $response['message'] = "This device is already linked to another account.";
                         //     echo json_encode($response);
                         //     die;
                         // }
-                        // 
-                        // if ($isUserExist['is_otp_verified'] == 1) {
-                        //     $response['mobile_verified'] = true;
-                        // } else {
-                        //     $response['mobile_verified'] = false;
-                        //     $response['is_forgot'] = true;
-                        // }
-                        // echo "hi";
-                        // die;
-                        $imei_no_exists = $this->Common_model->getData('tbl_users', array('imei_no' => $imei_no, 'is_deleted' => 0, 'id !='   => $isUserExist['id']), '', '', 'row_array');
-                        // print_r($imei_no_exists);
-                        // die;
-                        if (!empty($imei_no_exists['imei_no'])) {
-                            // echo "hi";
-                            // die;
-                            $response['result'] = false;
-                            $response['message'] = "This device is already linked to another account.";
-                            echo json_encode($response);
-                            die;
-                        }
                         $otpNumber = create6NumRandom();
                         $this->Common_model->iudAction('tbl_users', ['otp' => $otpNumber], 'update', array('id' => $isUserExist['id']));
                         $response['result'] = true;
@@ -979,13 +946,13 @@ class Authentication extends CI_Controller
                 $userEmail = $login_input;    // login by email
             }
         }
-        if (empty($imei_no) || empty($login_input)) {
+        // if (empty($imei_no) || empty($login_input)) {
 
-            $response['result'] = false;
-            $response['reason'] = "Invalid input";
-            echo json_encode($response);
-            die;
-        }
+        //     $response['result'] = false;
+        //     $response['reason'] = "Invalid input";
+        //     echo json_encode($response);
+        //     die;
+        // }
         $update_data = [
             // 'is_forgot' => 1,
             'otp' => create6NumRandom(),
@@ -995,12 +962,12 @@ class Authentication extends CI_Controller
             // print_r($isUserExist);
             // die;
             if ($isUserExist) {
-                if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
-                    $response['result'] = false;
-                    $response['reason'] = "IMEI number does not match the registered device.";
-                    echo json_encode($response);
-                    die;
-                }
+                // if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
+                //     $response['result'] = false;
+                //     $response['reason'] = "IMEI number does not match the registered device.";
+                //     echo json_encode($response);
+                //     die;
+                // }
                 if ($isUserExist['status'] != 1) {
                     $response['result'] = false;
                     $response['message'] = "User Not active";
@@ -1024,12 +991,12 @@ class Authentication extends CI_Controller
             $isUserExist = $this->Authentication_model->checkUserExist($userEmail, '', '', '', '', '', '');
 
             if ($isUserExist) {
-                if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
-                    $response['result'] = false;
-                    $response['reason'] = "IMEI number does not match the registered device.";
-                    echo json_encode($response);
-                    die;
-                }
+                // if (empty($isUserExist['imei_no']) || $isUserExist['imei_no'] != $imei_no) {
+                //     $response['result'] = false;
+                //     $response['reason'] = "IMEI number does not match the registered device.";
+                //     echo json_encode($response);
+                //     die;
+                // }
                 if ($isUserExist['status'] != 1) {
                     $response['result'] = false;
                     $response['message'] = "User Not active";

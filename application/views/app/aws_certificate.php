@@ -206,29 +206,12 @@
             font-size: 9px;
             color: #666666;
         }
-        .pos-watermark {
-            position: absolute;
-            top: 72mm;
-            left: 88mm;
-            width: 120mm;
-            text-align: center;
-            opacity: 0.07;
-        }
     </style>
 </head>
 <body>
 
     <!-- Frame Border -->
     <div class="cert-outer-frame"></div>
-
-    <!-- Background AWS Watermark Logo -->
-    <div class="pos-watermark">
-        <svg viewBox="0 0 300 180" width="130mm" height="78mm" xmlns="http://www.w3.org/2000/svg">
-            <text x="150" y="105" font-family="Arial, Helvetica, sans-serif" font-size="95" font-weight="900" fill="#232f3e" fill-opacity="0.05" text-anchor="middle" letter-spacing="4">aws</text>
-            <path d="M 60 120 Q 150 165 240 120 Q 150 145 60 120 Z" fill="#ff9900" fill-opacity="0.08" />
-            <path d="M 235 110 L 255 122 L 232 135 Z" fill="#ff9900" fill-opacity="0.08" />
-        </svg>
-    </div>
 
     <!-- Header Block -->
     <div class="pos-header">

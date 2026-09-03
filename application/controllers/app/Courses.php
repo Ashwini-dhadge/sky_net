@@ -1744,8 +1744,12 @@ class Courses extends CI_Controller
                 return $this->linuxServerCertificate($certData, 'D');
 
             case CERT_REDHAT_RH104:            // ID: 5
-                $certData['certificate_id'] = 'SKYNET-RH-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                $certData['certificate_id'] = 'SKYNET-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
                 return $this->redhatCertificate($certData, 'D');
+
+            case CERT_DEVOPS:                  // ID: 6
+                $certData['certificate_id'] = 'SKYNET-DO-' . date('Y') . '-' . str_pad($login_user_id, 5, '0', STR_PAD_LEFT);
+                return $this->devopsCertificate($certData, 'D');
 
             case CERT_LINUX_ADMIN:             // ID: 1 (Default)
             default:
@@ -2716,7 +2720,7 @@ class Courses extends CI_Controller
             'student_name'           => 'Rahul Rajesh',
             'course_title'           => 'Getting Started with Linux Fundamentals (RH104)',
             'date'                   => 'May 17, 2026',
-            'certificate_id'         => 'SKYNET-RH-2026-00001',
+            'certificate_id'         => 'SKYNET-2026-00001',
             'director_name'          => 'KISHOR AHIRE',
             'logo_image'             => base_url('assets/images/sky_net_logo_clean.jpg'),
             'redhat_watermark_image' => base_url('assets/images/red_hat_watermark.jpg'),
@@ -2738,6 +2742,47 @@ class Courses extends CI_Controller
         $data['signature_image']        = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
 
         $html = $this->load->view('app/redhat_certificate', $data, true);
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode'          => 'utf-8',
+            'format'        => 'A4-L',
+            'margin_left'   => 0,
+            'margin_right'  => 0,
+            'margin_top'    => 0,
+            'margin_bottom' => 0
+        ]);
+        $mpdf->autoPageBreak = false;
+
+        $mpdf->WriteHTML($html);
+        $fileName = 'Certificate_' . preg_replace('/[^A-Za-z0-9]/', '_', $data['course_title']) . '.pdf';
+        $mpdf->Output($fileName, $outputMode);
+    }
+
+    public function devopsCertificate($customData = [], $outputMode = 'I')
+    {
+        $defaultData = [
+            'student_name'    => 'Vrushali Nilesh Ugale',
+            'course_title'    => 'Devops Course',
+            'date'            => '30 MAY 2026',
+            'certificate_id'  => 'SKYNET-DO-2026-00001',
+            'director_name'   => 'KISHOR AHIRE',
+            'logo_image'      => base_url('assets/images/sky_net_logo_clean.jpg'),
+            'signature_image' => base_url('assets/images/signature_final_clean.jpg')
+        ];
+        $data = !empty($customData) ? array_merge($defaultData, $customData) : $defaultData;
+
+        if ($this->input->get('html') == 1) {
+            $this->load->view('app/devops_certificate', $data);
+            return;
+        }
+
+        $logoPath = FCPATH . 'assets/images/sky_net_logo_clean.jpg';
+        $sigPath  = FCPATH . 'assets/images/signature_final_clean.jpg';
+
+        $data['logo_image']      = file_exists($logoPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $data['signature_image'] = file_exists($sigPath) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($sigPath)) : '';
+
+        $html = $this->load->view('app/devops_certificate', $data, true);
 
         $mpdf = new \Mpdf\Mpdf([
             'mode'          => 'utf-8',

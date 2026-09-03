@@ -481,9 +481,9 @@ class Course extends CI_Controller
 
 		$course_certificate_details = [
 			'course_id' => $post['id'],
-			'issued_by' => $post['issued_by'],
-			'verify_url' => $post['verify_url'],
-			'certification_id' => $post['certification_id'],
+			'issued_by' => $post['issued_by'] ?? '',
+			'verify_url' => $post['verify_url'] ?? '',
+			'certification_id' => $post['certification_id'] ?? '',
 		];
 
 		if (!empty($_FILES['barcode_logo']['name'])) {

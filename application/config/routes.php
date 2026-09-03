@@ -136,3 +136,4 @@ $route['aws_certificate'] = 'app/Courses/awsCertificate';
 $route['ansible_certificate'] = 'app/Courses/ansibleCertificate';
 $route['linux_server_certificate'] = 'app/Courses/linuxServerCertificate';
 $route['redhat_certificate'] = 'app/Courses/redhatCertificate';
+$route['devops_certificate'] = 'app/Courses/devopsCertificate';
